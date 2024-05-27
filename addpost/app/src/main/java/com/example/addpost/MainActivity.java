@@ -1,33 +1,27 @@
 package com.example.addpost;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,111 +29,108 @@ public class MainActivity extends AppCompatActivity {
     private TextView timeInputTextView;
     private ImageView uploadIcon;
     private ShapeableImageView image;
-    private static final int PICK_IMAGE_REQUEST = 1;
+    private TextView placeInput;
+    private String imageUrl = "";
+
+    private String unit;
+
+    private TextView classificationChoice;
+
+    // 대분류와 하위 카테고리 배열
+    private String[] mainCategories = {"신선식품", "가공식품"};
+    private String[][] subCategories = {
+            {"과일", "채소", "유제품", "양념", "정육 및 계란", "곡물"},
+            {"냉동식품", "베이커리", "가공육", "간식 및 음료"}
+    };
+
+    private int selectedMainCategory = -1;
+    private int selectedSubCategory = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addpost);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addpost), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
 
-        });
+        // UI 초기화
+        initUI();
 
+        UnitSpinnerUtil.setupUnitSpinner(MainActivity.this);
+
+    }
+
+    private void initUI() {
+        // UI 요소 초기화
         timeInputTextView = findViewById(R.id.time_input);
-        calendar = Calendar.getInstance();
-
         uploadIcon = findViewById(R.id.uploadicon);
         image = findViewById(R.id.image);
+        placeInput = findViewById(R.id.place_input);
+        calendar = Calendar.getInstance();
+        classificationChoice = findViewById(R.id.classification_choice);
 
-        uploadIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+        // 갤러리 열기 버튼 클릭 이벤트 처리
+        uploadIcon.setOnClickListener(v -> UIHelper.openGallery(MainActivity.this));
 
+        // 날짜 및 시간 선택 다이얼로그 표시
+        timeInputTextView.setOnClickListener(v -> showDateTimePicker());
+
+        // 카테고리 선택 텍스트뷰 클릭 이벤트 처리
+        classificationChoice.setOnClickListener(v -> showCategoryDialog());
+
+        // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
-        postButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerPost(v); // 포스트 등록 메소드 호출
-            }
+        postButton.setOnClickListener(v -> registerPost());
+    }
+
+    private void showDateTimePicker() {
+        UIHelper.showDateTimePicker(this, calendar, (view, year, month, dayOfMonth) -> {
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, (view12, hourOfDay, minute1) -> {
+                calendar.set(year, month, dayOfMonth, hourOfDay, minute1);
+                updateTimeInputTextView(); // 시간 선택 후 텍스트 업데이트
+            }, hour, minute, false);
+            timePickerDialog.show();
+        }, (view, hourOfDay, minute) -> {
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            updateTimeInputTextView(); // 시간 선택 후 텍스트 업데이트
         });
     }
 
-
-    private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                image.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void showCategoryDialog(View view) {
-        final String[] categories = {"카테고리 1", "카테고리 2", "카테고리 3"}; // 카테고리 목록을 정의합니다.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("카테고리 선택");
-        builder.setItems(categories, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selectedCategory = categories[which];
-                // 선택된 카테고리에 대한 작업을 수행합니다.
-                // 예: 선택된 카테고리를 TextView에 표시합니다.
-                ((TextView) view).setText(selectedCategory); // 선택된 카테고리를 TextView에 표시합니다.
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    public void showDateTimePicker(View view) {
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-
-                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                        updateTimeInputTextView();
-                    }
-                }, hour, minute, false);
-                timePickerDialog.show();
-            }
-        }, year, month, day);
-        datePickerDialog.show();
-    }
 
     private void updateTimeInputTextView() {
         String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", calendar).toString();
         timeInputTextView.setText(formattedDateTime);
     }
 
-    public void registerPost(View view) {
-        // 사용자가 입력한 값을 가져오기
-        String imageUrl = ""; // 이미지 URL을 여기에 할당
+    private void showCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("카테고리 선택");
+
+        builder.setItems(mainCategories, (dialog, which) -> {
+            // 선택한 주 카테고리의 인덱스 저장
+            selectedMainCategory = which;
+            // 해당 주 카테고리에 대한 서브 카테고리 다이얼로그 표시
+            showSubCategoryDialog(which);
+        });
+        builder.show();
+    }
+
+    private void showSubCategoryDialog(int mainCategoryIndex) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("서브 카테고리 선택");
+
+        builder.setItems(subCategories[mainCategoryIndex], (dialog, which) -> {
+            // 선택한 서브 카테고리의 인덱스 저장
+            selectedSubCategory = which;
+            // 선택한 카테고리 텍스트뷰에 표시
+            String selectedCategory = mainCategories[selectedMainCategory] + " - " + subCategories[selectedMainCategory][selectedSubCategory];
+            classificationChoice.setText(selectedCategory);
+        });
+        builder.show();
+    }
+    private void registerPost() {
+        // 포스트 등록 처리
         String category = ((TextView) findViewById(R.id.classification_choice)).getText().toString();
         String productName = ((EditText) findViewById(R.id.product_choice)).getText().toString();
         int totalAmount = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
@@ -149,19 +140,14 @@ public class MainActivity extends AppCompatActivity {
         String meetingTime = ((TextView) findViewById(R.id.time_input)).getText().toString();
         boolean isFeatured = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
         boolean isContainer = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
+        String unit = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
 
-        // 입력 값을 사용하여 새로운 Post 객체 생성
-        Post newPost = new Post(imageUrl, category, productName, totalAmount, numberOfPeople, costPerPerson, meetingPlace, meetingTime, isFeatured, isContainer);
-        Log.d("Post Data", "Image URL: " + newPost.getImageUrl());
-        Log.d("Post Data", "Category: " + newPost.getCategory());
-        Log.d("Post Data", "Product Name: " + newPost.getProductName());
-        Log.d("Post Data", "Total Amount: " + newPost.getTotalAmount());
-        Log.d("Post Data", "Number of People: " + newPost.getNumberOfPeople());
-        Log.d("Post Data", "Cost Per Person: " + newPost.getCostPerPerson());
-        Log.d("Post Data", "Meeting Place: " + newPost.getMeetingPlace());
-        Log.d("Post Data", "Meeting Time: " + newPost.getMeetingTime());
-        Log.d("Post Data", "Is Featured: " + newPost.isFeatured());
-        Log.d("Post Data", "Is Container: " + newPost.isContainer());
+        Board newPost = new Board(imageUrl, category, productName, totalAmount, numberOfPeople, costPerPerson, meetingPlace, meetingTime, isFeatured, isContainer,unit);
+
+        // 서버에 포스트 전송
+        ApiHelper.sendBoardToServer(newPost);
     }
+
+
 
 }
