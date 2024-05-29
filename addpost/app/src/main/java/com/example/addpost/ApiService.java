@@ -16,20 +16,24 @@ public interface ApiService {
     Call<Board> getBoardDetail(@Path("id") int id);
 
     @Multipart
-    @POST("upload")
+    @POST("board")
     Call<Void> sendBoardToServer(
-            @Part MultipartBody.Part image,
-            @Part("category") RequestBody category,
-            @Part("productName") RequestBody productName,
-            @Part("totalAmount") RequestBody totalAmount,
-            @Part("numberOfPeople") RequestBody numberOfPeople,
-            @Part("costPerPerson") RequestBody costPerPerson,
-            @Part("meetingPlace") RequestBody meetingPlace,
-            @Part("meetingTime") RequestBody meetingTime,
-            @Part("isFeatured") RequestBody isFeatured,
-            @Part("isContainer") RequestBody isContainer,
-            @Part("unit") RequestBody unit
+            @Part MultipartBody.Part image1,
+            @Part MultipartBody.Part image2,
+            @Part("category_id") RequestBody category_id,
+            @Part("item_name") RequestBody item_name,
+            @Part("headcnt") RequestBody headcnt,
+            @Part("remain_headcnt") RequestBody remain_headcnt,
+            @Part("total_price") RequestBody total_price,
+            @Part("meeting_location") RequestBody meeting_location,
+            @Part("meeting_time") RequestBody meeting_time,
+            @Part("is_up") RequestBody is_up,
+            @Part("is_reusable") RequestBody is_reusable,
+            @Part("scale") RequestBody scale,
+            @Part("latitude") RequestBody latitude,
+            @Part("longitude") RequestBody longitude
     );
+
 
     @GET("board/{id}/request")
     Call<Void> requestBoard(@Path("id") int id);

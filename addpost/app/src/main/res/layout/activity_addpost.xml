@@ -65,25 +65,63 @@
                 <RelativeLayout
                     android:id="@+id/imageuploadbox"
                     android:layout_width="match_parent"
-                    android:layout_height="157dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="13dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/image"
+                    <!-- 첫 번째 이미지 업로드 상자 -->
+                    <RelativeLayout
+                        android:id="@+id/first_image_box"
                         android:layout_width="match_parent"
                         android:layout_height="157dp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/rectangle4"
-                        app:shapeAppearanceOverlay="@style/addimage" />
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@id/second_image_box"
+                        android:padding="5dp">
 
-                    <ImageView
-                        android:id="@+id/uploadicon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_marginTop="49dp"
-                        android:src="@drawable/vector" />
+                        <!-- 첫 번째 이미지 -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/image"
+                            android:layout_width="185dp"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/rectangle4"
+                            app:shapeAppearanceOverlay="@style/addimage" />
+
+                        <ImageView
+                            android:id="@+id/uploadicon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/vector" />
+                    </RelativeLayout>
+
+                    <!-- 두 번째 이미지 업로드 상자 -->
+                    <RelativeLayout
+                        android:id="@+id/second_image_box"
+                        android:layout_width="185dp"
+                        android:layout_height="157dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5dp"
+                        android:padding="5dp">
+
+                        <!-- 두 번째 이미지 -->
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/image_receipt"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/rectangle4"
+                            app:shapeAppearanceOverlay="@style/addimage" />
+
+                        <ImageView
+                            android:id="@+id/uploadicon_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/vector" />
+                    </RelativeLayout>
                 </RelativeLayout>
 
                 <!-- Rectangle 6 -->

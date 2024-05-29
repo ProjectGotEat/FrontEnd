@@ -20,7 +20,7 @@ import java.util.List;
 
 public class UIHelper {
 
-    public static void openGallery(MainActivity activity, int requestCode) {
+    public static void openGallery(AddpostActivity activity, int requestCode) {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         activity.startActivityForResult(galleryIntent, requestCode);
     }
