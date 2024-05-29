@@ -55,7 +55,7 @@
                         android:id="@+id/titletext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="소분 등록"
+                        android:text="  소분 등록"
                         android:textColor="#303030"
                         android:textSize="20sp"
                         android:textStyle="bold"/>
@@ -395,9 +395,9 @@
                             android:textColor="#808080"
                             android:textSize="18sp" />
 
-                        <EditText
+                        <TextView
                             android:id="@+id/place_input"
-                            android:layout_width="wrap_content"
+                            android:layout_width="205dp"
                             android:layout_height="wrap_content"
                             android:text="만나길 희망하는 장소를 선택해주세요"
                             android:textColor="#808080"

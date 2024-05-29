@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="PlacePickerActivity">
+    tools:context=".PlacePickerActivity">
 
-    <!-- Header 바 -->
+    <!-- Header Bar -->
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -22,11 +21,35 @@
             android:gravity="center"
             android:padding="16dp"/>
 
-        <!-- 다른 헤더 내용을 추가할 수 있습니다 -->
+        <!-- Search Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <EditText
+                android:id="@+id/search_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="장소 검색"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <Button
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="검색"/>
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- 좌상단의 X 표시 -->
+    <!-- Close Button -->
     <ImageView
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
@@ -36,11 +59,24 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="17dp"/>
 
-    <!-- 카카오맵 지도 -->
-    <com.kakao.vectormap.MapView
+    <!-- Google MapView -->
+    <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header_layout" />
 
+    <!-- Register Button -->
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="19dp"
+        android:background="@color/button"
+        android:text="등록"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

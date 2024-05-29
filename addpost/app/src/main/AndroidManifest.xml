@@ -19,9 +19,10 @@
         >
         <activity android:name=".CartActivity" />
         <activity android:name=".PlacePickerActivity" />
+
         <meta-data
-            android:name="com.kakao.vectormap.APP_KEY"
-            android:value="a4b4fe6ac1f34d080a42478a33d25f45"/>
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDChYA47ciPdnpQHHWL3g6AzP7xg31uSQU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

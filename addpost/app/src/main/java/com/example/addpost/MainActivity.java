@@ -1,9 +1,8 @@
 package com.example.addpost;
 
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,16 +11,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,13 +28,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView uploadIcon;
     private ShapeableImageView image;
     private TextView placeInput;
-    private String imageUrl = "";
-
-    private String unit;
-
+    private Uri imageUri;
     private TextView classificationChoice;
 
-    // 대분류와 하위 카테고리 배열
+    private static final int GALLERY_REQUEST_CODE = 1001;
+    private static final int PLACE_PICKER_REQUEST_CODE = 123;
+
     private String[] mainCategories = {"신선식품", "가공식품"};
     private String[][] subCategories = {
             {"과일", "채소", "유제품", "양념", "정육 및 계란", "곡물"},
@@ -51,14 +48,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addpost);
 
-        // UI 초기화
-        initUI();
+        // 주소 값을 받아옴
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("address")) {
+            String address = intent.getStringExtra("address");
 
-        UnitSpinnerUtil.setupUnitSpinner(MainActivity.this);
+            // 받아온 주소 값을 TextView에 설정
+            TextView addressTextView = findViewById(R.id.place_input);
+            addressTextView.setText(address);
+        }
 
-    }
-
-    private void initUI() {
         // UI 요소 초기화
         timeInputTextView = findViewById(R.id.time_input);
         uploadIcon = findViewById(R.id.uploadicon);
@@ -66,15 +65,22 @@ public class MainActivity extends AppCompatActivity {
         placeInput = findViewById(R.id.place_input);
         calendar = Calendar.getInstance();
         classificationChoice = findViewById(R.id.classification_choice);
+        TextView placeInputTextView = findViewById(R.id.place_input); // 장소 선택 텍스트뷰
 
         // 갤러리 열기 버튼 클릭 이벤트 처리
-        uploadIcon.setOnClickListener(v -> UIHelper.openGallery(MainActivity.this));
+        uploadIcon.setOnClickListener(v -> UIHelper.openGallery(MainActivity.this, GALLERY_REQUEST_CODE));
 
         // 날짜 및 시간 선택 다이얼로그 표시
         timeInputTextView.setOnClickListener(v -> showDateTimePicker());
 
         // 카테고리 선택 텍스트뷰 클릭 이벤트 처리
         classificationChoice.setOnClickListener(v -> showCategoryDialog());
+
+        // 장소 선택 텍스트뷰 클릭 이벤트
+        placeInputTextView.setOnClickListener(v -> {
+            Intent placePickerIntent = new Intent(MainActivity.this, PlacePickerActivity.class);
+            startActivityForResult(placePickerIntent, PLACE_PICKER_REQUEST_CODE); // 다음 화면으로 이동
+        });
 
         // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
@@ -96,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             updateTimeInputTextView(); // 시간 선택 후 텍스트 업데이트
         });
     }
-
 
     private void updateTimeInputTextView() {
         String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", calendar).toString();
@@ -128,26 +133,52 @@ public class MainActivity extends AppCompatActivity {
             classificationChoice.setText(selectedCategory);
         });
         builder.show();
+
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_PICKER_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null && data.hasExtra("address")) {
+                String address = data.getStringExtra("address");
+                placeInput.setText(address);
+            }
+        }
+    }
+
     private void registerPost() {
-        // 포스트 등록 처리
-        String category = ((TextView) findViewById(R.id.classification_choice)).getText().toString();
-        String productName = ((EditText) findViewById(R.id.product_choice)).getText().toString();
-        int totalAmount = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
-        int numberOfPeople = Integer.parseInt(((EditText) findViewById(R.id.people_input)).getText().toString());
-        int costPerPerson = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
-        String meetingPlace = ((TextView) findViewById(R.id.place_input)).getText().toString();
-        String meetingTime = ((TextView) findViewById(R.id.time_input)).getText().toString();
-        boolean isFeatured = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
-        boolean isContainer = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
-        String unit = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
+        try {
+            // 이미지 URI 가져오기
 
-        Board newPost = new Board(imageUrl, category, productName, totalAmount, numberOfPeople, costPerPerson, meetingPlace, meetingTime, isFeatured, isContainer,unit);
 
-        // 서버에 포스트 전송
-        ApiHelper.sendBoardToServer(newPost);
+            // 이미지 URI 가져오기
+            if (imageUri == null) {
+                Toast.makeText(this, "이미지를 선택하세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String category = classificationChoice.getText().toString();
+            String productName = ((EditText) findViewById(R.id.product_choice)).getText().toString();
+            int totalAmount = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
+            int numberOfPeople = Integer.parseInt(((EditText) findViewById(R.id.people_input)).getText().toString());
+            int costPerPerson = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
+            String meetingPlace = placeInput.getText().toString();
+            String meetingTime = timeInputTextView.getText().toString();
+            boolean isFeatured = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
+            boolean isContainer = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
+            String unit = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
+
+            Board newPost = new Board(imageUri, category, productName, totalAmount, numberOfPeople, costPerPerson, meetingPlace, meetingTime, isFeatured, isContainer, unit);
+
+            // 서버에 포스트 전송
+            ApiHelper.sendBoardToServer(this, newPost);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "양, 인원 및 비용에 올바른 숫자를 입력하세요.", Toast.LENGTH_SHORT).show();
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
-
-
-
 }

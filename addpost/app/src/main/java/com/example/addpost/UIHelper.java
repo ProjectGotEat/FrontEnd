@@ -20,9 +20,9 @@ import java.util.List;
 
 public class UIHelper {
 
-    public static void openGallery(Context context) {
+    public static void openGallery(MainActivity activity, int requestCode) {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        context.startActivity(galleryIntent);
+        activity.startActivityForResult(galleryIntent, requestCode);
     }
 
     public static void showDateTimePicker(Context context, Calendar calendar, DatePickerDialog.OnDateSetListener dateSetListener, TimePickerDialog.OnTimeSetListener timeSetListener) {
@@ -41,35 +41,5 @@ public class UIHelper {
         datePickerDialog.show();
     }
 
-
-    public static void showCategoryDialog(Context context, String[][] categories, DialogInterface.OnClickListener clickListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("카테고리 선택");
-
-        // Flatten the categories array
-        List<String> flattenedList = new ArrayList<>();
-        for (String[] array : categories) {
-            Collections.addAll(flattenedList, array);
-        }
-        CharSequence[] items = flattenedList.toArray(new CharSequence[flattenedList.size()]);
-
-        builder.setItems(items, clickListener);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-
-    public static void displayImageFromUri(Context context, ImageView imageView, Uri imageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
-            imageView.setImageBitmap(bitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
 
 }
