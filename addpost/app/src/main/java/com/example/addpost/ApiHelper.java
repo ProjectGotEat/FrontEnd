@@ -25,7 +25,7 @@ public class ApiHelper {
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://10.101.27.211:8080/")
+                    .baseUrl("https://172.20.39.247:8080/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

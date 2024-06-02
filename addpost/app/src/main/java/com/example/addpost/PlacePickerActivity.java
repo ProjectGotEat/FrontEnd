@@ -132,6 +132,8 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
                 // 주소 값을 다른 페이지로 전달
                 Intent intent = new Intent();
                 intent.putExtra("address", addressText);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
                 setResult(RESULT_OK, intent);
                 finish();
             } else {

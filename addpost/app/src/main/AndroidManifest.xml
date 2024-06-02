@@ -24,7 +24,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDChYA47ciPdnpQHHWL3g6AzP7xg31uSQU"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".AddpostActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

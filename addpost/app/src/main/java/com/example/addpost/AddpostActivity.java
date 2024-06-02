@@ -145,6 +145,8 @@ public class AddpostActivity extends AppCompatActivity {
         if (requestCode == PLACE_PICKER_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null && data.hasExtra("address")) {
                 String address = data.getStringExtra("address");
+                double latitude = data.getDoubleExtra("latitude", 0);
+                double longitude = data.getDoubleExtra("longitude", 0);
                 placeInput.setText(address);
             }
         }
