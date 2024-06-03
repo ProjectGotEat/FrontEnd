@@ -1,4 +1,4 @@
-package com.example.addpost;
+package com.example.addpost.model;
 
 import android.net.Uri;
 
