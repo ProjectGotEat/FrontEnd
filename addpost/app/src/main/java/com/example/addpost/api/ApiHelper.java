@@ -1,11 +1,13 @@
-package com.example.addpost;
+package com.example.addpost.api;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.addpost.model.Board;
+import com.example.addpost.model.BoardDetailResponse;
 
 import java.io.File;
 
@@ -106,23 +108,93 @@ public class ApiHelper {
         return result;
     }
 
-    public static void getBoardDetail(Context context, int id, final TextView textView) {
+    public static void getBoardDetail(Context context, int boardId, String userId, final ApiCallback<BoardDetailResponse> callback) {
         initApiService();
 
-        Call<Board> call = apiService.getBoardDetail(id);
-        call.enqueue(new Callback<Board>() {
+        Call<BoardDetailResponse> call = apiService.getBoardDetail(boardId, userId);
+        call.enqueue(new Callback<BoardDetailResponse>() {
             @Override
-            public void onResponse(Call<Board> call, Response<Board> response) {
+            public void onResponse(Call<BoardDetailResponse> call, Response<BoardDetailResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Board board = response.body();
+                    callback.onSuccess(response.body());
                 } else {
-                    Toast.makeText(context, "게시판 상세 정보를 가져오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "게시판을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Board> call, Throwable t) {
-                Toast.makeText(context, "게시판 상세 정보를 가져오는 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<BoardDetailResponse> call, Throwable t) {
+                Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void sendRequestToServer(Context context, int boardId, String uid) {
+        initApiService();
+
+        // RequestBody에 필요한 데이터를 추가
+        int organizerId = 123;
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(organizerId));
+
+        // 서버로 POST 요청을 보냄
+        Call<Void> call = apiService.sendRequest(uid, boardId, requestBody);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // 서버로의 요청이 성공했을 때 처리할 코드
+                    Toast.makeText(context, "신청이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 서버로의 요청이 실패했을 때 처리할 코드
+                    Toast.makeText(context, "신청에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // 통신 실패 시 처리할 코드
+                Toast.makeText(context, "네트워크 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void requestBoard(int boardId, final ApiCallback<Void> callback) {
+        initApiService();
+
+        Call<Void> call = apiService.requestBoard(boardId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    callback.onFailure("요청 실패: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure("요청 실패: " + t.getMessage());
+            }
+        });
+    }
+    public static void scrapBoard(int boardId, String uid, final ApiCallback<Void> callback) {
+        initApiService();
+
+        Call<Void> call = apiService.scrapBoard(boardId, uid);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    callback.onFailure("게시물 스크랩에 실패했습니다.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure("게시물 스크랩에 실패했습니다.");
             }
         });
     }

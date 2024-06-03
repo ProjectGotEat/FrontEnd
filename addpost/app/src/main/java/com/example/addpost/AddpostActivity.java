@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.addpost.api.ApiHelper;
+import com.example.addpost.model.Board;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.Calendar;

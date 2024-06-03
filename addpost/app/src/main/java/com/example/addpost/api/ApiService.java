@@ -1,19 +1,27 @@
-package com.example.addpost;
+package com.example.addpost.api;
+
+import com.example.addpost.model.Board;
+import com.example.addpost.model.BoardDetailResponse;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
+
 public interface ApiService {
     @GET("board/{id}")
-    Call<Board> getBoardDetail(@Path("id") int id);
+    Call<BoardDetailResponse> getBoardDetail(
+            @Path("id") int id,
+            @Header("id") String userId
+    );
 
     @Multipart
     @POST("board")
@@ -35,12 +43,21 @@ public interface ApiService {
     );
 
 
-    @GET("board/{id}/request")
-    Call<Void> requestBoard(@Path("id") int id);
+    @POST("board/{id}/request")
+    Call<Void> sendRequest(
+            @Header("uid") String uid,
+            @Path("id") int boardId,
+            @Body RequestBody body
+    );
 
-    @PUT("board/{id}")
-    Call<Void> updateBoard(@Path("id") int id, @Body Board board);
+    @PUT("board/{id}/request")
+    Call<Void> requestBoard(
+            @Path("id") int boardId
+    );
 
-    @GET("board/{id}/scrap")
-    Call<Void> scrapBoard(@Path("id") int id);
+    @POST("board/{id}/scrap")
+    Call<Void> scrapBoard(
+            @Path("id") int boardId,
+            @Header("uid") String uid
+    );
 }
