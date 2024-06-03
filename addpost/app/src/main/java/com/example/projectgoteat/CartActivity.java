@@ -1,4 +1,4 @@
-package com.example.addpost;
+package com.example.projectgoteat;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -9,9 +9,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.addpost.api.ApiCallback;
-import com.example.addpost.api.ApiHelper;
-import com.example.addpost.model.BoardDetailResponse;
+import com.example.addpost.R;
+import com.example.projectgoteat.api.ApiCallback;
+import com.example.projectgoteat.api.ApiHelper;
+import com.example.projectgoteat.model.BoardDetailResponse;
 
 public class CartActivity extends AppCompatActivity {
 

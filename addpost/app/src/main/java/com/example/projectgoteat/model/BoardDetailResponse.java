@@ -1,4 +1,4 @@
-package com.example.addpost.model;
+package com.example.projectgoteat.model;
 
 public class BoardDetailResponse {
     private String item_image1;

@@ -1,4 +1,4 @@
-package com.example.addpost.model;
+package com.example.projectgoteat.model;
 
 import android.net.Uri;
 

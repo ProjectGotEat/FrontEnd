@@ -1,4 +1,4 @@
-package com.example.addpost;
+package com.example.projectgoteat;
 
 import android.content.Context;
 

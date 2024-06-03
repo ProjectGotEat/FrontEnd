@@ -1,4 +1,4 @@
-package com.example.addpost;
+package com.example.projectgoteat;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -15,8 +15,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.addpost.api.ApiHelper;
-import com.example.addpost.model.Board;
+import com.example.addpost.R;
+import com.example.projectgoteat.api.ApiHelper;
+import com.example.projectgoteat.model.Board;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.Calendar;
@@ -69,7 +70,7 @@ public class AddpostActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         classificationChoice = findViewById(R.id.classification_choice);
         TextView placeInputTextView = findViewById(R.id.place_input); // 장소 선택 텍스트뷰
-// 장소 선택 텍스트뷰
+
 
         // 갤러리 열기 버튼 클릭 이벤트 처리
         uploadIcon1.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, GALLERY_REQUEST_CODE_1));
@@ -90,6 +91,9 @@ public class AddpostActivity extends AppCompatActivity {
         // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
         postButton.setOnClickListener(v -> registerPost());
+
+        //단위 선택
+        UnitSpinnerUtil.setupUnitSpinner(this);
     }
 
     private void showDateTimePicker() {
@@ -141,11 +145,23 @@ public class AddpostActivity extends AppCompatActivity {
 
     }
 
+    // 이미지를 ImageView에 표시
+    private void displaySelectedImage(Uri imageUri, ImageView imageView) {
+        imageView.setImageURI(imageUri);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (data != null && data.hasExtra("address")) {
+        if (resultCode == RESULT_OK && data != null) {
+            if (requestCode == GALLERY_REQUEST_CODE_1) {
+                imageUri1 = data.getData();
+                displaySelectedImage(imageUri1, image1);
+            } else if (requestCode == GALLERY_REQUEST_CODE_2) {
+                imageUri2 = data.getData();
+                displaySelectedImage(imageUri2, image2);
+            } else if (requestCode == PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
                 String address = data.getStringExtra("address");
                 double latitude = data.getDoubleExtra("latitude", 0);
                 double longitude = data.getDoubleExtra("longitude", 0);

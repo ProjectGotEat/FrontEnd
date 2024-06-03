@@ -1,7 +1,6 @@
-package com.example.addpost.api;
+package com.example.projectgoteat.api;
 
-import com.example.addpost.model.Board;
-import com.example.addpost.model.BoardDetailResponse;
+import com.example.projectgoteat.model.BoardDetailResponse;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

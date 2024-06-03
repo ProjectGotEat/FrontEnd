@@ -1,4 +1,4 @@
-package com.example.addpost.api;
+package com.example.projectgoteat.api;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
-import com.example.addpost.model.Board;
-import com.example.addpost.model.BoardDetailResponse;
+import com.example.projectgoteat.model.Board;
+import com.example.projectgoteat.model.BoardDetailResponse;
 
 import java.io.File;
 

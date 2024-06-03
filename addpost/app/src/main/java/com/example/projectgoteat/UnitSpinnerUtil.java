@@ -1,10 +1,12 @@
-package com.example.addpost;
+package com.example.projectgoteat;
 
 // UnitSpinnerUtil.java
 
 import android.app.Activity;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.example.addpost.R;
 
 public class UnitSpinnerUtil {
 
