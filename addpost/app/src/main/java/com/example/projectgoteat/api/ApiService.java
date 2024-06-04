@@ -38,16 +38,10 @@ public interface ApiService {
             @Part("is_reusable") RequestBody is_reusable,
             @Part("scale") RequestBody scale,
             @Part("latitude") RequestBody latitude,
-            @Part("longitude") RequestBody longitude
+            @Part("longitude") RequestBody longitude,
+            @Header("uid") String userId
     );
 
-
-    @POST("board/{id}/request")
-    Call<Void> sendRequest(
-            @Header("uid") String uid,
-            @Path("id") int boardId,
-            @Body RequestBody body
-    );
 
     @PUT("board/{id}/request")
     Call<Void> requestBoard(

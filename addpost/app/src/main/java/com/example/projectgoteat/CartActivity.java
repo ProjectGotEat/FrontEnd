@@ -1,5 +1,7 @@
 package com.example.projectgoteat;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -9,7 +11,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.addpost.R;
 import com.example.projectgoteat.api.ApiCallback;
 import com.example.projectgoteat.api.ApiHelper;
 import com.example.projectgoteat.model.BoardDetailResponse;
@@ -20,6 +21,7 @@ public class CartActivity extends AppCompatActivity {
     private Button scrapButton; // 스크랩 버튼
     private int boardId; // 게시물 ID
     private String uid; // 사용자 ID
+    private TextView titleText;
     private TextView categoryInput;
     private TextView placeInput;
     private TextView timeInput;
@@ -27,9 +29,13 @@ public class CartActivity extends AppCompatActivity {
     private TextView costInput;
     private ImageView itemImage1;
     private ImageView itemImage2;
+
+    private ImageView receiptImage;
     private ImageView userImage;
     private TextView userNickname;
     private TextView userRank;
+
+    private BoardDetailResponse boardDetailResponse; // 게시물 상세 정보를 담을 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +43,14 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
 
         categoryInput = findViewById(R.id.category_input);
+        titleText =findViewById(R.id.titletext);
         placeInput = findViewById(R.id.place_input);
         timeInput = findViewById(R.id.time_input);
         amountInput = findViewById(R.id.amount_input);
         costInput = findViewById(R.id.cost_input);
         itemImage1 = findViewById(R.id.image);
-        itemImage2 = findViewById(R.id.image); // 이미지 2를 위한 아이디로 가정
+        itemImage2 = findViewById(R.id.image);// 이미지 2를 위한 아이디로 가정
+        receiptImage =findViewById(R.id.image_receipt);
         userImage = findViewById(R.id.profile_image);
         userNickname = findViewById(R.id.ID_input);
         userRank = findViewById(R.id.rank_input);
@@ -50,11 +58,22 @@ public class CartActivity extends AppCompatActivity {
         scrapButton = findViewById(R.id.scrap_button);
 
         // 게시물 ID와 사용자 ID를 가져옴
-        boardId = 123;
-        uid = "user123";
+        Intent intent = getIntent();
+        if (intent != null) {
+            boardId = intent.getIntExtra("BOARD_ID", 0);}
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        uid = sharedPreferences.getString("userId", "");
+
+        // 게시물 상세 정보 가져오기
+        fetchBoardDetails(boardId, uid);
 
         // 신청 버튼 클릭 이벤트 처리
         postButton.setOnClickListener(v -> {
+            // 소분 가능 여부를 확인하고 메시지를 표시
+            if (boardDetailResponse != null && boardDetailResponse.isIs_reusable()) {
+                Toast.makeText(getApplicationContext(), "소분 시 다회용기를 지참해주세요", Toast.LENGTH_SHORT).show();
+            }
+
             // 서버로 신청 요청을 보냄
             ApiHelper.requestBoard(boardId, new ApiCallback<Void>() {
                 @Override
@@ -87,8 +106,9 @@ public class CartActivity extends AppCompatActivity {
             });
         });
 
-        // 게시물 상세 정보 가져오기
-        fetchBoardDetails(boardId, uid);
+        //이전 페이지 이동
+        ImageView closeButton = findViewById(R.id.close_button);
+        closeButton.setOnClickListener(v -> onBackPressed()); // 이전 페이지로 이동
     }
 
     private void fetchBoardDetails(int boardId, String userId) {
@@ -101,15 +121,41 @@ public class CartActivity extends AppCompatActivity {
                 amountInput.setText(String.valueOf(response.getEach_quantity()) + " " + response.getScale());
                 costInput.setText(String.valueOf(response.getEach_price()));
                 categoryInput.setText(response.getCategory());
+                categoryInput.setText(response.getCategory());
+                titleText.setText(response.getItem_name());
 
                 // Load images (you can use libraries like Glide or Picasso)
-                Glide.with(CartActivity.this).load(response.getItem_image1()).into(itemImage1);
-                if (response.getItem_image2() != null) {
-                    Glide.with(CartActivity.this).load(response.getItem_image2()).into(itemImage2);
+                Glide.with(CartActivity.this)
+                        .load(response.getItem_image1())
+                        .into(itemImage1);
+
+                if (response.getReceipt_image() != null) {
+                    Glide.with(CartActivity.this)
+                            .load(response.getReceipt_image())
+                            .into(receiptImage);
                 }
-                Glide.with(CartActivity.this).load(response.getUser_image()).into(userImage);
+
+                if (response.getItem_image2() != null) {
+                    Glide.with(CartActivity.this)
+                            .load(response.getItem_image2())
+                            .into(itemImage2);
+                }
+
+                Glide.with(CartActivity.this)
+                        .load(response.getUser_image())
+                        .into(userImage);
+
                 userNickname.setText(response.getUser_nickname());
                 userRank.setText(response.getUser_rank());
+
+                // 소분 완료 상태인 경우 버튼 비활성화
+                if (response.isIs_finished()) {
+                    postButton.setEnabled(false);
+                    postButton.setText("소분 완료됨");
+                }
+
+                // 가져온 게시물 상세 정보를 response 변수에 저장
+                boardDetailResponse = response;;
             }
 
             @Override

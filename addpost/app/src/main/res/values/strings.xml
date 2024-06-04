@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">addpost</string>
+    <string name="app_name">projectgoteat</string>
     <string name="title">소분등록</string>
     <string name="addimage">이미지 등록</string>
 </resources>

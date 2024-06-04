@@ -1,8 +1,10 @@
 package com.example.projectgoteat.api;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -27,7 +29,7 @@ public class ApiHelper {
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://172.20.39.247:8080/")
+                    .baseUrl("http://goteat-goteat-98eb531b.koyeb.app")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
@@ -41,6 +43,10 @@ public class ApiHelper {
     }
 
     public static void sendBoardToServer(Context context, Board board) {
+        // 사용자 ID 가져오기
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userId = sharedPreferences.getString("userId", "");
+
         initApiService();
 
         if (board.getItem_image1() != null && board.getReceipt_image() != null) {
@@ -68,7 +74,8 @@ public class ApiHelper {
                 RequestBody latitude = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getLatitude()));
                 RequestBody longitude = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getLongitude()));
 
-                Call<Void> call = apiService.sendBoardToServer(body1, body2, category_id, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude);
+                // 사용자 ID를 헤더에 추가
+                Call<Void> call = apiService.sendBoardToServer(body1, body2, category_id, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude, userId);
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -129,34 +136,6 @@ public class ApiHelper {
         });
     }
 
-    public static void sendRequestToServer(Context context, int boardId, String uid) {
-        initApiService();
-
-        // RequestBody에 필요한 데이터를 추가
-        int organizerId = 123;
-        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(organizerId));
-
-        // 서버로 POST 요청을 보냄
-        Call<Void> call = apiService.sendRequest(uid, boardId, requestBody);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    // 서버로의 요청이 성공했을 때 처리할 코드
-                    Toast.makeText(context, "신청이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    // 서버로의 요청이 실패했을 때 처리할 코드
-                    Toast.makeText(context, "신청에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                // 통신 실패 시 처리할 코드
-                Toast.makeText(context, "네트워크 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     public static void requestBoard(int boardId, final ApiCallback<Void> callback) {
         initApiService();

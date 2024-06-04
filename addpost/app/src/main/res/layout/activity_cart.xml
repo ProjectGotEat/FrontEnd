@@ -24,53 +24,58 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header Layout -->
-
-
-
-            <LinearLayout
-                android:id="@+id/headerLayout"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="22dp"
-                android:paddingVertical="15dp"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
+                <!-- Header Layout -->
+                <LinearLayout
+                    android:id="@+id/headerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/titletext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="상세 조회"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:padding="16dp" />
 
+                </LinearLayout>
+
+                <!-- Close Button -->
                 <ImageView
-                    android:id="@+id/arrow"
-                    android:layout_width="6dp"
-                    android:layout_height="13dp"
-                    android:layout_marginEnd="128dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/back"
-                    android:clickable="true" />
-
-                <TextView
-                    android:id="@+id/titletext"
+                    android:id="@+id/close_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity='center'
-                    android:text="  상세 조회"
-                    android:textColor="#303030"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:src="@drawable/back"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="17dp" /> <!-- Aligning close button to the bottom of headerLayout -->
+
+                <!-- Scrap Button -->
                 <Button
                     android:id="@+id/scrap_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="120dp"
-                    android:layout_marginTop="2dp"
                     android:text="♡"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:textColor="#303030"
                     android:background="@android:color/transparent"
-                    android:clickable="true" />
-            </LinearLayout>
+                    android:clickable="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginTop="2dp"
+
+                    /> <!-- Aligning scrap button to the top right corner with margin -->
+
+            </RelativeLayout>
+
 
             <!-- Image Upload Box -->
             <RelativeLayout

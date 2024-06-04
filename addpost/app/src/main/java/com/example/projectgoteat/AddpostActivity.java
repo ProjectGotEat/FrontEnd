@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.addpost.R;
+import com.example.projectgoteat.R;
 import com.example.projectgoteat.api.ApiHelper;
 import com.example.projectgoteat.model.Board;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -94,6 +94,10 @@ public class AddpostActivity extends AppCompatActivity {
 
         //단위 선택
         UnitSpinnerUtil.setupUnitSpinner(this);
+
+        //이전 페이지 이동
+        ImageView closeButton = findViewById(R.id.arrow);
+        closeButton.setOnClickListener(v -> onBackPressed()); // 이전 페이지로 이동
     }
 
     private void showDateTimePicker() {

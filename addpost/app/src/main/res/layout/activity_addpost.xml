@@ -6,7 +6,7 @@
     android:id="@+id/addpost"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".AddpostActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,34 +32,42 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Header Layout -->
-                <LinearLayout
-                    android:id="@+id/headerLayout"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="22dp"
-                    android:paddingVertical="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
+                    <!-- Header Layout -->
+                    <LinearLayout
+                        android:id="@+id/headerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/titletext"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="소분 등록"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:padding="16dp" />
+
+                    </LinearLayout>
+
+                    <!-- Close Button -->
                     <ImageView
                         android:id="@+id/arrow"
-                        android:layout_width="6dp"
-                        android:layout_height="13dp"
-                        android:layout_marginEnd="128dp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/back" />
-
-                    <TextView
-                        android:id="@+id/titletext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="  소분 등록"
-                        android:textColor="#303030"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:src="@drawable/back"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="17dp" />
+
+                </RelativeLayout>
+
+
 
                 <!-- Image Upload Box -->
                 <RelativeLayout
@@ -83,7 +91,7 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/image"
                             android:layout_width="185dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="157dp"
                             android:scaleType="fitXY"
                             android:src="@drawable/rectangle4"
                             app:shapeAppearanceOverlay="@style/addimage" />
@@ -375,7 +383,7 @@
                             android:id="@+id/cost_input"
                             android:layout_width="wrap_content"
                             android:layout_height="48dp"
-                            android:hint="인당 금액을 입력해주세요"
+                            android:hint="전체 금액을 입력해주세요"
                             android:inputType="number"
                             android:textColor="#808080"
                             android:textSize="13sp" />

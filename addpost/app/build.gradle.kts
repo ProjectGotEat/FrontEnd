@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.addpost"
+    namespace = "com.example.projectgoteat"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.addpost"
+        applicationId = "com.example.projectgoteat"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
