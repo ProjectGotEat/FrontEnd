@@ -235,8 +235,8 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReviewDialog(int revieweeId, int participantId) {
-        Log.d(TAG, "Opening review dialog for participantId: " + participantId + ", revieweeId: " + revieweeId);
+    public void showReviewDialog(int revieweeId, int participantId) { // 메서드 수정됨
+        Log.d(TAG, "Opening review dialog for participantId: " + participantId + ", revieweeId: " + revieweeId); // 로그 추가
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
@@ -257,7 +257,7 @@ public class MyItemList extends AppCompatActivity {
                     Log.d(TAG, "Reviewee ID: " + revieweeId);
                     Log.d(TAG, "Review Content: " + reviewContent);
                     Log.d(TAG, "Rating: " + rating);
-                    submitReview(revieweeId, rating, reviewContent, participantId);
+                    submitReview(revieweeId, rating, reviewContent, participantId); // 메서드 호출 수정됨
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -265,13 +265,12 @@ public class MyItemList extends AppCompatActivity {
                 .show();
     }
 
-    private void submitReview(int revieweeId, int rating, String content, int participantId) {
-        int boardId = participantId; // Now using participantId instead of boardId
-        Review review = new Review(boardId, revieweeId, rating, content);
+    private void submitReview(int revieweeId, int rating, String content, int participantId) { // 메서드 수정됨
+        Review review = new Review(participantId, revieweeId, rating, content); // Review 객체 생성 시 participantId 사용
 
         Log.d(TAG, "Submitting review: " + review.toString()); // 로그 추가
 
-        retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() {
+        retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() { // 메서드 호출 수정됨
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -294,8 +293,8 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReportDialog(int reporteeId) {
-        Log.d(TAG, "Opening report dialog for reporteeId: " + reporteeId);
+    public void showReportDialog(int participantId) { // 메서드 이름 및 매개변수 수정됨
+        Log.d(TAG, "Opening report dialog for participantId: " + participantId); // 로그 추가
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
@@ -307,7 +306,7 @@ public class MyItemList extends AppCompatActivity {
                     String otherReason = otherReasonEditText.getText().toString();
 
                     String content = selectedCategoryId == 4 ? otherReason : null;
-                    submitReport(reporteeId, selectedCategoryId, content);
+                    submitReport(participantId, selectedCategoryId, content);
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -341,10 +340,10 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-    private void submitReport(int reporteeId, int categoryId, String content) {
-        Report report = new Report(reporteeId, categoryId, content);
+    private void submitReport(int participantId, int categoryId, String content) {
+        Report report = new Report(participantId, categoryId, content);
         Log.d(TAG, "Submitting report: " + report.toString());
-        retrofitService.submitReport(reporteeId, report).enqueue(new Callback<Void>() {
+        retrofitService.submitReport(participantId, report).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
