@@ -4,17 +4,19 @@ public class Item {
     private String title;
     private String meetingTime;
     private String message;
-    private int participantId;
-    private int userId;
+    private int id;
+    private int revieweeId;
     private int organizerId;
+    private int userId;
 
-    public Item(String title, String meetingTime, String message, int participantId, int userId, int organizerId) {
+    public Item(String title, String meetingTime, String message, int id, int revieweeId, int organizerId, int userId) {
         this.title = title;
         this.meetingTime = meetingTime;
         this.message = message;
-        this.participantId = participantId;
-        this.userId = userId;
+        this.id = id;
+        this.revieweeId = revieweeId;
         this.organizerId = organizerId;
+        this.userId = userId;
     }
 
     public String getTitle() {
@@ -29,19 +31,19 @@ public class Item {
         return message;
     }
 
-    public int getParticipantId() {
-        return participantId;
+    public int getId() {
+        return id;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getRevieweeId() {
+        return revieweeId;
     }
 
     public int getOrganizerId() {
         return organizerId;
     }
 
-    public int getRevieweeId(int uid) {
-        return uid == organizerId ? userId : organizerId;
+    public int getUserId() {
+        return userId;
     }
 }

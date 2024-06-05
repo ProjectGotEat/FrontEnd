@@ -33,12 +33,12 @@ import retrofit2.Retrofit;
 public class MyItemList extends AppCompatActivity {
 
     private static final String TAG = "MyItemList";
+    public static final int UID = 1;  // 로그인된 사용자의 ID
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private List<List<Item>> itemLists;
     private RetrofitService retrofitService;
     private SwipeRefreshLayout swipeRefreshLayout;
-    public static final int UID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,9 +150,11 @@ public class MyItemList extends AppCompatActivity {
         String meetingTime = (String) map.get("meeting_time");
         String message = (String) map.get("message");
         int id = map.get("id") != null ? ((Number) map.get("id")).intValue() : 0;
-        int userId = map.get("userId") != null ? ((Number) map.get("userId")).intValue() : 0;
-        int organizerId = map.get("organizerId") != null ? ((Number) map.get("organizerId")).intValue() : 0;
-        return new Item(title, meetingTime, message, id, userId, organizerId);
+        int revieweeId = map.get("reviewee_id") != null ? ((Number) map.get("reviewee_id")).intValue() : 0;
+        int organizerId = map.get("organizer_id") != null ? ((Number) map.get("organizer_id")).intValue() : 0;
+        int userId = map.get("user_id") != null ? ((Number) map.get("user_id")).intValue() : 0;
+
+        return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId);
     }
 
     public void showSuccessDialog(Item item) {
@@ -160,8 +162,8 @@ public class MyItemList extends AppCompatActivity {
         builder.setTitle("소분 성공")
                 .setMessage("정말로 이 소분을 성공 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
-                    Log.d(TAG, "Marking item as success with ID: " + item.getParticipantId());
-                    markItemSuccess(item.getParticipantId());
+                    Log.d(TAG, "Marking item as success with ID: " + item.getId());
+                    markItemSuccess(item.getId());
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -199,8 +201,8 @@ public class MyItemList extends AppCompatActivity {
         builder.setTitle("소분 실패")
                 .setMessage("정말로 이 소분을 실패 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
-                    Log.d(TAG, "Marking item as failed with ID: " + item.getParticipantId());
-                    markItemFail(item.getParticipantId());
+                    Log.d(TAG, "Marking item as failed with ID: " + item.getId());
+                    markItemFail(item.getId());
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -234,8 +236,6 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showReviewDialog(int revieweeId, int participantId) {
-        Log.d(TAG, "showReviewDialog called with revieweeId: " + revieweeId + ", participantId: " + participantId);
-
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
@@ -263,10 +263,10 @@ public class MyItemList extends AppCompatActivity {
                 .create()
                 .show();
     }
-//showreviewdialogue에서 호출이 잘되는지 확인하는 로그 만들어줘
 
     private void submitReview(int revieweeId, int rating, String content, int participantId) {
-        Review review = new Review(participantId, revieweeId, rating, content);
+        int boardId = participantId; // Now using participantId instead of boardId
+        Review review = new Review(boardId, revieweeId, rating, content);
 
         Log.d(TAG, "Submitting review: " + review.toString()); // 로그 추가
 

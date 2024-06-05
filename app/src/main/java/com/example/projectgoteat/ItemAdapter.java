@@ -1,7 +1,5 @@
 package com.example.projectgoteat;
 
-import static com.example.projectgoteat.MyItemList.UID;
-
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,17 +40,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(myItemList, ChatActivity.class);
-            intent.putExtra("participantId", item.getParticipantId());
+            intent.putExtra("participantId", item.getId());
             intent.putExtra("chatRoomTitle", item.getTitle());  // 채팅방 제목을 인텐트로 전달
             myItemList.startActivity(intent);
         });
 
+        int revieweeId;
+        if (item.getUserId() == MyItemList.UID) {
+            revieweeId = item.getOrganizerId();
+        } else {
+            revieweeId = item.getUserId();
+        }
+
         if (isCompletedItems) {
             holder.btnSuccess.setText("리뷰하기");
             holder.btnFail.setText("신고하기");
-            int revieweeId = (UID == item.getOrganizerId()) ? item.getUserId() : item.getOrganizerId();
-            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(revieweeId, item.getParticipantId()));
-            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getParticipantId()));
+            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(revieweeId, item.getId()));  // 수정된 부분
+            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getId()));
         } else {
             holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
             holder.btnFail.setOnClickListener(v -> myItemList.showFailDialog(item));
