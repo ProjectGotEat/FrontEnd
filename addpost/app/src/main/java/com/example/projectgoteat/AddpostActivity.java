@@ -89,7 +89,11 @@ public class AddpostActivity extends AppCompatActivity {
 
         // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
-        postButton.setOnClickListener(v -> registerPost());
+        postButton.setOnClickListener(v -> {
+            registerPost();
+            Intent intent = new Intent(getApplicationContext(), CartActivity.class);
+        startActivity(intent);
+        });
 
         // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.arrow);
@@ -275,7 +279,7 @@ public class AddpostActivity extends AppCompatActivity {
     private int getUserId() {
         // 여기에서 사용자 ID를 가져오는 로직을 구현합니다.
         // 예를 들어, 현재 로그인한 사용자의 ID를 가져오는 방법을 사용하십시오.
-        return 123; // 임의의 사용자 ID를 반환하도록 설정합니다. 실제로는 해당 로직을 구현해야 합니다.
+        return 10; // 임의의 사용자 ID를 반환하도록 설정합니다. 실제로는 해당 로직을 구현해야 합니다.
     }
     private void showPermissionDeniedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

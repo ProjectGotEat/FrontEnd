@@ -3,11 +3,11 @@ package com.example.projectgoteat.model;
 import android.net.Uri;
 
 public class BoardDetailResponse {
-    private Uri item_image1;
-    private Uri item_image2;
-    private Uri receipt_image;
+    private String item_image1;
+    private String item_image2;
+    private String receipt_image;
     private String created_at;
-    private Uri user_image;
+    private String user_image;
     private String user_nickname;
     private String user_rank;
     private String category;
@@ -19,32 +19,32 @@ public class BoardDetailResponse {
     private String meeting_time;
     private double latitude;
     private double longitude;
-    private boolean is_finished;
-    private boolean is_reusable;
+    private int is_finished;
+    private int is_reusable;
 
     // Getters and Setters
 
-    public Uri getItem_image1() {
+    public String getItem_image1() {
         return item_image1;
     }
 
-    public void setItem_image1(Uri item_image1) {
+    public void setItem_image1(String item_image1) {
         this.item_image1 = item_image1;
     }
 
-    public Uri getItem_image2() {
+    public String getItem_image2() {
         return item_image2;
     }
 
-    public void setItem_image2(Uri item_image2) {
+    public void setItem_image2(String item_image2) {
         this.item_image2 = item_image2;
     }
 
-    public Uri getReceipt_image() {
+    public String getReceipt_image() {
         return receipt_image;
     }
 
-    public void setReceipt_image(Uri receipt_image) {
+    public void setReceipt_image(String receipt_image) {
         this.receipt_image = receipt_image;
     }
 
@@ -56,11 +56,11 @@ public class BoardDetailResponse {
         this.created_at = created_at;
     }
 
-    public Uri getUser_image() {
+    public String getUser_image() {
         return user_image;
     }
 
-    public void setUser_image(Uri user_image) {
+    public void setUser_image(String user_image) {
         this.user_image = user_image;
     }
 
@@ -152,19 +152,19 @@ public class BoardDetailResponse {
         this.longitude = longitude;
     }
 
-    public boolean isIs_finished() { // 변경됨
+    public int isIs_finished() { // 변경됨
         return is_finished;
     }
 
-    public void setIs_finished(boolean is_finished) { // 변경됨
+    public void setIs_finished(int is_finished) { // 변경됨
         this.is_finished = is_finished;
     }
 
-    public boolean isIs_reusable() { // 변경됨
+    public int isIs_reusable() { // 변경됨
         return is_reusable;
     }
 
-    public void setIs_reusable(boolean is_reusable) { // 변경됨
+    public void setIs_reusable(int is_reusable) { // 변경됨
         this.is_reusable = is_reusable;
     }
 }

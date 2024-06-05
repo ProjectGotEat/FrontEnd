@@ -18,7 +18,7 @@ public interface RetrofitService {
     @GET("board/{id}")
     Call<BoardDetailResponse> getBoardDetail(
             @Path("id") int id,
-            @Header("id") String userId
+            @Header("uid") int userId
     );
 
     @Multipart
@@ -51,6 +51,6 @@ public interface RetrofitService {
     @POST("board/{id}/scrap")
     Call<Void> scrapBoard(
             @Path("id") int boardId,
-            @Header("uid") String uid
+            @Header("uid") int userId
     );
 }

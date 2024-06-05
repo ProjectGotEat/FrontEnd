@@ -116,7 +116,7 @@ public class RetrofitHelper {
         return result;
     }
 
-    public static void getBoardDetail(Context context, int boardId, String userId, final ApiCallback<BoardDetailResponse> callback) {
+    public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
         initApiService();
 
         Call<BoardDetailResponse> call = apiService.getBoardDetail(boardId, userId);
@@ -132,6 +132,8 @@ public class RetrofitHelper {
 
             @Override
             public void onFailure(Call<BoardDetailResponse> call, Throwable t) {
+                // Log the error
+                Log.e("API_CALL", "API call failed", t);
                 Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -158,10 +160,10 @@ public class RetrofitHelper {
             }
         });
     }
-    public static void scrapBoard(int boardId, String uid, final ApiCallback<Void> callback) {
+    public static void scrapBoard(int boardId, int userId, final ApiCallback<Void> callback) {
         initApiService();
 
-        Call<Void> call = apiService.scrapBoard(boardId, uid);
+        Call<Void> call = apiService.scrapBoard(boardId,userId);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
