@@ -31,6 +31,7 @@ public interface RetrofitService {
             @Part("headcnt") RequestBody headcnt,
             @Part("remain_headcnt") RequestBody remain_headcnt,
             @Part("total_price") RequestBody total_price,
+            @Part("quantity") RequestBody quantity,
             @Part("meeting_location") RequestBody meeting_location,
             @Part("meeting_time") RequestBody meeting_time,
             @Part("is_up") RequestBody is_up,

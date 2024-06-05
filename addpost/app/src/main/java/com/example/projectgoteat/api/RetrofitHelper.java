@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.projectgoteat.model.Board;
@@ -40,67 +41,66 @@ public class RetrofitHelper {
         }
     }
 
-    public static void sendBoardToServer(Context context, Board board) {
-        // 사용자 ID 가져오기
-        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        //String userId = sharedPreferences.getString("userId", "");
-        int userId= 10;
-
+    public static void sendBoardToServer(Context context, String categoryId, String itemName, int headcnt, int remainHeadcnt, int totalPrice, int quantity,
+                                         String meetingLocation, String meetingTime, boolean isUp, boolean isReusable, String scale,
+                                         String imageUri1, String imageUri2, double latitude, double longitude, int userId) {
 
         initApiService();
 
-        if (board.getItem_image1() != null && board.getReceipt_image() != null) {
+        if (imageUri1 != null && !imageUri1.isEmpty() && imageUri2 != null && !imageUri2.isEmpty()) {
             try {
-                File file1 = new File(getRealPathFromURI(context, board.getItem_image1()));
-                RequestBody requestFile1 = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
-                MultipartBody.Part body1 = MultipartBody.Part.createFormData("image1", file1.getName(), requestFile1);
+                RequestBody requestBody1 = RequestBody.create(MediaType.parse("text/plain"), imageUri1);
+                MultipartBody.Part body1 = MultipartBody.Part.createFormData("image1", imageUri1);
 
-                File file2 = new File(getRealPathFromURI(context, board.getReceipt_image()));
-                RequestBody requestFile2 = RequestBody.create(MediaType.parse("multipart/form-data"), file2);
-                MultipartBody.Part body2 = MultipartBody.Part.createFormData("image2", file2.getName(), requestFile2);
+                RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), imageUri2);
+                MultipartBody.Part body2 = MultipartBody.Part.createFormData("image2", imageUri2);
 
-                RequestBody category_id = RequestBody.create(MultipartBody.FORM, board.getCategory_id());
-                RequestBody item_name = RequestBody.create(MultipartBody.FORM, board.getItem_name());
-                RequestBody headcnt = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getHeadcnt()));
-                RequestBody remain_headcnt = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getRemain_headcnt()));
-                RequestBody total_price = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getTotal_price()));
-                RequestBody meeting_location = RequestBody.create(MultipartBody.FORM, board.getMeeting_location());
-                RequestBody meeting_time = RequestBody.create(MultipartBody.FORM, board.getMeeting_time());
-                RequestBody is_up = RequestBody.create(MultipartBody.FORM, String.valueOf(board.isIs_up()));
-                RequestBody is_reusable = RequestBody.create(MultipartBody.FORM, String.valueOf(board.isIs_reusable()));
-                RequestBody scale = RequestBody.create(MultipartBody.FORM, board.getScale());
+                RequestBody categoryIdBody = RequestBody.create(MediaType.parse("text/plain"), categoryId);
+                RequestBody itemNameBody = RequestBody.create(MediaType.parse("text/plain"), itemName);
+                RequestBody headcntBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(headcnt));
+                RequestBody remainHeadcntBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(remainHeadcnt));
+                RequestBody totalPriceBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(totalPrice));
+                RequestBody quantityBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(quantity));
+                RequestBody meetingLocationBody = RequestBody.create(MediaType.parse("text/plain"), meetingLocation);
+                RequestBody meetingTimeBody = RequestBody.create(MediaType.parse("text/plain"), meetingTime);
+                RequestBody isUpBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(isUp));
+                RequestBody isReusableBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(isReusable));
+                RequestBody scaleBody = RequestBody.create(MediaType.parse("text/plain"), scale);
+                RequestBody latitudeBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(latitude));
+                RequestBody longitudeBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(longitude));
 
-                // 위도와 경도를 추가합니다.
-                RequestBody latitude = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getLatitude()));
-                RequestBody longitude = RequestBody.create(MultipartBody.FORM, String.valueOf(board.getLongitude()));
+                Call<Void> call = apiService.sendBoardToServer(
+                        body1, body2, categoryIdBody, itemNameBody, headcntBody, remainHeadcntBody, totalPriceBody,
+                        quantityBody, meetingLocationBody, meetingTimeBody, isUpBody, isReusableBody, scaleBody, latitudeBody, longitudeBody, userId
+                );
 
-                // 사용자 ID를 헤더에 추가
-                Call<Void> call = apiService.sendBoardToServer(body1, body2, category_id, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude, userId);
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            // 서버 응답 본문을 특정 성공 지표에 대해 확인할 수 있습니다.
                             Toast.makeText(context, "포스트가 성공적으로 등록되었습니다!", Toast.LENGTH_SHORT).show();
+                            Log.d("sendBoardToServer", "포스트 등록 성공");
                         } else {
                             Toast.makeText(context, "포스트 등록에 실패했습니다. " + response.message(), Toast.LENGTH_SHORT).show();
+                            Log.e("sendBoardToServer", "포스트 등록 실패: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Toast.makeText(context, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-
+                        Log.e("sendBoardToServer", "포스트 등록 중 오류 발생", t);
                     }
                 });
             } catch (Exception e) {
                 Toast.makeText(context, "파일 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+                Log.e("sendBoardToServer", "파일 처리 중 오류 발생", e);
             }
         } else {
             Toast.makeText(context, "이미지를 선택해주세요.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private static String getRealPathFromURI(Context context, Uri uri) {
         String result;

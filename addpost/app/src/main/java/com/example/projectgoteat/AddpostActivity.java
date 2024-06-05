@@ -1,9 +1,14 @@
 package com.example.projectgoteat;
 
+import android.Manifest;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.projectgoteat.api.RetrofitHelper;
 import com.example.projectgoteat.model.Board;
@@ -36,6 +44,7 @@ public class AddpostActivity extends AppCompatActivity {
     private static final int GALLERY_REQUEST_CODE_1 = 1001;
     private static final int GALLERY_REQUEST_CODE_2 = 1002;
     private static final int PLACE_PICKER_REQUEST_CODE = 123;
+    private static final int READ_MEDIA_PERMISSION_REQUEST_CODE = 2001;
 
     private String[] mainCategories = {"신선식품", "가공식품", "기타"};
     private String[][] subCategories = {
@@ -50,16 +59,6 @@ public class AddpostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addpost);
-
-        // 주소 값을 받아옴
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("address")) {
-            String address = intent.getStringExtra("address");
-
-            // 받아온 주소 값을 TextView에 설정
-            TextView addressTextView = findViewById(R.id.place_input);
-            addressTextView.setText(address);
-        }
 
         // UI 요소 초기화
         timeInputTextView = findViewById(R.id.time_input);
@@ -92,12 +91,12 @@ public class AddpostActivity extends AppCompatActivity {
         Button postButton = findViewById(R.id.post_button);
         postButton.setOnClickListener(v -> registerPost());
 
-        // 단위 선택
-        UnitSpinnerUtil.setupUnitSpinner(this);
-
         // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.arrow);
         closeButton.setOnClickListener(v -> onBackPressed()); // 이전 페이지로 이동
+
+        // 단위 선택
+        UnitSpinnerUtil.setupUnitSpinner(this);
     }
 
     private void showDateTimePicker() {
@@ -105,19 +104,20 @@ public class AddpostActivity extends AppCompatActivity {
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
             TimePickerDialog timePickerDialog = new TimePickerDialog(AddpostActivity.this, (view12, hourOfDay, minute1) -> {
-                calendar.set(year, month, dayOfMonth, hourOfDay, minute1);
+                calendar.set(year, month, dayOfMonth, hourOfDay, minute1, 0); // 초를 00으로 설정
                 updateTimeInputTextView(); // 시간 선택 후 텍스트 업데이트
             }, hour, minute, false);
             timePickerDialog.show();
         }, (view, hourOfDay, minute) -> {
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0); // 초를 00으로 설정
             updateTimeInputTextView(); // 시간 선택 후 텍스트 업데이트
         });
     }
 
     private void updateTimeInputTextView() {
-        String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", calendar).toString();
+        String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd'T'HH:mm:ss", calendar).toString();
         timeInputTextView.setText(formattedDateTime);
     }
 
@@ -146,7 +146,6 @@ public class AddpostActivity extends AppCompatActivity {
             classificationChoice.setText(selectedCategory);
         });
         builder.show();
-
     }
 
     private void displaySelectedImage(Uri imageUri, ImageView imageView) {
@@ -159,25 +158,27 @@ public class AddpostActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("ActivityResult", "requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (resultCode == RESULT_OK && data != null) {
             if (requestCode == GALLERY_REQUEST_CODE_1) {
                 imageUri1 = data.getData();
                 displaySelectedImage(imageUri1, image1);
+                Log.d("ActivityResult", "Image 1 selected: " + imageUri1.toString());
             } else if (requestCode == GALLERY_REQUEST_CODE_2) {
                 imageUri2 = data.getData();
                 displaySelectedImage(imageUri2, image2);
-            } else if (requestCode == PLACE_PICKER_REQUEST_CODE &&
-                    data.hasExtra("address")) {
+                Log.d("ActivityResult", "Image 2 selected: " + imageUri2.toString());
+            } else if (requestCode == PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
                 String address = data.getStringExtra("address");
                 double latitude = data.getDoubleExtra("latitude", 0);
                 double longitude = data.getDoubleExtra("longitude", 0);
                 placeInput.setText(address);
                 this.latitude = latitude;
                 this.longitude = longitude;
+                Log.d("ActivityResult", "Place selected: " + address);
             }
         }
     }
@@ -186,42 +187,104 @@ public class AddpostActivity extends AppCompatActivity {
     private double longitude; // Define longitude as a class field
 
     private void registerPost() {
-        Board newPost = null;
+        // 권한 요청
+        requestPermissionsIfNeeded();
+    }
+
+    // 필요한 권한 요청 메서드
+    private void requestPermissionsIfNeeded() {
+        Log.d("Permissions", "Requesting permissions if needed.");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            Log.d("Permissions", "Permissions not granted. Requesting...");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_AUDIO}, READ_MEDIA_PERMISSION_REQUEST_CODE);
+        } else {
+            Log.d("Permissions", "Permissions already granted.");
+            sendDataToServer();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("Permissions", "onRequestPermissionsResult: requestCode=" + requestCode);
+        if (requestCode == READ_MEDIA_PERMISSION_REQUEST_CODE) {
+            boolean allPermissionsGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+            if (allPermissionsGranted) {
+                Log.d("Permissions", "All permissions granted.");
+                sendDataToServer();
+            } else {
+                Log.d("Permissions", "Permissions denied.");
+                Toast.makeText(this, "미디어 읽기 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+                showPermissionDeniedDialog(); // 권한이 거부된 경우 대화상자 표시
+            }
+        }
+    }
+
+    private void sendDataToServer() {
+        Log.d("Data", "Sending data to server...");
         try {
-            // Check if image URIs are null
             if (imageUri1 == null || imageUri2 == null) {
                 Toast.makeText(this, "이미지를 선택하세요.", Toast.LENGTH_SHORT).show();
+                Log.e("Data", "Images not selected.");
                 return;
             }
 
-            // Extract values from UI elements
-            String category = classificationChoice.getText().toString();
+            String categoryId = classificationChoice.getText().toString();
             String item_name = ((EditText) findViewById(R.id.product_choice)).getText().toString();
             int headcnt = Integer.parseInt(((EditText) findViewById(R.id.people_input)).getText().toString());
-            int remain_headcnt = headcnt; // Set remain_headcnt to headcnt
+            int remain_headcnt = headcnt;
             int total_price = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
+            int quantity = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
             String meeting_location = placeInput.getText().toString();
             String meeting_time = timeInputTextView.getText().toString();
             boolean is_up = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
             boolean is_reusable = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
             String scale = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
 
-            // Create a new Board object
-            newPost = new Board(imageUri1, imageUri2, category, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude);
+            // 이미지 URI를 문자열로 변환하여 서버에 전송
+            String imageUri1String = imageUri1.toString();
+            String imageUri2String = imageUri2.toString();
 
-            // Send the post to the server
-            RetrofitHelper.sendBoardToServer(this, newPost);
+            int userId = getUserId(); // 사용자 ID 가져오기
+
+            // 데이터를 서버로 보내기 위한 RetrofitHelper 메서드 호출
+            RetrofitHelper.sendBoardToServer(this, categoryId, item_name, headcnt, remain_headcnt, total_price, quantity, meeting_location, meeting_time, is_up, is_reusable, scale, imageUri1String, imageUri2String, latitude, longitude, userId);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "양, 인원 및 비용에 올바른 숫자를 입력하세요.", Toast.LENGTH_SHORT).show();
+            Log.e("Data", "NumberFormatException: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("Data", "IllegalArgumentException: " + e.getMessage());
         } catch (Exception e) {
             Toast.makeText(this, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-            Log.v("소분등록", "Exception: " + e.getMessage());
-        } finally {
-            if (newPost != null) {
-                Log.v("소분등록", newPost.toString());
-            }
+            Log.e("Data", "Exception: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    // 사용자 ID를 가져오는 메서드 (예시)
+    private int getUserId() {
+        // 여기에서 사용자 ID를 가져오는 로직을 구현합니다.
+        // 예를 들어, 현재 로그인한 사용자의 ID를 가져오는 방법을 사용하십시오.
+        return 123; // 임의의 사용자 ID를 반환하도록 설정합니다. 실제로는 해당 로직을 구현해야 합니다.
+    }
+    private void showPermissionDeniedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permission Denied");
+        builder.setMessage("This permission is required to perform this action.");
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            // 사용자가 확인을 누르면 아무런 동작 없이 대화 상자를 닫습니다.
+            dialog.dismiss();
+        });
+        builder.show();
     }
 }
