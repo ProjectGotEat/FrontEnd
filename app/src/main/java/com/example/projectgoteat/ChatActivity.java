@@ -5,6 +5,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -52,6 +53,8 @@ public class ChatActivity extends AppCompatActivity {
         participantId = getIntent().getIntExtra("participantId", -1);
         receiverId = getIntent().getIntExtra("receiverId", -1);
 
+        Log.d(TAG, "participantId: " + participantId + ", receiverId: " + receiverId); // 로그 추가
+
         chatAdapter = new ChatAdapter(participantId, receiverId, messageList);
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -70,7 +73,11 @@ public class ChatActivity extends AppCompatActivity {
 
             chatAdapter.sendMessage(message, () -> {
                 messageInput.setText(""); // Clear the input field
-                chatAdapter.fetchMessages(); // Refresh the messages to include the sent message
+                // 메시지 전송 후 메시지 리스트에 추가하고 화면 업데이트
+                Message newMessage = new Message("Me", null, messageText, 1, receiverId);
+                messageList.add(newMessage);
+                chatAdapter.notifyItemInserted(messageList.size() - 1);
+                recyclerView.scrollToPosition(messageList.size() - 1); // 스크롤을 가장 최근 메시지로 이동
             });
         } else {
             Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();

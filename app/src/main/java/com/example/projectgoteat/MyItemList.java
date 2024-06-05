@@ -236,6 +236,7 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showReviewDialog(int revieweeId, int participantId) {
+        Log.d(TAG, "Opening review dialog for participantId: " + participantId + ", revieweeId: " + revieweeId);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
@@ -294,6 +295,7 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showReportDialog(int reporteeId) {
+        Log.d(TAG, "Opening report dialog for reporteeId: " + reporteeId);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)

@@ -41,6 +41,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(myItemList, ChatActivity.class);
             intent.putExtra("participantId", item.getId());
+            intent.putExtra("receiverId", item.getUserId() != MyItemList.UID ? item.getUserId() : item.getOrganizerId());
             intent.putExtra("chatRoomTitle", item.getTitle());  // 채팅방 제목을 인텐트로 전달
             myItemList.startActivity(intent);
         });
