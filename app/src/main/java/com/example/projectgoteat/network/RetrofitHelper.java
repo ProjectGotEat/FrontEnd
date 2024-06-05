@@ -1,6 +1,10 @@
 package com.example.projectgoteat.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,7 +30,7 @@ public class RetrofitHelper {
                         public Response intercept(Chain chain) throws IOException {
                             Request original = chain.request();
                             Request request = original.newBuilder()
-                                    .header("uid", "1") // uid 헤더 추가, 실제 로그인된 사용자의 ID로 설정 필요
+                                    .header("uid", "1") // uid 헤더 추가
                                     .method(original.method(), original.body())
                                     .build();
                             return chain.proceed(request);
@@ -34,10 +38,14 @@ public class RetrofitHelper {
                     })
                     .build();
 
+            Gson gson = new GsonBuilder()
+                    .setLenient()  // 비정형 JSON을 허용하도록 설정
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl("http://goteat-goteat-98eb531b.koyeb.app/") // 실제 API URL로 변경 필요
                     .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;

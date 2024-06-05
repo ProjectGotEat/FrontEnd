@@ -31,10 +31,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class MyItemList extends AppCompatActivity {
-
+    public static final int UID = 1;
     private static final String TAG = "MyItemList";
-    public static final int UID = 1;  // 로그인된 사용자의 ID
-
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private List<List<Item>> itemLists;
@@ -48,7 +46,7 @@ public class MyItemList extends AppCompatActivity {
 
         createRequiredDirectory();
         initViewPager();
-        initSwipeRefresh();
+        initSwipeRefresh();  // 올바르게 작동하도록 수정된 initSwipeRefresh 메서드 호출
 
         Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
         retrofitService = retrofit.create(RetrofitService.class);
@@ -102,31 +100,27 @@ public class MyItemList extends AppCompatActivity {
     }
 
     private void loadData() {
-        fetchItems(retrofitService.getOrganizingItems(String.valueOf(UID)), 0);
-        fetchItems(retrofitService.getParticipatingItems(String.valueOf(UID)), 1);
-        fetchItems(retrofitService.getCompletedItems(String.valueOf(UID)), 2);
+        fetchItems(retrofitService.getOrganizingItems("1"), 0);
+        fetchItems(retrofitService.getParticipatingItems("1"), 1);
+        fetchItems(retrofitService.getCompletedItems("1"), 2);
     }
 
     private void fetchItems(Call<List<HashMap<String, Object>>> call, int listIndex) {
         call.enqueue(new Callback<List<HashMap<String, Object>>>() {
             @Override
             public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        List<Item> items = new ArrayList<>();
-                        for (HashMap<String, Object> map : response.body()) {
-                            items.add(convertMapToItem(map));
-                        }
-                        Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
-                        runOnUiThread(() -> {
-                            itemLists.get(listIndex).clear();
-                            itemLists.get(listIndex).addAll(items);
-                            viewPagerAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false); // 새로고침 완료 후 스피너 숨기기
-                        });
-                    } else {
-                        Log.e(TAG, "Response body is null for listIndex: " + listIndex);
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Item> items = new ArrayList<>();
+                    for (HashMap<String, Object> map : response.body()) {
+                        items.add(convertMapToItem(map));
                     }
+                    Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
+                    runOnUiThread(() -> {
+                        itemLists.get(listIndex).clear();
+                        itemLists.get(listIndex).addAll(items);
+                        viewPagerAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);  // 새로고침 완료 후 스피너 숨기기
+                    });
                 } else {
                     Log.e(TAG, "Response not successful: " + response.code());
                     try {
@@ -135,14 +129,14 @@ public class MyItemList extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    swipeRefreshLayout.setRefreshing(false);  // 실패한 경우에도 스피너 숨기기
                 }
-                swipeRefreshLayout.setRefreshing(false); // 실패한 경우에도 스피너 숨기기
             }
 
             @Override
             public void onFailure(Call<List<HashMap<String, Object>>> call, Throwable t) {
                 Log.e(TAG, "Network Error: " + t.getMessage());
-                swipeRefreshLayout.setRefreshing(false); // 실패한 경우에도 스피너 숨기기
+                swipeRefreshLayout.setRefreshing(false);  // 실패한 경우에도 스피너 숨기기
             }
         });
     }
@@ -155,10 +149,8 @@ public class MyItemList extends AppCompatActivity {
         int revieweeId = map.get("reviewee_id") != null ? ((Number) map.get("reviewee_id")).intValue() : 0;
         int organizerId = map.get("organizer_id") != null ? ((Number) map.get("organizer_id")).intValue() : 0;
         int userId = map.get("user_id") != null ? ((Number) map.get("user_id")).intValue() : 0;
-
         return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId);
     }
-
 
     public void showSuccessDialog(Item item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -296,7 +288,6 @@ public class MyItemList extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
                 .setPositiveButton("신고 제출", (dialog, id) -> {
-                    // 다이얼로그에서 입력된 데이터를 가져옴
                     RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
                     EditText otherReasonEditText = dialogView.findViewById(R.id.otherReasonEditText);
                     int selectedCategoryId = getSelectedCategoryId(radioGroup);

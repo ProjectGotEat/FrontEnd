@@ -81,7 +81,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     // UI 업데이트는 메인 스레드에서 실행
                     new Handler(Looper.getMainLooper()).post(() -> {
                         notifyDataSetChanged();
-                        onComplete.run();
+                        onComplete.run(); // 새로고침 완료 후 실행할 작업
                     });
                 } else {
                     Log.e(TAG, "Response code: " + response.code()); // 실패 로그
@@ -92,26 +92,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                             e.printStackTrace(); // 예외 처리
                         }
                     }
-                    onComplete.run();
                 }
             }
 
             @Override
             public void onFailure(Call<HashMap<String, Object>> call, Throwable t) {
                 Log.e(TAG, "Network error: ", t); // 네트워크 오류 로그
-                onComplete.run();
             }
         });
     }
 
     public void sendMessage(HashMap<String, Object> message, Runnable onSuccess) {
-        // 메시지 전송 요청
+        Log.d(TAG, "Sending message: " + message.toString()); // 메시지 전송 로그
         retrofitService.sendMessage(participantId, message).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "Message sent successfully"); // 메시지 전송 성공 로그
                     onSuccess.run(); // 성공 시 콜백 실행
-                    fetchMessages(() -> {}); // 메시지 전송 후 새 메시지 가져오기
+                    fetchMessages(onSuccess); // 메시지 다시 불러오기
                 } else {
                     Log.e(TAG, "Message send failed: " + response.code()); // 실패 로그 출력
                     if (response.errorBody() != null) {

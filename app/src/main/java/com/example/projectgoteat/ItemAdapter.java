@@ -40,7 +40,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(myItemList, ChatActivity.class);
-            intent.putExtra("participantId", item.getId());
+            intent.putExtra("participantId", item.getParticipantId());
             intent.putExtra("receiverId", item.getUserId() != MyItemList.UID ? item.getUserId() : item.getOrganizerId());
             intent.putExtra("chatRoomTitle", item.getTitle());  // 채팅방 제목을 인텐트로 전달
             myItemList.startActivity(intent);
@@ -49,7 +49,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         if (isCompletedItems) {
             holder.btnSuccess.setText("리뷰하기");
             holder.btnFail.setText("신고하기");
-            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(item.getId()));  // 수정된 부분
+            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(item.getParticipantId()));  // 수정된 부분
             holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getUserId() == MyItemList.UID ? item.getOrganizerId() : item.getUserId()));  // 수정된 부분
         } else {
             holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
