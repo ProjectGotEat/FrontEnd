@@ -13,22 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHolder> {
 
@@ -44,27 +41,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         this.receiverId = receiverId; // 수신자 ID 설정
         this.messageList = messageList; // 메시지 리스트 설정
 
-        // 로그 인터셉터 추가
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .build();
-
-        Gson gson = new GsonBuilder().setLenient().create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://goteat-goteat-98eb531b.koyeb.app/") // 적절한 API 기본 URL로 변경하세요
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(); // 레트로핏 인스턴스 가져오기
         retrofitService = retrofit.create(RetrofitService.class); // 레트로핏 서비스 생성
-        fetchMessages(); // 메시지 가져오기
+
+        fetchMessages(() -> {}); // 메시지 가져오기
     }
 
-    public void fetchMessages() {
+    public void fetchMessages(Runnable onComplete) {
         Log.d(TAG, "Fetching messages for participantId: " + participantId); // 요청 시작 로그 추가
         retrofitService.getMessageDetails(participantId).enqueue(new Callback<HashMap<String, Object>>() {
             @Override
@@ -96,7 +79,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                         messageList.add(message); // 메시지 리스트에 추가
                     }
                     // UI 업데이트는 메인 스레드에서 실행
-                    new Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        notifyDataSetChanged();
+                        onComplete.run();
+                    });
                 } else {
                     Log.e(TAG, "Response code: " + response.code()); // 실패 로그
                     if (response.errorBody() != null) {
@@ -106,26 +92,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                             e.printStackTrace(); // 예외 처리
                         }
                     }
+                    onComplete.run();
                 }
             }
 
             @Override
             public void onFailure(Call<HashMap<String, Object>> call, Throwable t) {
                 Log.e(TAG, "Network error: ", t); // 네트워크 오류 로그
+                onComplete.run();
             }
         });
     }
 
     public void sendMessage(HashMap<String, Object> message, Runnable onSuccess) {
-        Log.d(TAG, "Sending message: " + message.toString()); // 메시지 전송 로그
+        // 메시지 전송 요청
         retrofitService.sendMessage(participantId, message).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "Message sent successfully"); // 메시지 전송 성공 로그
                     onSuccess.run(); // 성공 시 콜백 실행
-                    // 성공적으로 메시지를 보낸 후 UI 업데이트
-                    fetchMessages(); // 메시지 다시 불러오기
+                    fetchMessages(() -> {}); // 메시지 전송 후 새 메시지 가져오기
                 } else {
                     Log.e(TAG, "Message send failed: " + response.code()); // 실패 로그 출력
                     if (response.errorBody() != null) {

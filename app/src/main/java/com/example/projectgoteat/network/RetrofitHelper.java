@@ -26,7 +26,7 @@ public class RetrofitHelper {
                         public Response intercept(Chain chain) throws IOException {
                             Request original = chain.request();
                             Request request = original.newBuilder()
-                                    .header("uid", "1") // uid 헤더 추가
+                                    .header("uid", "1") // uid 헤더 추가, 실제 로그인된 사용자의 ID로 설정 필요
                                     .method(original.method(), original.body())
                                     .build();
                             return chain.proceed(request);

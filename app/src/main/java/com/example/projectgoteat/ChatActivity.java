@@ -1,17 +1,19 @@
 package com.example.projectgoteat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
         participantId = getIntent().getIntExtra("participantId", -1);
         receiverId = getIntent().getIntExtra("receiverId", -1);
 
-        Log.d(TAG, "participantId: " + participantId + ", receiverId: " + receiverId); // 로그 추가
+        Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId);  // 사용자 ID 로그 추가
 
         chatAdapter = new ChatAdapter(participantId, receiverId, messageList);
         recyclerView.setAdapter(chatAdapter);
@@ -61,7 +63,10 @@ public class ChatActivity extends AppCompatActivity {
 
         sendButton.setOnClickListener(v -> sendMessage());
 
-        swipeRefreshLayout.setOnRefreshListener(chatAdapter::fetchMessages);
+        // 초기 메시지를 가져오는 호출
+        chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
+
+        swipeRefreshLayout.setOnRefreshListener(() -> chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false)));
     }
 
     private void sendMessage() {
@@ -72,12 +77,8 @@ public class ChatActivity extends AppCompatActivity {
             message.put("receiver_id", receiverId);
 
             chatAdapter.sendMessage(message, () -> {
-                messageInput.setText(""); // Clear the input field
-                // 메시지 전송 후 메시지 리스트에 추가하고 화면 업데이트
-                Message newMessage = new Message("Me", null, messageText, 1, receiverId);
-                messageList.add(newMessage);
-                chatAdapter.notifyItemInserted(messageList.size() - 1);
-                recyclerView.scrollToPosition(messageList.size() - 1); // 스크롤을 가장 최근 메시지로 이동
+                messageInput.setText("");
+                chatAdapter.fetchMessages(() -> recyclerView.scrollToPosition(messageList.size() - 1));
             });
         } else {
             Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
@@ -96,7 +97,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 리소스를 정리합니다.
         recyclerView.setAdapter(null);
         chatAdapter = null;
         messageList.clear();

@@ -46,18 +46,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             myItemList.startActivity(intent);
         });
 
-        int revieweeId;
-        if (item.getUserId() == MyItemList.UID) {
-            revieweeId = item.getOrganizerId();
-        } else {
-            revieweeId = item.getUserId();
-        }
-
         if (isCompletedItems) {
             holder.btnSuccess.setText("리뷰하기");
             holder.btnFail.setText("신고하기");
-            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(revieweeId, item.getId()));  // 수정된 부분
-            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(revieweeId));  // 수정된 부분
+            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(item.getId()));  // 수정된 부분
+            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getUserId() == MyItemList.UID ? item.getOrganizerId() : item.getUserId()));  // 수정된 부분
         } else {
             holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
             holder.btnFail.setOnClickListener(v -> myItemList.showFailDialog(item));

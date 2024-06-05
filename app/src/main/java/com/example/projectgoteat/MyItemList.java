@@ -34,6 +34,7 @@ public class MyItemList extends AppCompatActivity {
 
     private static final String TAG = "MyItemList";
     public static final int UID = 1;  // 로그인된 사용자의 ID
+
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private List<List<Item>> itemLists;
@@ -45,23 +46,31 @@ public class MyItemList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 필요한 디렉토리 생성
         createRequiredDirectory();
-
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(this::loadData);
-
-        viewPager = findViewById(R.id.viewPager);
-        itemLists = new ArrayList<>();
-        itemLists.add(new ArrayList<>());
-        itemLists.add(new ArrayList<>());
-        itemLists.add(new ArrayList<>());
+        initViewPager();
+        initSwipeRefresh();
 
         Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
         retrofitService = retrofit.create(RetrofitService.class);
 
         loadData();
+    }
 
+    private void createRequiredDirectory() {
+        File directory = new File(getFilesDir(), "recent_tasks");
+        if (!directory.exists() && directory.mkdirs()) {
+            Log.d(TAG, "Directory created: " + directory.getAbsolutePath());
+        } else {
+            Log.e(TAG, "Failed to create directory: " + directory.getAbsolutePath());
+        }
+    }
+
+    private void initViewPager() {
+        viewPager = findViewById(R.id.viewPager);
+        itemLists = new ArrayList<>();
+        itemLists.add(new ArrayList<>());
+        itemLists.add(new ArrayList<>());
+        itemLists.add(new ArrayList<>());
         viewPagerAdapter = new ViewPagerAdapter(this, itemLists);
         viewPager.setAdapter(viewPagerAdapter);
 
@@ -81,25 +90,14 @@ public class MyItemList extends AppCompatActivity {
         }).attach();
     }
 
-    // 필요한 디렉토리를 생성하는 메서드
-    private void createRequiredDirectory() {
-        File directory = new File(getFilesDir(), "recent_tasks");
-        if (!directory.exists()) {
-            boolean created = directory.mkdirs();
-            if (created) {
-                Log.d(TAG, "Directory created: " + directory.getAbsolutePath());
-            } else {
-                Log.e(TAG, "Failed to create directory: " + directory.getAbsolutePath());
-            }
-        } else {
-            Log.d(TAG, "Directory already exists: " + directory.getAbsolutePath());
-        }
+    private void initSwipeRefresh() {
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this::loadData);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // MyItemList로 돌아왔을 때 데이터 새로고침
         loadData();
     }
 
@@ -113,18 +111,22 @@ public class MyItemList extends AppCompatActivity {
         call.enqueue(new Callback<List<HashMap<String, Object>>>() {
             @Override
             public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Item> items = new ArrayList<>();
-                    for (HashMap<String, Object> map : response.body()) {
-                        items.add(convertMapToItem(map));
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<Item> items = new ArrayList<>();
+                        for (HashMap<String, Object> map : response.body()) {
+                            items.add(convertMapToItem(map));
+                        }
+                        Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
+                        runOnUiThread(() -> {
+                            itemLists.get(listIndex).clear();
+                            itemLists.get(listIndex).addAll(items);
+                            viewPagerAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false); // 새로고침 완료 후 스피너 숨기기
+                        });
+                    } else {
+                        Log.e(TAG, "Response body is null for listIndex: " + listIndex);
                     }
-                    Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
-                    runOnUiThread(() -> {
-                        itemLists.get(listIndex).clear();
-                        itemLists.get(listIndex).addAll(items);
-                        viewPagerAdapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false); // 새로고침 완료 후 스피너 숨기기
-                    });
                 } else {
                     Log.e(TAG, "Response not successful: " + response.code());
                     try {
@@ -133,8 +135,8 @@ public class MyItemList extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    swipeRefreshLayout.setRefreshing(false); // 실패한 경우에도 스피너 숨기기
                 }
+                swipeRefreshLayout.setRefreshing(false); // 실패한 경우에도 스피너 숨기기
             }
 
             @Override
@@ -157,13 +159,14 @@ public class MyItemList extends AppCompatActivity {
         return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId);
     }
 
+
     public void showSuccessDialog(Item item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("소분 성공")
                 .setMessage("정말로 이 소분을 성공 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
-                    Log.d(TAG, "Marking item as success with ID: " + item.getId());
-                    markItemSuccess(item.getId());
+                    Log.d(TAG, "Marking item as success with ID: " + item.getParticipantId());
+                    markItemSuccess(item.getParticipantId());
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -201,8 +204,8 @@ public class MyItemList extends AppCompatActivity {
         builder.setTitle("소분 실패")
                 .setMessage("정말로 이 소분을 실패 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
-                    Log.d(TAG, "Marking item as failed with ID: " + item.getId());
-                    markItemFail(item.getId());
+                    Log.d(TAG, "Marking item as failed with ID: " + item.getParticipantId());
+                    markItemFail(item.getParticipantId());
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -235,8 +238,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReviewDialog(int revieweeId, int participantId) { // 메서드 수정됨
-        Log.d(TAG, "Opening review dialog for participantId: " + participantId + ", revieweeId: " + revieweeId); // 로그 추가
+    public void showReviewDialog(int revieweeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
@@ -250,14 +252,9 @@ public class MyItemList extends AppCompatActivity {
                         Toast.makeText(this, "평점을 입력하세요", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    if (reviewContent.trim().isEmpty()) {
-                        Toast.makeText(this, "리뷰 내용을 입력하세요", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Log.d(TAG, "Reviewee ID: " + revieweeId);
                     Log.d(TAG, "Review Content: " + reviewContent);
                     Log.d(TAG, "Rating: " + rating);
-                    submitReview(revieweeId, rating, reviewContent, participantId); // 메서드 호출 수정됨
+                    submitReview(revieweeId, rating, reviewContent);
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -265,12 +262,13 @@ public class MyItemList extends AppCompatActivity {
                 .show();
     }
 
-    private void submitReview(int revieweeId, int rating, String content, int participantId) { // 메서드 수정됨
-        Review review = new Review(participantId, revieweeId, rating, content); // Review 객체 생성 시 participantId 사용
+    private void submitReview(int revieweeId, int rating, String content) {
+        int boardId = 3; // Assuming boardId is 3
+        Review review = new Review(boardId, revieweeId, rating, content);
 
         Log.d(TAG, "Submitting review: " + review.toString()); // 로그 추가
 
-        retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() { // 메서드 호출 수정됨
+        retrofitService.submitReview(boardId, review).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -293,8 +291,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReportDialog(int participantId) { // 메서드 이름 및 매개변수 수정됨
-        Log.d(TAG, "Opening report dialog for participantId: " + participantId); // 로그 추가
+    public void showReportDialog(int participantId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)

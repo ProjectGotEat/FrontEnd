@@ -46,4 +46,8 @@ public class Item {
     public int getUserId() {
         return userId;
     }
+
+    public int getParticipantId() {
+        return id;
+    }
 }

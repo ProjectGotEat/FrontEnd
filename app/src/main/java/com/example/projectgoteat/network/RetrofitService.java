@@ -31,11 +31,11 @@ public interface RetrofitService {
     @PUT("participant/{id}/fail")
     Call<Void> markItemFail(@Path("id") int id);
 
-    @POST("participant/{id}")
-    Call<String> sendMessage(@Path("id") int id, @Body HashMap<String, Object> message);
-
     @GET("participant/{id}")
     Call<HashMap<String, Object>> getMessageDetails(@Path("id") int id);
+
+    @POST("participant/{id}")
+    Call<String> sendMessage(@Path("id") int id, @Body HashMap<String, Object> message);
 
     @POST("participant/{id}/review")
     Call<Void> submitReview(@Path("id") int participantId, @Body Review review);
