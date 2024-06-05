@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,14 +27,16 @@ import retrofit2.Retrofit;
 public class MyPageActivity extends AppCompatActivity {
 
     private static final String TAG = "MyPageActivity";
-    private EditText pvName;
+
     private EditText pvNickname;
-    private EditText pvLevel;
+    private EditText pvRank;
+    private EditText pvPoint;
 
     private ImageView imageView9;
     private ImageView imageView8;
     private TextView tvmypage;
     private Button btn_point;
+    private ImageButton btnHome, btnChat, btnProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +44,41 @@ public class MyPageActivity extends AppCompatActivity {
         setContentView(R.layout.my_page);
 
         btn_point = findViewById(R.id.btn_point);
-        pvName = findViewById(R.id.pvName);
+        pvRank = findViewById(R.id.pvRank);
         pvNickname = findViewById(R.id.pvNickname); // ID 일치 확인
-        pvLevel = findViewById(R.id.pvLevel); // ID 일치 확인
+        pvPoint = findViewById(R.id.pvPoint); // ID 일치 확인
+
+        btnHome = findViewById(R.id.btnHome);
+        btnChat = findViewById(R.id.btnChat);
+        btnProfile = findViewById(R.id.btnProfile);
+
+        // 하단 바 버튼 클릭 리스너 설정
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // MainActivity로 이동
+                Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // ChatActivity로 이동
+                //Intent intent = new Intent(MyPageActivity.this, ChatActivity.class);
+                //startActivity(intent);
+            }
+        });
+
+        btnProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // MyPageActivity로 이동 (현재 페이지)
+                Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         getUserInfo();
 
@@ -75,9 +110,9 @@ public class MyPageActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     HashMap<String, Object> userInfo = response.body();
                     if (userInfo != null) {
-                        pvName.setText(String.valueOf(userInfo.get("name")));
-                        pvNickname.setText(String.valueOf(userInfo.get("nickname")));
-                        pvLevel.setText(String.valueOf(userInfo.get("level")));
+                        pvNickname.setText("닉네임 : " + String.valueOf(userInfo.get("profile_name")));
+                        pvRank.setText("등급 : " + String.valueOf(userInfo.get("rank")));
+                        pvPoint.setText("포인트 : " + String.valueOf(((Double) userInfo.get("point")).intValue()));
                     }
                 } else {
                     Log.e(TAG, "Response not successful");

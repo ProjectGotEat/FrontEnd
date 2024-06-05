@@ -8,20 +8,20 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/pvName"
+        android:id="@+id/pvNickname"
         android:layout_width="166dp"
         android:layout_height="48dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:inputType="text"
-        android:text="이름"
-        app:layout_constraintEnd_toEndOf="@+id/pvNickname"
+        android:text="닉네임"
+        app:layout_constraintEnd_toEndOf="@+id/pvRank"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/pvNickname"
+        app:layout_constraintStart_toStartOf="@+id/pvRank"
         app:layout_constraintTop_toBottomOf="@+id/tvmypage" />
 
     <EditText
-        android:id="@+id/pvNickname"
+        android:id="@+id/pvRank"
         android:layout_width="167dp"
         android:layout_height="43dp"
         android:layout_marginStart="16dp"
@@ -29,10 +29,10 @@
         android:layout_marginEnd="32dp"
         android:ems="10"
         android:inputType="text"
-        android:text="닉네임"
+        android:text="등급"
         app:layout_constraintEnd_toEndOf="@+id/btn_point"
         app:layout_constraintStart_toEndOf="@+id/imageView8"
-        app:layout_constraintTop_toBottomOf="@+id/pvName" />
+        app:layout_constraintTop_toBottomOf="@+id/pvNickname" />
 
     <TextView
         android:id="@+id/tvmypage"
@@ -52,7 +52,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/pvNickname"
+        app:layout_constraintEnd_toStartOf="@+id/pvRank"
         app:layout_constraintStart_toStartOf="@+id/btn_point"
         app:layout_constraintTop_toBottomOf="@+id/tvmypage"
         app:srcCompat="@drawable/ic_mypage" />
@@ -113,17 +113,17 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_point" />
 
     <EditText
-        android:id="@+id/pvLevel"
+        android:id="@+id/pvPoint"
         android:layout_width="168dp"
         android:layout_height="41dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:inputType="text"
-        android:text="등급"
-        app:layout_constraintEnd_toEndOf="@+id/pvNickname"
+        android:text="포인트"
+        app:layout_constraintEnd_toEndOf="@+id/pvRank"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/pvNickname"
-        app:layout_constraintTop_toBottomOf="@+id/pvNickname" />
+        app:layout_constraintStart_toStartOf="@+id/pvRank"
+        app:layout_constraintTop_toBottomOf="@+id/pvRank" />
 
     <LinearLayout
         android:id="@+id/bottomNavigationView"

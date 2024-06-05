@@ -1,11 +1,14 @@
 package com.example.prac7;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,9 +47,15 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImageButton btnHome, btnChat, btnProfile;
 
+    private Button btnScrap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 액션바 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.listview_main);
 
         btnSearch = findViewById(R.id.btnSearch);
@@ -55,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
         btnHome = findViewById(R.id.btnHome);
         btnChat = findViewById(R.id.btnChat);
         btnProfile = findViewById(R.id.btnProfile);
+
+
+        //스크랩 액티비티로 이동할 수 있도록 클릭 이벤트
+        //btnScrap = findViewById(R.id.btnScrap);
+        btnScrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(MainActivity.this, ScrapActivity.class);
+                //startActivity(intent);
+            }
+        });
 
         // 하단 바 버튼 클릭 리스너 설정
         btnHome.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: 게시물 작성 화면으로 이동하는 처리 구현
+                // Intent를 사용하여 WriteActivity로 전환
+                //Intent intent = new Intent(MainActivity.this, WriteActivity.class);
+                //startActivity(intent);
             }
         });
 
@@ -131,27 +154,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getBoard() { // 3.1 전체 소분 내역 조회
-        // 백엔드로 넘겨 줄 파라미터
-        String uid = "10";
+        // SharedPreferences에서 사용자 ID 가져오기
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        int uid = sharedPreferences.getInt("uid", -1);
 
-        // API를 호출할 객체 생성
-        Call<List<HashMap<String, Object>>> call = retrofitService.getBoard(uid);
+        if (uid != -1) {
+            // 백엔드로 넘겨 줄 파라미터
+            String userId = String.valueOf(uid);
 
-        // API 호출
-        call.enqueue(new Callback<List<HashMap<String, Object>>>() {
-            @Override
-            public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
-                if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
-                    List<HashMap<String, Object>> boardList = response.body();
-                    printBoardData(boardList);
+            // API를 호출할 객체 생성
+            Call<List<HashMap<String, Object>>> call = retrofitService.getBoard(userId);
+
+            // API 호출
+            call.enqueue(new Callback<List<HashMap<String, Object>>>() {
+                @Override
+                public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
+                    if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
+                        List<HashMap<String, Object>> boardList = response.body();
+                        printBoardData(boardList);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<HashMap<String, Object>>> call, Throwable t) {
-                Log.e(TAG, "Network Error: " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<List<HashMap<String, Object>>> call, Throwable t) {
+                    Log.e(TAG, "Network Error: " + t.getMessage());
+                }
+            });
+        } else {
+                Log.e(TAG, "User ID not found in SharedPreferences");
+        }
     }
 
     private void printBoardData(List<HashMap<String, Object>> boardList) {
