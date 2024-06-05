@@ -2,12 +2,10 @@ package com.example.projectgoteat;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +24,7 @@ public class ChatActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText messageInput;
     private Button sendButton;
+    private Button refreshButton;
     private int participantId;
     private int receiverId;
 
@@ -40,9 +39,9 @@ public class ChatActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             String chatRoomTitle = getIntent().getStringExtra("chatRoomTitle");
             if (chatRoomTitle != null) {
-                getSupportActionBar().setTitle(chatRoomTitle);  // 인텐트로 전달받은 채팅방 이름 설정
+                getSupportActionBar().setTitle(chatRoomTitle);
             } else {
-                getSupportActionBar().setTitle("Chat Room");  // 기본 채팅방 이름 설정
+                getSupportActionBar().setTitle("Chat Room");
             }
         }
 
@@ -50,12 +49,13 @@ public class ChatActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         messageInput = findViewById(R.id.messageInput);
         sendButton = findViewById(R.id.sendButton);
+        refreshButton = findViewById(R.id.refreshButton);
 
         messageList = new ArrayList<>();
         participantId = getIntent().getIntExtra("participantId", -1);
         receiverId = getIntent().getIntExtra("receiverId", -1);
 
-        Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId);  // 사용자 ID 로그 추가
+        Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId);
 
         chatAdapter = new ChatAdapter(participantId, receiverId, messageList);
         recyclerView.setAdapter(chatAdapter);
@@ -63,10 +63,14 @@ public class ChatActivity extends AppCompatActivity {
 
         sendButton.setOnClickListener(v -> sendMessage());
 
-        // 초기 메시지를 가져오는 호출
         chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
 
         swipeRefreshLayout.setOnRefreshListener(() -> chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false)));
+
+        refreshButton.setOnClickListener(v -> {
+            swipeRefreshLayout.setRefreshing(true);
+            chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
+        });
     }
 
     private void sendMessage() {
@@ -77,21 +81,12 @@ public class ChatActivity extends AppCompatActivity {
             message.put("receiver_id", receiverId);
 
             chatAdapter.sendMessage(message, () -> {
-                messageInput.setText("");  // 입력 필드를 비웁니다.
+                messageInput.setText("");
                 chatAdapter.fetchMessages(() -> recyclerView.scrollToPosition(messageList.size() - 1));
             });
         } else {
             Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
