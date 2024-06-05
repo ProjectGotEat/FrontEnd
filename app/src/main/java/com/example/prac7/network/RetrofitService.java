@@ -29,7 +29,7 @@ public interface RetrofitService {
     Call<List<HashMap<String, Object>>> getBoardSearch(@Header("uid") String uid, @Query("keyword") String keyword, @Query("category") String category);
 
     @POST("auth/join") // 1.1 회원가입
-    Call<HashMap<String, Object>> postAuthJoin(@Body Map<String, Object> requestBody);
+    Call<Void> postAuthJoin(@Body Map<String, Object> requestBody);
 
     @POST("auth/log-in") // 1.2 로그인
     Call<HashMap<String, Object>> postAuthLogin(@Body Map<String, Object> requestBody);
@@ -42,6 +42,8 @@ public interface RetrofitService {
 
     @GET("user/point") // 1.3.1 포인트 조회
     Call<List<HashMap<String, Object>>> getUserPoint(@Header("uid") String uid);
+    @GET("user/scrap") // 1.3.2 스크랩 조회
+    Call<List<HashMap<String, Object>>> getScrap(@Header("uid") String uid);
 
 
 }

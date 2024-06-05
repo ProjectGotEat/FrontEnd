@@ -7,29 +7,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
+    <TextView
         android:id="@+id/pvNickname"
         android:layout_width="166dp"
         android:layout_height="48dp"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:inputType="text"
+        android:textSize="20sp"
         android:text="닉네임"
-        app:layout_constraintEnd_toEndOf="@+id/pvRank"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="@+id/pvNickname"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/pvRank"
         app:layout_constraintTop_toBottomOf="@+id/tvmypage" />
 
-    <EditText
+    <TextView
         android:id="@+id/pvRank"
-        android:layout_width="167dp"
+        android:layout_width="166dp"
         android:layout_height="43dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:ems="10"
-        android:inputType="text"
+        android:textSize="20sp"
         android:text="등급"
+        android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="@+id/btn_point"
         app:layout_constraintStart_toEndOf="@+id/imageView8"
         app:layout_constraintTop_toBottomOf="@+id/pvNickname" />
@@ -39,8 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="MyPage"
-        android:textSize="34sp"
+        android:text=""
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView9"
         app:layout_constraintStart_toStartOf="@+id/imageView9"
         app:layout_constraintTop_toBottomOf="@+id/imageView9" />
@@ -59,27 +61,46 @@
 
     <Button
         android:id="@+id/btn_review"
-        android:layout_width="296dp"
-        android:layout_height="54dp"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
         android:text="리뷰 조회"
-        android:textSize="20sp"
+        android:textSize="17sp"
+        android:background="#009000"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="@+id/btn_scrap"
         app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="@+id/btn_scrap"
         app:layout_constraintTop_toBottomOf="@+id/btn_scrap" />
 
     <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:text="로그아웃"
+        android:textSize="17sp"
+        android:background="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/btn_scrap"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="@+id/btn_review"
+        app:layout_constraintTop_toBottomOf="@+id/btn_review" />
+
+    <Button
         android:id="@+id/btn_point"
-        android:layout_width="296dp"
-        android:layout_height="57dp"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
         android:layout_marginEnd="8dp"
         android:text="포인트 확인"
-        android:textSize="20sp"
+        android:textSize="17sp"
+        android:background="#009000"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,38 +110,39 @@
         android:id="@+id/imageView9"
         android:layout_width="84dp"
         android:layout_height="81dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.463"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
     <Button
         android:id="@+id/btn_scrap"
-        android:layout_width="291dp"
-        android:layout_height="58dp"
+        android:layout_width="330dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
-        android:text="스크랩 조회"
-        android:textSize="20sp"
+        android:text="스크랩 목록"
+        android:textSize="17sp"
+        android:background="#009000"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="@+id/btn_point"
         app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="@+id/btn_point"
         app:layout_constraintTop_toBottomOf="@+id/btn_point" />
 
-    <EditText
+    <TextView
         android:id="@+id/pvPoint"
-        android:layout_width="168dp"
+        android:layout_width="166dp"
         android:layout_height="41dp"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:inputType="text"
+        android:textSize="20sp"
         android:text="포인트"
-        app:layout_constraintEnd_toEndOf="@+id/pvRank"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="@+id/pvNickname"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/pvRank"
         app:layout_constraintTop_toBottomOf="@+id/pvRank" />

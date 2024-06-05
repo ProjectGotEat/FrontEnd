@@ -47,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImageButton btnHome, btnChat, btnProfile;
 
-    private Button btnScrap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,16 +64,6 @@ public class MainActivity extends AppCompatActivity {
         btnProfile = findViewById(R.id.btnProfile);
 
 
-        //스크랩 액티비티로 이동할 수 있도록 클릭 이벤트
-        //btnScrap = findViewById(R.id.btnScrap);
-        btnScrap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this, ScrapActivity.class);
-                //startActivity(intent);
-            }
-        });
-
         // 하단 바 버튼 클릭 리스너 설정
         btnHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 // ChatActivity로 이동
                 //Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                 //startActivity(intent);
+                System.out.println("");
             }
         });
 
@@ -217,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getBoardSearch(String category) { // 3.2.1 일반 검색어 검색, 3.2.2 필터 적용하여 검색
         // 백엔드로 넘겨 줄 파라미터
-        String uid = "10"; // TODO: 로그인한 사용자의 uid를 저장하도록 변경
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        String uid = String.valueOf(sharedPreferences.getInt("uid", -1));
         editKeyword = findViewById(R.id.editKeyword);
         String keyword = String.valueOf(editKeyword.getText());
         switch(category) {

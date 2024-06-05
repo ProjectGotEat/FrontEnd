@@ -28,14 +28,16 @@ public class MyPageActivity extends AppCompatActivity {
 
     private static final String TAG = "MyPageActivity";
 
-    private EditText pvNickname;
-    private EditText pvRank;
-    private EditText pvPoint;
+    private TextView pvNickname;
+    private TextView pvRank;
+    private TextView pvPoint;
 
     private ImageView imageView9;
     private ImageView imageView8;
     private TextView tvmypage;
     private Button btn_point;
+    private Button btn_scrap;
+    private Button btn_logout;
     private ImageButton btnHome, btnChat, btnProfile;
 
     @Override
@@ -43,10 +45,13 @@ public class MyPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_page);
 
-        btn_point = findViewById(R.id.btn_point);
         pvRank = findViewById(R.id.pvRank);
         pvNickname = findViewById(R.id.pvNickname); // ID 일치 확인
         pvPoint = findViewById(R.id.pvPoint); // ID 일치 확인
+
+        btn_point = findViewById(R.id.btn_point);
+        btn_scrap = findViewById(R.id.btn_scrap);
+        btn_logout = findViewById(R.id.btn_logout);
 
         btnHome = findViewById(R.id.btnHome);
         btnChat = findViewById(R.id.btnChat);
@@ -89,7 +94,32 @@ public class MyPageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btn_scrap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyPageActivity.this, ScrapActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearPreferences();
+                Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
+    private void clearPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
 
     private void getUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);

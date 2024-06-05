@@ -102,7 +102,7 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
         if (!isChecked) {
-            Toast.makeText(this, "아이디 중복체크를 해주세요..", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "아이디 중복체크를 해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -113,30 +113,22 @@ public class SignupActivity extends AppCompatActivity {
         requestBody.put("password", password);
         requestBody.put("noti_allow", isNotificationEnabled ? 1 : 0);
 
-        Call<HashMap<String, Object>> call = retrofitService.postAuthJoin(requestBody);
-        call.enqueue(new Callback<HashMap<String, Object>>() {
+        Call<Void> call = retrofitService.postAuthJoin(requestBody);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<HashMap<String, Object>> call, Response<HashMap<String, Object>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    HashMap<String, Object> responseMap = response.body();
-                    Object uidObj = responseMap.get("uid");
-                    if (uidObj != null) {
-                        int uid = Integer.parseInt(uidObj.toString());
-                        saveLoginInfo(uid);
-                        Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(SignupActivity.this, "회원가입 실패: UID 없음", Toast.LENGTH_SHORT).show();
-                    }
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(SignupActivity.this, "회원가입 실패", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<HashMap<String, Object>> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network Error: " + t.getMessage());
                 Toast.makeText(SignupActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();
             }

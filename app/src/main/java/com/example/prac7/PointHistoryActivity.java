@@ -1,5 +1,7 @@
 package com.example.prac7;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +47,10 @@ public class PointHistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 액션바 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.point_history_main);
 
         getUserPoint();
@@ -53,7 +59,8 @@ public class PointHistoryActivity extends AppCompatActivity {
 
     private void getUserPoint() { // 1.3.1 포인트 조회
         // 백엔드로 넘겨 줄 파라미터
-        String uid = "10"; // TODO: 로그인한 사용자의 uid를 설정하도록 수정. dummy data의 uid는 10
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        String uid = String.valueOf(sharedPreferences.getInt("uid", -1));
 
         // API를 호출할 객체 생성
         Call<List<HashMap<String, Object>>> call = retrofitService.getUserPoint(uid);
