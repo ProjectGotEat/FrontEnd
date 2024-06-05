@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:padding="8dp"
     android:layout_marginBottom="8dp">
+    <!-- item_chat_received.xml -->
 
     <ImageView
         android:id="@+id/profileImageView"

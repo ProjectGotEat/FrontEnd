@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
             message.put("receiver_id", receiverId);
 
             chatAdapter.sendMessage(message, () -> {
-                messageInput.setText("");
+                messageInput.setText("");  // 입력 필드를 비웁니다.
                 chatAdapter.fetchMessages(() -> recyclerView.scrollToPosition(messageList.size() - 1));
             });
         } else {
