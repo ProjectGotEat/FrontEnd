@@ -37,12 +37,17 @@ public class MyPageActivity extends AppCompatActivity {
     private TextView tvmypage;
     private Button btn_point;
     private Button btn_scrap;
+    private Button btn_review;
     private Button btn_logout;
     private ImageButton btnHome, btnChat, btnProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 액션바 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.my_page);
 
         pvRank = findViewById(R.id.pvRank);
@@ -51,6 +56,7 @@ public class MyPageActivity extends AppCompatActivity {
 
         btn_point = findViewById(R.id.btn_point);
         btn_scrap = findViewById(R.id.btn_scrap);
+        btn_review = findViewById(R.id.btn_review);
         btn_logout = findViewById(R.id.btn_logout);
 
         btnHome = findViewById(R.id.btnHome);
@@ -99,6 +105,14 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MyPageActivity.this, ScrapActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_review.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyPageActivity.this, ReviewActivity.class);
                 startActivity(intent);
             }
         });

@@ -44,6 +44,8 @@ public interface RetrofitService {
     Call<List<HashMap<String, Object>>> getUserPoint(@Header("uid") String uid);
     @GET("user/scrap") // 1.3.2 스크랩 조회
     Call<List<HashMap<String, Object>>> getScrap(@Header("uid") String uid);
+    @GET("user/review") // 1.3.3 리뷰 조회
+    Call<List<HashMap<String, Object>>> getReview(@Header("uid") String uid);
 
 
 }
