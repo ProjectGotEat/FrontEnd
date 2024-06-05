@@ -293,7 +293,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReportDialog(int participantId) {
+    public void showReportDialog(int reporteeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
@@ -305,7 +305,7 @@ public class MyItemList extends AppCompatActivity {
                     String otherReason = otherReasonEditText.getText().toString();
 
                     String content = selectedCategoryId == 4 ? otherReason : null;
-                    submitReport(participantId, selectedCategoryId, content);
+                    submitReport(reporteeId, selectedCategoryId, content);
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -339,10 +339,10 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-    private void submitReport(int participantId, int categoryId, String content) {
-        Report report = new Report(participantId, categoryId, content);
+    private void submitReport(int reporteeId, int categoryId, String content) {
+        Report report = new Report(reporteeId, categoryId, content);
         Log.d(TAG, "Submitting report: " + report.toString());
-        retrofitService.submitReport(participantId, report).enqueue(new Callback<Void>() {
+        retrofitService.submitReport(reporteeId, report).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

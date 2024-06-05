@@ -56,7 +56,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             holder.btnSuccess.setText("리뷰하기");
             holder.btnFail.setText("신고하기");
             holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(revieweeId, item.getId()));  // 수정된 부분
-            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getId()));
+            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(revieweeId));  // 수정된 부분
         } else {
             holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
             holder.btnFail.setOnClickListener(v -> myItemList.showFailDialog(item));
