@@ -1,6 +1,8 @@
 package com.example.prac7;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +31,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button btnCheckId, btnRegister;
 
     private Switch switchNotification;
+    Boolean isChecked = false;
 
     Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
     RetrofitService retrofitService = retrofit.create(RetrofitService.class);
@@ -65,11 +68,13 @@ public class SignupActivity extends AppCompatActivity {
             public void onResponse(Call<HashMap<String, Object>> call, Response<HashMap<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     HashMap<String, Object> responseMap = response.body();
-                    boolean isExist = (boolean) responseMap.get("isExist");
-                    if (isExist) {
+                    Boolean isExist = (Boolean) responseMap.get("isExist");
+
+                    if (isExist != null && isExist) {
                         Toast.makeText(SignupActivity.this, "아이디가 이미 존재합니다.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(SignupActivity.this, "아이디를 사용할 수 있습니다.", Toast.LENGTH_SHORT).show();
+                        isChecked = true;
                     }
                 } else {
                     Toast.makeText(SignupActivity.this, "중복확인 실패", Toast.LENGTH_SHORT).show();
@@ -96,6 +101,10 @@ public class SignupActivity extends AppCompatActivity {
             Toast.makeText(this, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!isChecked) {
+            Toast.makeText(this, "아이디 중복체크를 해주세요..", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("name", name);
@@ -109,11 +118,18 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<HashMap<String, Object>> call, Response<HashMap<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                    // 회원가입 성공 시 로그인 화면으로 이동
-                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
+                    HashMap<String, Object> responseMap = response.body();
+                    Object uidObj = responseMap.get("uid");
+                    if (uidObj != null) {
+                        int uid = Integer.parseInt(uidObj.toString());
+                        saveLoginInfo(uid);
+                        Toast.makeText(SignupActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(SignupActivity.this, "회원가입 실패: UID 없음", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(SignupActivity.this, "회원가입 실패", Toast.LENGTH_SHORT).show();
                 }
@@ -125,5 +141,12 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(SignupActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void saveLoginInfo(int uid) {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("uid", uid);
+        editor.apply();
     }
 }

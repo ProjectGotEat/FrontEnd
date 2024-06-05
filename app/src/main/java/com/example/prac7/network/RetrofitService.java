@@ -15,6 +15,16 @@ public interface RetrofitService {
     @GET("board") // 3.1 전체 소분 내역 조회
     Call<List<HashMap<String, Object>>> getBoard(@Header("uid") String uid);
 
+    @POST("scrap/add") //스크랩 내역 조회
+    Call<HashMap<String, Object>> addScrap(@Header("uid") String uid, @Query("itemId") String itemId);
+
+    @POST("scrap/remove")
+    Call<HashMap<String, Object>> removeScrap(@Header("uid") String uid, @Query("itemId") String itemId);
+
+    @GET("scrap/list")
+    Call<List<HashMap<String, Object>>> getScrapList(@Header("uid") String uid);
+
+
     @GET("board/search") // 3.2.1 일반 검색어 검색, 3.2.2 필터 적용하여 검색
     Call<List<HashMap<String, Object>>> getBoardSearch(@Header("uid") String uid, @Query("keyword") String keyword, @Query("category") String category);
 
@@ -32,4 +42,6 @@ public interface RetrofitService {
 
     @GET("user/point") // 1.3.1 포인트 조회
     Call<List<HashMap<String, Object>>> getUserPoint(@Header("uid") String uid);
+
+
 }

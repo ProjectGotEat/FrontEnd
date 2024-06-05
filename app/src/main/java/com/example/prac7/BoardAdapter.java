@@ -32,13 +32,13 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
-        BoardAdapter.ViewHolder viewHolder = new BoardAdapter.ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BoardAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         BoardItem item = itemList.get(position);
 //        holder.imageView.setImageResource(item.getImageUrl());
         Glide.with(context).load(item.getImageUrl()).into(holder.imageView);

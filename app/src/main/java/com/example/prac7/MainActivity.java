@@ -1,5 +1,6 @@
 package com.example.prac7;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnWrite;
     private EditText editKeyword;
 
+    private RecyclerView recyclerView;
+    private ImageButton btnHome, btnChat, btnProfile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +51,40 @@ public class MainActivity extends AppCompatActivity {
 
         btnSearch = findViewById(R.id.btnSearch);
         btnWrite = findViewById(R.id.btnWrite);
+
+        btnHome = findViewById(R.id.btnHome);
+        btnChat = findViewById(R.id.btnChat);
+        btnProfile = findViewById(R.id.btnProfile);
+
+        // 하단 바 버튼 클릭 리스너 설정
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // MainActivity로 이동 (현재 페이지)
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // ChatActivity로 이동
+                //Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                //startActivity(intent);
+            }
+        });
+
+        btnProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // mypageActivity로 이동
+                Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         //Spinner객체 생성
         final Spinner spinner_field = (Spinner) findViewById(R.id.category);

@@ -1,6 +1,8 @@
 package com.example.prac7;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -59,6 +61,9 @@ public class LoginActivity extends AppCompatActivity {
             String password = etPass.getText().toString().trim();
             validateLogin(id, password);
         });
+
+        // 자동 로그인
+        checkLoginStatus();
     }
 
     private void validateLogin(String id, String password) {
@@ -78,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("LoginActivity", "Response Body: " + responseMap);
                     if (responseMap.containsKey("uid")) {
                         int uid = ((Double) responseMap.get("uid")).intValue();
+                        saveLoginInfo(uid);  // UID를 SharedPreferences에 저장
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("uid", uid);
                         startActivity(intent);
@@ -96,5 +102,23 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "로그인 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void saveLoginInfo(int uid) {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("uid", uid);
+        editor.apply();
+    }
+
+    private void checkLoginStatus() {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        int uid = sharedPreferences.getInt("uid", -1);
+        if (uid != -1) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("uid", uid);
+            startActivity(intent);
+            finish();
+        }
     }
 }
