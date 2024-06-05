@@ -3,6 +3,7 @@ package com.example.projectgoteat;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.projectgoteat.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,6 +32,7 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
     private Marker marker;
     private EditText searchEditText;
     private Button registerButton;
+    private SearchLocationTask searchTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,11 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
             public void onClick(View v) {
                 String searchQuery = searchEditText.getText().toString();
                 if (!searchQuery.isEmpty()) {
-                    searchLocation(searchQuery);
+                    if (searchTask != null && searchTask.getStatus() == AsyncTask.Status.RUNNING) {
+                        searchTask.cancel(true);
+                    }
+                    searchTask = new SearchLocationTask();
+                    searchTask.execute(searchQuery);
                 } else {
                     Toast.makeText(PlacePickerActivity.this, "검색어를 입력하세요", Toast.LENGTH_SHORT).show();
                 }
@@ -101,24 +106,6 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
             marker = googleMap.addMarker(new MarkerOptions().position(location).draggable(true));
         } else {
             marker.setPosition(location);
-        }
-    }
-
-    private void searchLocation(String searchQuery) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(searchQuery, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
-                updateMarkerPosition(location);
-            } else {
-                Toast.makeText(this, "장소를 찾을 수 없습니다", Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "장소 검색 중 오류 발생", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -175,5 +162,35 @@ public class PlacePickerActivity extends AppCompatActivity implements OnMapReady
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
-}
 
+    private class SearchLocationTask extends AsyncTask<String, Void, LatLng> {
+
+        @Override
+        protected LatLng doInBackground(String... params) {
+            if (isCancelled()) return null;
+
+            String searchQuery = params[0];
+            Geocoder geocoder = new Geocoder(PlacePickerActivity.this, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(searchQuery, 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    return new LatLng(address.getLatitude(), address.getLongitude());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(LatLng location) {
+            if (location != null) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+                updateMarkerPosition(location);
+            } else {
+                Toast.makeText(PlacePickerActivity.this, "장소를 찾을 수 없습니다", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}

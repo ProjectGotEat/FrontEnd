@@ -5,7 +5,6 @@ import com.example.projectgoteat.model.BoardDetailResponse;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -15,7 +14,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 
-public interface ApiService {
+public interface RetrofitService {
     @GET("board/{id}")
     Call<BoardDetailResponse> getBoardDetail(
             @Path("id") int id,
@@ -39,7 +38,7 @@ public interface ApiService {
             @Part("scale") RequestBody scale,
             @Part("latitude") RequestBody latitude,
             @Part("longitude") RequestBody longitude,
-            @Header("uid") String userId
+            @Header("uid") int userId
     );
 
 

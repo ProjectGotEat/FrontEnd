@@ -4,6 +4,8 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -15,8 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.projectgoteat.R;
-import com.example.projectgoteat.api.ApiHelper;
+import com.example.projectgoteat.api.RetrofitHelper;
 import com.example.projectgoteat.model.Board;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -26,17 +27,17 @@ public class AddpostActivity extends AppCompatActivity {
 
     private Calendar calendar;
     private TextView timeInputTextView;
-    private ImageView uploadIcon1,uploadIcon2;
-    private ShapeableImageView image1,image2;
+    private ImageView uploadIcon1, uploadIcon2;
+    private ShapeableImageView image1, image2;
     private TextView placeInput;
-    private Uri imageUri1,imageUri2;
+    private Uri imageUri1, imageUri2;
     private TextView classificationChoice;
 
     private static final int GALLERY_REQUEST_CODE_1 = 1001;
     private static final int GALLERY_REQUEST_CODE_2 = 1002;
     private static final int PLACE_PICKER_REQUEST_CODE = 123;
 
-    private String[] mainCategories = {"신선식품", "가공식품","기타"};
+    private String[] mainCategories = {"신선식품", "가공식품", "기타"};
     private String[][] subCategories = {
             {"과일", "채소", "유제품", "양념", "정육 및 계란", "곡물"},
             {"냉동식품", "베이커리", "가공육", "간식 및 음료"}
@@ -71,7 +72,6 @@ public class AddpostActivity extends AppCompatActivity {
         classificationChoice = findViewById(R.id.classification_choice);
         TextView placeInputTextView = findViewById(R.id.place_input); // 장소 선택 텍스트뷰
 
-
         // 갤러리 열기 버튼 클릭 이벤트 처리
         uploadIcon1.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, GALLERY_REQUEST_CODE_1));
         uploadIcon2.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, GALLERY_REQUEST_CODE_2));
@@ -92,10 +92,10 @@ public class AddpostActivity extends AppCompatActivity {
         Button postButton = findViewById(R.id.post_button);
         postButton.setOnClickListener(v -> registerPost());
 
-        //단위 선택
+        // 단위 선택
         UnitSpinnerUtil.setupUnitSpinner(this);
 
-        //이전 페이지 이동
+        // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.arrow);
         closeButton.setOnClickListener(v -> onBackPressed()); // 이전 페이지로 이동
     }
@@ -149,9 +149,14 @@ public class AddpostActivity extends AppCompatActivity {
 
     }
 
-    // 이미지를 ImageView에 표시
     private void displaySelectedImage(Uri imageUri, ImageView imageView) {
         imageView.setImageURI(imageUri);
+        // 이미지가 업로드되었으므로 해당 버튼을 숨김
+        if (imageView == image1) {
+            uploadIcon1.setVisibility(View.GONE);
+        } else if (imageView == image2) {
+            uploadIcon2.setVisibility(View.GONE);
+        }
     }
 
 
@@ -165,11 +170,14 @@ public class AddpostActivity extends AppCompatActivity {
             } else if (requestCode == GALLERY_REQUEST_CODE_2) {
                 imageUri2 = data.getData();
                 displaySelectedImage(imageUri2, image2);
-            } else if (requestCode == PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
+            } else if (requestCode == PLACE_PICKER_REQUEST_CODE &&
+                    data.hasExtra("address")) {
                 String address = data.getStringExtra("address");
                 double latitude = data.getDoubleExtra("latitude", 0);
                 double longitude = data.getDoubleExtra("longitude", 0);
                 placeInput.setText(address);
+                this.latitude = latitude;
+                this.longitude = longitude;
             }
         }
     }
@@ -178,6 +186,7 @@ public class AddpostActivity extends AppCompatActivity {
     private double longitude; // Define longitude as a class field
 
     private void registerPost() {
+        Board newPost = null;
         try {
             // Check if image URIs are null
             if (imageUri1 == null || imageUri2 == null) {
@@ -198,18 +207,21 @@ public class AddpostActivity extends AppCompatActivity {
             String scale = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
 
             // Create a new Board object
-            Board newPost = new Board(imageUri1, imageUri2, category, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude);
+            newPost = new Board(imageUri1, imageUri2, category, item_name, headcnt, remain_headcnt, total_price, meeting_location, meeting_time, is_up, is_reusable, scale, latitude, longitude);
 
             // Send the post to the server
-            ApiHelper.sendBoardToServer(this, newPost);
+            RetrofitHelper.sendBoardToServer(this, newPost);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "양, 인원 및 비용에 올바른 숫자를 입력하세요.", Toast.LENGTH_SHORT).show();
         } catch (IllegalArgumentException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Log.v("소분등록", "Exception: " + e.getMessage());
+        } finally {
+            if (newPost != null) {
+                Log.v("소분등록", newPost.toString());
+            }
         }
     }
-
-
 }

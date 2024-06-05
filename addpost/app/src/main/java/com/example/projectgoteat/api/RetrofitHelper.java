@@ -1,10 +1,8 @@
 package com.example.projectgoteat.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -22,14 +20,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiHelper {
+public class RetrofitHelper {
     private static Retrofit retrofit;
-    private static ApiService apiService;
+    private static RetrofitService apiService;
 
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://goteat-goteat-98eb531b.koyeb.app")
+                    .baseUrl("https://goteat-goteat-98eb531b.koyeb.app/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
@@ -38,14 +36,16 @@ public class ApiHelper {
 
     private static void initApiService() {
         if (apiService == null) {
-            apiService = getRetrofit().create(ApiService.class);
+            apiService = getRetrofit().create(RetrofitService.class);
         }
     }
 
     public static void sendBoardToServer(Context context, Board board) {
         // 사용자 ID 가져오기
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userId = sharedPreferences.getString("userId", "");
+        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        //String userId = sharedPreferences.getString("userId", "");
+        int userId= 10;
+
 
         initApiService();
 
@@ -90,6 +90,7 @@ public class ApiHelper {
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         Toast.makeText(context, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+
                     }
                 });
             } catch (Exception e) {

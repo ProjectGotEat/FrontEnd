@@ -5,7 +5,7 @@ import android.net.Uri;
 public class Board {
     private Uri item_image1;
     private Uri receipt_image;
-    private String category_id;
+    private String category;
     private String item_name;
     private int headcnt;
     private int remain_headcnt;
@@ -22,7 +22,7 @@ public class Board {
     public Board(Uri item_image1, Uri receipt_image, String category_id, String item_name, int headcnt, int remain_headcnt, int total_price, String meeting_location, String meeting_time, boolean is_up, boolean is_reusable, String scale, double latitude, double longitude) {
         this.item_image1 = item_image1;
         this.receipt_image = receipt_image;
-        this.category_id = category_id;
+        this.category = category_id;
         this.item_name = item_name;
         this.headcnt = headcnt;
         this.remain_headcnt = remain_headcnt;
@@ -46,7 +46,7 @@ public class Board {
     }
 
     public String getCategory_id() {
-        return category_id;
+        return category;
     }
 
     public String getItem_name() {
@@ -92,4 +92,25 @@ public class Board {
     public double getLongitude() {
         return longitude;
     }
+
+    @Override
+    public String toString() {
+        return "Board{" +
+                "imageUri1=" + item_image1 +
+                ", imageUri2=" + receipt_image +
+                ", category='" + category + '\'' +
+                ", item_name='" + item_name + '\'' +
+                ", headcnt=" + headcnt +
+                ", remain_headcnt=" + remain_headcnt +
+                ", total_price=" + total_price +
+                ", meeting_location='" + meeting_location + '\'' +
+                ", meeting_time='" + meeting_time + '\'' +
+                ", is_up=" + is_up +
+                ", is_reusable=" + is_reusable +
+                ", scale='" + scale + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
+
 }

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.projectgoteat.api.ApiCallback;
-import com.example.projectgoteat.api.ApiHelper;
+import com.example.projectgoteat.api.RetrofitHelper;
 import com.example.projectgoteat.model.BoardDetailResponse;
 
 public class CartActivity extends AppCompatActivity {
@@ -57,12 +57,16 @@ public class CartActivity extends AppCompatActivity {
         postButton = findViewById(R.id.post_button);
         scrapButton = findViewById(R.id.scrap_button);
 
-        // 게시물 ID와 사용자 ID를 가져옴
+        // 게시물 ID
         Intent intent = getIntent();
         if (intent != null) {
             boardId = intent.getIntExtra("BOARD_ID", 0);}
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        uid = sharedPreferences.getString("userId", "");
+
+        //사용자 ID
+        //String uid = sharedPreferences.getString("userId", "");
+         String uid= "TestUID";
+
 
         // 게시물 상세 정보 가져오기
         fetchBoardDetails(boardId, uid);
@@ -75,7 +79,7 @@ public class CartActivity extends AppCompatActivity {
             }
 
             // 서버로 신청 요청을 보냄
-            ApiHelper.requestBoard(boardId, new ApiCallback<Void>() {
+            RetrofitHelper.requestBoard(boardId, new ApiCallback<Void>() {
                 @Override
                 public void onSuccess(Void response) {
                     Toast.makeText(CartActivity.this, "소분 신청이 완료되었습니다.", Toast.LENGTH_SHORT).show();
@@ -91,7 +95,7 @@ public class CartActivity extends AppCompatActivity {
         // 스크랩 버튼 클릭 이벤트 처리
         scrapButton.setOnClickListener(v -> {
             // 서버로 스크랩 요청을 보냄
-            ApiHelper.scrapBoard(boardId, uid, new ApiCallback<Void>() {
+            RetrofitHelper.scrapBoard(boardId, uid, new ApiCallback<Void>() {
                 @Override
                 public void onSuccess(Void response) {
                     // 버튼 텍스트를 변경하여 스크랩 상태를 나타냄
@@ -112,7 +116,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void fetchBoardDetails(int boardId, String userId) {
-        ApiHelper.getBoardDetail(this, boardId, userId, new ApiCallback<BoardDetailResponse>() {
+        RetrofitHelper.getBoardDetail(this, boardId, userId, new ApiCallback<BoardDetailResponse>() {
             @Override
             public void onSuccess(BoardDetailResponse response) {
                 // Update UI with response data
