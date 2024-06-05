@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ProjectGoEat</string>
+    <string name="back">Back</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="send">Send</string>
+    <string name="type_message">메세지를 입력하세요</string>
+    <string name="back_button">Back</string>
+
+</resources>

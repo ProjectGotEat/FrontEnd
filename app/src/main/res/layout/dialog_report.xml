@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/radioNoShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="노쇼" />
+
+        <RadioButton
+            android:id="@+id/radioBadCondition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제품 상태 이상" />
+
+        <RadioButton
+            android:id="@+id/radioBadAttitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="부적절한 대화 태도" />
+
+        <RadioButton
+            android:id="@+id/radioOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기타" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/otherReasonEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="기타 사유 입력"
+        android:visibility="gone" />
+
+</LinearLayout>
