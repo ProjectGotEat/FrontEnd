@@ -9,9 +9,11 @@ public class BoardItem {
     private String category;
     private boolean isBookmarked;
     private boolean isFinished;
+    private String bid;
 
     // Constructor, getters, and setters
-    public BoardItem(String imageUrl, String title, String eachPrice, String location, String participants, String category, boolean isBookmarked, boolean isFinished) {
+    public BoardItem(String bid, String imageUrl, String title, String eachPrice, String location, String participants, String category, boolean isBookmarked, boolean isFinished) {
+        this.bid = bid;
         this.imageUrl = imageUrl;
         this.title = title;
         this.eachPrice = eachPrice;
@@ -42,6 +44,7 @@ public class BoardItem {
     public String getCategory() {
         return category;
     }
+    public String getBid() { return bid; }
 
     public boolean isBookmarked() {
         return isBookmarked;

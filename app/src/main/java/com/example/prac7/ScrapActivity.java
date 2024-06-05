@@ -78,6 +78,7 @@ public class ScrapActivity extends AppCompatActivity {
                         String strHeadcnt = String.valueOf(((Double) ScrapMap.get("headcnt")).intValue());
                         String strIsScraped = String.valueOf(((Double) ScrapMap.get("isScraped")).intValue());
                         boolean isFinished = "1".equals(String.valueOf(((Double) ScrapMap.get("isFinished")).intValue()));
+                        String bid = String.valueOf(ScrapMap.get("id"));
 
                         String title = String.valueOf(ScrapMap.get("itemName")) + " | 총 " + strQuantity + String.valueOf(ScrapMap.get("scale"));
                         String eachPrice = strEachQuantity + String.valueOf(ScrapMap.get("scale")) + " 당 " + strEachPrice + "원";
@@ -86,7 +87,7 @@ public class ScrapActivity extends AppCompatActivity {
                         String category = String.valueOf(ScrapMap.get("category"));
                         boolean isBookmarked = "1".equals(strIsScraped);
                         String imageUrl = String.valueOf(ScrapMap.get("item_image1"));
-                        itemList.add(new BoardItem(imageUrl, title, eachPrice, location, participants, category, isBookmarked, isFinished));
+                        itemList.add(new BoardItem(bid, imageUrl, title, eachPrice, location, participants, category, isBookmarked, isFinished));
                     }
 
                     BoardAdapter adapter = new BoardAdapter(ScrapActivity.this, itemList);

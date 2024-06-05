@@ -10,7 +10,7 @@ public class RetrofitHelper {
         //객체 생성 안하고 함수를 쓸 수 있게끔 static 설정한다.
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.baseUrl("http://goteat-goteat-98eb531b.koyeb.app/");
-//        builder.baseUrl("http://10.101.11.202:8080/");
+
         builder.addConverterFactory(GsonConverterFactory.create());
         Retrofit retrofit = builder.build();
 

@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText editKeyword;
 
     private RecyclerView recyclerView;
+
+    private BoardAdapter boardAdapter;
     private ImageButton btnHome, btnChat, btnProfile;
 
     @Override
@@ -189,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             String strHeadcnt = String.valueOf(((Double) boardMap.get("headcnt")).intValue());
             String strIsScraped = String.valueOf(((Double) boardMap.get("is_scraped")).intValue());
             boolean isFinished = "1".equals(String.valueOf(((Double) boardMap.get("is_finished")).intValue()));
+            String bid = String.valueOf(boardMap.get("id"));
 
             String title = String.valueOf(boardMap.get("item_name")) + " | 총 " + strQuantity + String.valueOf(boardMap.get("scale"));
             String eachPrice = strEachQuantity + String.valueOf(boardMap.get("scale")) + " 당 " + strEachPrice + "원";
@@ -197,11 +200,22 @@ public class MainActivity extends AppCompatActivity {
             String category = String.valueOf(boardMap.get("category"));
             boolean isBookmarked = "1".equals(strIsScraped);
             String imageUrl = String.valueOf(boardMap.get("item_image1"));
-            itemList.add(new BoardItem(imageUrl, title, eachPrice, location, participants, category, isBookmarked, isFinished));
+            itemList.add(new BoardItem(bid, imageUrl, title, eachPrice, location, participants, category, isBookmarked, isFinished));
         }
 
         BoardAdapter adapter = new BoardAdapter(MainActivity.this, itemList);
         recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new BoardAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //String boardId = getBoardId(position); // position으로부터 boardId를 가져오는 메소드
+                //Intent intent = new Intent(MainActivity.this, CardActivity.class);
+                //intent.putExtra("BOARD_ID", boardId);
+                //startActivity(intent);
+                //TODO:사용자가 리스트 하나를 누르면 보드 아이디 옮기기
+            }
+        });
     }
 
     private void getBoardSearch(String category) { // 3.2.1 일반 검색어 검색, 3.2.2 필터 적용하여 검색

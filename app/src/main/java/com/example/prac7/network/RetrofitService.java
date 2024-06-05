@@ -9,6 +9,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RetrofitService {
@@ -46,6 +47,9 @@ public interface RetrofitService {
     Call<List<HashMap<String, Object>>> getScrap(@Header("uid") String uid);
     @GET("user/review") // 1.3.3 리뷰 조회
     Call<List<HashMap<String, Object>>> getReview(@Header("uid") String uid);
+
+    @POST("board/{id}/scrap")
+    Call<Void> postScrap(@Header("uid") String uid, @Path("id") int bid);
 
 
 }
