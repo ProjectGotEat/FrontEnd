@@ -1,3 +1,0 @@
-com.example.projectgoteat.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme
