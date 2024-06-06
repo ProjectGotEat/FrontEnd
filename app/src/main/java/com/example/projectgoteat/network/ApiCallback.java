@@ -1,4 +1,4 @@
-package com.example.projectgoteat.api;
+package com.example.projectgoteat.network;
 
 public interface ApiCallback<T> {
     void onSuccess(T response);

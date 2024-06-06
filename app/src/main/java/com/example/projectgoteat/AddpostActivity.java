@@ -2,13 +2,10 @@ package com.example.projectgoteat;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.projectgoteat.api.RetrofitHelper;
-import com.example.projectgoteat.model.Board;
+import com.example.projectgoteat.network.RetrofitHelper;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.Calendar;

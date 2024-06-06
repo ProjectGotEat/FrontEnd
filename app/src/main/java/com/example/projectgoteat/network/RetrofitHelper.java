@@ -1,16 +1,10 @@
-package com.example.projectgoteat.api;
+package com.example.projectgoteat.network;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.model.BoardDetailResponse;
-
-import java.io.File;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;

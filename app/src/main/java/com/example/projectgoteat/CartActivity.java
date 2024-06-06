@@ -2,7 +2,6 @@ package com.example.projectgoteat;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,8 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.projectgoteat.api.ApiCallback;
-import com.example.projectgoteat.api.RetrofitHelper;
+import com.example.projectgoteat.network.ApiCallback;
+import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.model.BoardDetailResponse;
 
 public class CartActivity extends AppCompatActivity {

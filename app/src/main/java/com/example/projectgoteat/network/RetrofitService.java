@@ -1,4 +1,4 @@
-package com.example.projectgoteat.api;
+package com.example.projectgoteat.network;
 
 import com.example.projectgoteat.model.BoardDetailResponse;
 
