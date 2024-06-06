@@ -30,7 +30,11 @@
 
         <activity
             android:name=".ChatActivity"
-            android:exported="true">
+            android:exported="true"
+            android:parentActivityName=".MyItemList">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MyItemList" />
         </activity>
 
         <!-- SuccessActivity와 FailActivity 추가 -->
