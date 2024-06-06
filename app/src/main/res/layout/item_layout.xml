@@ -6,7 +6,6 @@
     android:padding="8dp"
     android:background="@android:color/white"
     android:layout_marginBottom="8dp">
-    <!-- item_layout.xml -->
 
     <TextView
         android:id="@+id/itemName"

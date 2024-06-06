@@ -230,7 +230,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    public void showReviewDialog(int revieweeId) {
+    public void showReviewDialog(int participantId, int revieweeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
@@ -246,7 +246,7 @@ public class MyItemList extends AppCompatActivity {
                     }
                     Log.d(TAG, "Review Content: " + reviewContent);
                     Log.d(TAG, "Rating: " + rating);
-                    submitReview(revieweeId, rating, reviewContent);
+                    submitReview(participantId, revieweeId, rating, reviewContent);
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -254,13 +254,12 @@ public class MyItemList extends AppCompatActivity {
                 .show();
     }
 
-    private void submitReview(int revieweeId, int rating, String content) {
-        int boardId = 3; // Assuming boardId is 3
-        Review review = new Review(boardId, revieweeId, rating, content);
+    private void submitReview(int participantId, int revieweeId, int rating, String content) {
+        Review review = new Review(revieweeId, rating, content);
 
-        Log.d(TAG, "Submitting review: " + review.toString()); // 로그 추가
+        Log.d(TAG, "Submitting review: " + review.toString());
 
-        retrofitService.submitReview(boardId, review).enqueue(new Callback<Void>() {
+        retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

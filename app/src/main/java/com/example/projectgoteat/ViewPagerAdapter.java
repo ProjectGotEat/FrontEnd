@@ -16,7 +16,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
         if (fragmentActivity instanceof MyItemList) {
             this.myItemList = (MyItemList) fragmentActivity;
         } else {
-            throw new IllegalArgumentException("fragmentActivity must be an instance of MainActivity");
+            throw new IllegalArgumentException("fragmentActivity must be an instance of MyItemList");
         }
     }
 

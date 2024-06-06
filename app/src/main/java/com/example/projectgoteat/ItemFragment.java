@@ -31,7 +31,7 @@ public class ItemFragment extends Fragment {
         if (context instanceof MyItemList) {
             myItemList = (MyItemList) context;
         } else {
-            throw new RuntimeException(context.toString() + " must be an instance of MainActivity");
+            throw new RuntimeException(context.toString() + " must be an instance of MyItemList");
         }
     }
 
