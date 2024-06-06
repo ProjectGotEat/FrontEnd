@@ -87,8 +87,12 @@ public class AddpostActivity extends AppCompatActivity {
 
         // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
-        postButton.setOnClickListener(v ->
-                registerPost());
+        postButton.setOnClickListener(v -> {
+            registerPost(); // registerPost 메서드 호출
+            Intent intent = new Intent(getApplicationContext(), CartActivity.class);
+            startActivity(intent);
+             // 현재 액티비티 종료
+        });
 
         // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.arrow);

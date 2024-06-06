@@ -35,7 +35,7 @@ public class CartActivity extends AppCompatActivity {
     private BoardDetailResponse boardDetailResponse; // 게시물 상세 정보를 담을 변수
 
     private int userId = 10;
-    private int boardId = 4;
+    private int boardId = 47;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
