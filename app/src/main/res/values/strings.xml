@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">projectgoteat</string>
+    <string name="app_name">ProjectGoEat</string> <!-- 중복된 항목 통합 -->
     <string name="title">소분등록</string>
     <string name="addimage">이미지 등록</string>
+    <string name="back">Back</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="send">Send</string>
+    <string name="type_message">메세지를 입력하세요</string>
+    <string name="back_button">Back</string>
 </resources>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color> <!-- 중복된 항목 통합 -->
+    <color name="white">#FFFFFFFF</color> <!-- 중복된 항목 통합 -->
     <color name="button">#FF27AE60</color>
+    <color name="purple_200">#E8F6E2</color>
+    <color name="purple_500">#27AE60</color>
+    <color name="purple_700">#27AE60</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="green">#27AE60</color>
+    <color name="light_green">#E8F6E2</color>
+    <color name="d0d0d0">#757575</color>
+    <color name="red">#FF0000</color>
 </resources>
