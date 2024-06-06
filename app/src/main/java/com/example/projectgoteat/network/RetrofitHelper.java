@@ -5,25 +5,57 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.projectgoteat.model.BoardDetailResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitHelper {
-    private static Retrofit retrofit;
+    private static Retrofit retrofit = null;
     private static RetrofitService apiService;
 
-    public static Retrofit getRetrofit() {
+    public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
+            // 로그 인터셉터 추가
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request original = chain.request();
+                            Request request = original.newBuilder()
+                                    .header("uid", "1") // uid 헤더 추가
+                                    .method(original.method(), original.body())
+                                    .build();
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+            Gson gson = new GsonBuilder()
+                    .setLenient()  // 비정형 JSON을 허용하도록 설정
+                    .create();
+
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://goteat-goteat-98eb531b.koyeb.app/")
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl("https://goteat-goteat-98eb531b.koyeb.app/") // 실제 API URL로 변경 필요
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;
@@ -31,7 +63,7 @@ public class RetrofitHelper {
 
     private static void initApiService() {
         if (apiService == null) {
-            apiService = getRetrofit().create(RetrofitService.class);
+            apiService = getRetrofitInstance().create(RetrofitService.class);
         }
     }
 
@@ -95,8 +127,6 @@ public class RetrofitHelper {
         }
     }
 
-
-
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
         initApiService();
 
@@ -119,6 +149,7 @@ public class RetrofitHelper {
             }
         });
     }
+
     public static void requestBoard(int boardId, final ApiCallback<Void> callback) {
         initApiService();
 
@@ -144,7 +175,4 @@ public class RetrofitHelper {
             }
         });
     }
-
-
-    }
-
+}
