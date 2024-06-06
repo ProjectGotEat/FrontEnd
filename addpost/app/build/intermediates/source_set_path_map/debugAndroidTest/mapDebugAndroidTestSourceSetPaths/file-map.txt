@@ -1,0 +1,6 @@
+com.example.projectgoteat.test.app-core-1.5.0-0 /Users/lily/.gradle/caches/transforms-4/1efa49463f3ce7bdaaeb963aeb6503a1/transformed/core-1.5.0/res
+com.example.projectgoteat.test.app-annotation-experimental-1.4.0-1 /Users/lily/.gradle/caches/transforms-4/71a8cc7de72beceb58d3dbe58fcee2d3/transformed/annotation-experimental-1.4.0/res
+com.example.projectgoteat.test.app-androidTest-2 /Users/lily/Desktop/lilygit/addpost/app/build/generated/res/resValues/androidTest/debug
+com.example.projectgoteat.test.app-mergeDebugAndroidTestResources-3 /Users/lily/Desktop/lilygit/addpost/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.example.projectgoteat.test.app-mergeDebugAndroidTestResources-4 /Users/lily/Desktop/lilygit/addpost/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.example.projectgoteat.test.app-debugAndroidTest-5 /Users/lily/Desktop/lilygit/addpost/app/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources
