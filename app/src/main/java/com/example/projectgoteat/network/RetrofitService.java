@@ -5,6 +5,7 @@ import com.example.projectgoteat.model.BoardDetailResponse;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -24,22 +25,10 @@ public interface RetrofitService {
     @Multipart
     @POST("board")
     Call<Void> sendBoardToServer(
-            @Part MultipartBody.Part image1,
-            @Part MultipartBody.Part image2,
-            @Part("category_id") RequestBody category_id,
-            @Part("item_name") RequestBody item_name,
-            @Part("headcnt") RequestBody headcnt,
-            @Part("remain_headcnt") RequestBody remain_headcnt,
-            @Part("total_price") RequestBody total_price,
-            @Part("quantity") RequestBody quantity,
-            @Part("meeting_location") RequestBody meeting_location,
-            @Part("meeting_time") RequestBody meeting_time,
-            @Part("is_up") RequestBody is_up,
-            @Part("is_reusable") RequestBody is_reusable,
-            @Part("scale") RequestBody scale,
-            @Part("latitude") RequestBody latitude,
-            @Part("longitude") RequestBody longitude,
-            @Header("uid") int userId
+            @Header("uid") int userId,
+            @Part MultipartBody.Part item_image1,
+            @Part MultipartBody.Part receipt_image,
+            @Part("board") RequestBody boardJson
     );
 
 

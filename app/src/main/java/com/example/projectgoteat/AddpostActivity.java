@@ -22,9 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.google.android.material.imageview.ShapeableImageView;
 
+import java.io.File;
 import java.util.Calendar;
 
 public class AddpostActivity extends AppCompatActivity {
@@ -85,11 +87,8 @@ public class AddpostActivity extends AppCompatActivity {
 
         // 게시 버튼 클릭 이벤트 처리
         Button postButton = findViewById(R.id.post_button);
-        postButton.setOnClickListener(v -> {
-            registerPost();
-            Intent intent = new Intent(getApplicationContext(), CartActivity.class);
-        startActivity(intent);
-        });
+        postButton.setOnClickListener(v ->
+                registerPost());
 
         // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.arrow);
@@ -239,25 +238,42 @@ public class AddpostActivity extends AppCompatActivity {
             }
 
             String categoryId = classificationChoice.getText().toString();
-            String item_name = ((EditText) findViewById(R.id.product_choice)).getText().toString();
+            String itemName = ((EditText) findViewById(R.id.product_choice)).getText().toString();
             int headcnt = Integer.parseInt(((EditText) findViewById(R.id.people_input)).getText().toString());
-            int remain_headcnt = headcnt;
-            int total_price = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
+            int remainHeadcnt = headcnt;
+            int totalPrice = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
             int quantity = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
-            String meeting_location = placeInput.getText().toString();
-            String meeting_time = timeInputTextView.getText().toString();
-            boolean is_up = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
-            boolean is_reusable = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
+            String meetingLocation = placeInput.getText().toString();
+            String meetingTime = timeInputTextView.getText().toString();
+            boolean isUp = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
+            boolean isReusable = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
             String scale = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
 
-            // 이미지 URI를 문자열로 변환하여 서버에 전송
-            String imageUri1String = imageUri1.toString();
-            String imageUri2String = imageUri2.toString();
+            // 이미지 파일을 파일로 변환
+            File imageFile1 = RetrofitHelper.getFileFromUri(this, imageUri1);
+            File imageFile2 = RetrofitHelper.getFileFromUri(this, imageUri2);
+
+            // Board 객체 생성 및 설정
+            Board board = new Board();
+            board.setCategory(categoryId);
+            board.setItem_name(itemName);
+            board.setHeadcnt(headcnt);
+            board.setRemain_headcnt(remainHeadcnt);
+            board.setTotal_price(totalPrice);
+            board.setQuantity(quantity);
+            board.setMeeting_location(meetingLocation);
+            board.setMeeting_time(meetingTime);
+            board.setIs_up(isUp);
+            board.setIs_reusable(isReusable);
+            board.setScale(scale);
+            board.setLatitude(latitude);
+            board.setLongitude(longitude);;
 
             int userId = getUserId(); // 사용자 ID 가져오기
 
             // 데이터를 서버로 보내기 위한 RetrofitHelper 메서드 호출
-            RetrofitHelper.sendBoardToServer(this, categoryId, item_name, headcnt, remain_headcnt, total_price, quantity, meeting_location, meeting_time, is_up, is_reusable, scale, imageUri1String, imageUri2String, latitude, longitude, userId);
+            RetrofitHelper.sendBoardToServer(this, board, imageFile1, imageFile2, userId);
+
         } catch (NumberFormatException e) {
             Toast.makeText(this, "양, 인원 및 비용에 올바른 숫자를 입력하세요.", Toast.LENGTH_SHORT).show();
             Log.e("Data", "NumberFormatException: " + e.getMessage());
@@ -288,3 +304,4 @@ public class AddpostActivity extends AppCompatActivity {
         builder.show();
     }
 }
+

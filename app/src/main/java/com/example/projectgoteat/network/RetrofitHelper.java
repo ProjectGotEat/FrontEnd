@@ -1,10 +1,21 @@
 package com.example.projectgoteat.network;
 
 import android.content.Context;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.model.BoardDetailResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -17,6 +28,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitHelper {
     private static Retrofit retrofit;
+
+    private static final String BASE_URL = "https://goteat-goteat-98eb531b.koyeb.app/";
     private static RetrofitService apiService;
 
     public static Retrofit getRetrofit() {
@@ -30,72 +43,91 @@ public class RetrofitHelper {
     }
 
     private static void initApiService() {
-        if (apiService == null) {
-            apiService = getRetrofit().create(RetrofitService.class);
-        }
+        Gson gson = new GsonBuilder().setLenient().create();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        apiService = retrofit.create(RetrofitService.class);
     }
 
-    public static void sendBoardToServer(Context context, String categoryId, String itemName, int headcnt, int remainHeadcnt, int totalPrice, int quantity,
-                                         String meetingLocation, String meetingTime, boolean isUp, boolean isReusable, String scale,
-                                         String imageUri1, String imageUri2, double latitude, double longitude, int userId) {
-
+    public static void sendBoardToServer(Context context, Board board, File imageFile1, File imageFile2, int userId) {
         initApiService();
 
-        if (imageUri1 != null && !imageUri1.isEmpty() && imageUri2 != null && !imageUri2.isEmpty()) {
-            try {
-                RequestBody requestBody1 = RequestBody.create(MediaType.parse("text/plain"), imageUri1);
-                MultipartBody.Part body1 = MultipartBody.Part.createFormData("image1", imageUri1);
+        try {
+            // Convert board object to JSON string
+            Gson gson = new GsonBuilder().create();
+            String boardJson = gson.toJson(board);
 
-                RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), imageUri2);
-                MultipartBody.Part body2 = MultipartBody.Part.createFormData("image2", imageUri2);
+            // Create RequestBody for board JSON data
+            RequestBody boardRequestBody = RequestBody.create(MediaType.parse("application/json"), boardJson);
 
-                RequestBody categoryIdBody = RequestBody.create(MediaType.parse("text/plain"), categoryId);
-                RequestBody itemNameBody = RequestBody.create(MediaType.parse("text/plain"), itemName);
-                RequestBody headcntBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(headcnt));
-                RequestBody remainHeadcntBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(remainHeadcnt));
-                RequestBody totalPriceBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(totalPrice));
-                RequestBody quantityBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(quantity));
-                RequestBody meetingLocationBody = RequestBody.create(MediaType.parse("text/plain"), meetingLocation);
-                RequestBody meetingTimeBody = RequestBody.create(MediaType.parse("text/plain"), meetingTime);
-                RequestBody isUpBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(isUp));
-                RequestBody isReusableBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(isReusable));
-                RequestBody scaleBody = RequestBody.create(MediaType.parse("text/plain"), scale);
-                RequestBody latitudeBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(latitude));
-                RequestBody longitudeBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(longitude));
+            // Create RequestBody for image files
+            RequestBody requestFile1 = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile1);
+            RequestBody requestFile2 = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile2);
 
-                Call<Void> call = apiService.sendBoardToServer(
-                        body1, body2, categoryIdBody, itemNameBody, headcntBody, remainHeadcntBody, totalPriceBody,
-                        quantityBody, meetingLocationBody, meetingTimeBody, isUpBody, isReusableBody, scaleBody, latitudeBody, longitudeBody, userId
-                );
+            // Create MultipartBody.Part for image files
+            MultipartBody.Part body1 = MultipartBody.Part.createFormData("item_image1", imageFile1.getName(), requestFile1);
+            MultipartBody.Part body2 = MultipartBody.Part.createFormData("receipt_image", imageFile2.getName(), requestFile2);
 
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(context, "포스트가 성공적으로 등록되었습니다!", Toast.LENGTH_SHORT).show();
-                            Log.d("sendBoardToServer", "포스트 등록 성공");
-                        } else {
-                            Toast.makeText(context, "포스트 등록에 실패했습니다. " + response.message(), Toast.LENGTH_SHORT).show();
-                            Log.e("sendBoardToServer", "포스트 등록 실패: " + response.message());
+            // Enqueue the call to send board data to server
+            Call<Void> call = apiService.sendBoardToServer(userId, body1, body2, boardRequestBody);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(context, "포스트가 성공적으로 등록되었습니다!", Toast.LENGTH_SHORT).show();
+                        Log.d("RetrofitHelper", "포스트 등록 성공");
+                    } else {
+                        try {
+                            String errorMessage = response.errorBody().string();
+                            Toast.makeText(context, "포스트 등록에 실패했습니다. " + errorMessage, Toast.LENGTH_SHORT).show();
+                            Log.e("RetrofitHelper", "포스트 등록 실패: " + errorMessage);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(context, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                        Log.e("sendBoardToServer", "포스트 등록 중 오류 발생", t);
-                    }
-                });
-            } catch (Exception e) {
-                Toast.makeText(context, "파일 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
-                Log.e("sendBoardToServer", "파일 처리 중 오류 발생", e);
-            }
-        } else {
-            Toast.makeText(context, "이미지를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(context, "포스트 등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    Log.e("RetrofitHelper", "포스트 등록 중 오류 발생", t);
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(context, "파일 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Log.e("RetrofitHelper", "파일 처리 중 오류 발생", e);
         }
     }
 
 
+
+    public static File getFileFromUri(Context context, Uri uri) throws IOException {
+        // 파일을 저장할 임시 파일 생성
+        File tempFile = File.createTempFile("temp", null, context.getCacheDir());
+        tempFile.deleteOnExit(); // 애플리케이션 종료 후 파일 자동 삭제
+
+        // Uri에서 InputStream 가져오기
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new IOException("Cannot open input stream for URI: " + uri);
+        }
+
+        // InputStream에서 파일로 복사
+        FileOutputStream outputStream = new FileOutputStream(tempFile);
+        byte[] buffer = new byte[4 * 1024]; // 4KB 버퍼 사용
+        int read;
+        while ((read = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, read);
+        }
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
+        return tempFile;
+    }
 
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
         initApiService();
