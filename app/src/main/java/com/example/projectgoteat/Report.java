@@ -5,8 +5,15 @@ public class Report {
     private int categoryId;  // 신고 사유 카테고리 ID
     private String content;  // 신고 내용
 
+    // 기존 생성자
     public Report(int reporteeId, int categoryId, String content) {
         this.reporteeId = reporteeId;
+        this.categoryId = categoryId;
+        this.content = content;
+    }
+
+    // 새로운 생성자
+    public Report(int categoryId, String content) {
         this.categoryId = categoryId;
         this.content = content;
     }

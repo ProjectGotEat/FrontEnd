@@ -41,5 +41,5 @@ public interface RetrofitService {
     Call<Void> submitReview(@Path("id") int participantId, @Body Review review);
 
     @POST("participant/{id}/report")
-    Call<Void> submitReport(@Path("id") int participantId, @Body Report report);
+    Call<Void> submitReport(@Path("id") int participantId, @Header("uid") int uid, @Body Report report);
 }

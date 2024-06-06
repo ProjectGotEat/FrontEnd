@@ -330,7 +330,7 @@ public class MyItemList extends AppCompatActivity {
     private void submitReport(int participantId, int categoryId, String content) {
         Report report = new Report(participantId, categoryId, content);
         Log.d(TAG, "Submitting report: " + report.toString());
-        retrofitService.submitReport(participantId, report).enqueue(new Callback<Void>() {
+        retrofitService.submitReport(participantId, UID, report).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
