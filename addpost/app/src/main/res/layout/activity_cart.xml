@@ -57,22 +57,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="17dp" /> <!-- Aligning close button to the bottom of headerLayout -->
 
-                <!-- Scrap Button -->
-                <Button
-                    android:id="@+id/scrap_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="♡"
-                    android:textSize="25sp"
-                    android:textColor="#303030"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginTop="2dp"
 
-                    /> <!-- Aligning scrap button to the top right corner with margin -->
 
             </RelativeLayout>
 

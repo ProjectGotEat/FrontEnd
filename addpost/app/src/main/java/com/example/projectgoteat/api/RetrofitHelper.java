@@ -102,19 +102,6 @@ public class RetrofitHelper {
     }
 
 
-    private static String getRealPathFromURI(Context context, Uri uri) {
-        String result;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if (cursor == null) {
-            result = uri.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
-    }
 
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
         initApiService();
@@ -138,8 +125,6 @@ public class RetrofitHelper {
             }
         });
     }
-
-
     public static void requestBoard(int boardId, final ApiCallback<Void> callback) {
         initApiService();
 
@@ -148,37 +133,24 @@ public class RetrofitHelper {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess(null);
+                    callback.onSuccess(response.body());
+                    Log.i("RequestBoard", "요청 성공"); // 성공 로그 추가
                 } else {
-                    callback.onFailure("요청 실패: " + response.message());
+                    String errorMessage = "요청 실패: " + response.message();
+                    Log.e("RequestBoard", errorMessage); // 오류 로그 추가
+                    callback.onFailure(errorMessage);
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                callback.onFailure("요청 실패: " + t.getMessage());
+                String errorMessage = "요청 실패: " + t.getMessage();
+                Log.e("RequestBoard", errorMessage); // 오류 로그 추가
+                callback.onFailure(errorMessage);
             }
         });
     }
-    public static void scrapBoard(int boardId, int userId, final ApiCallback<Void> callback) {
-        initApiService();
 
-        Call<Void> call = apiService.scrapBoard(boardId,userId);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(null);
-                } else {
-                    callback.onFailure("게시물 스크랩에 실패했습니다.");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                callback.onFailure("게시물 스크랩에 실패했습니다.");
-            }
-        });
     }
-}
 

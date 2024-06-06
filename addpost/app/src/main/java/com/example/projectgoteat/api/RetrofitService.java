@@ -48,9 +48,4 @@ public interface RetrofitService {
             @Path("id") int boardId
     );
 
-    @POST("board/{id}/scrap")
-    Call<Void> scrapBoard(
-            @Path("id") int boardId,
-            @Header("uid") int userId
-    );
 }
