@@ -1,4 +1,4 @@
-package com.example.prac7;
+package com.example.projectgotit;
 
 import org.junit.Test;
 

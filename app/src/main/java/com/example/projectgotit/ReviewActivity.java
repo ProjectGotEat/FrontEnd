@@ -1,4 +1,4 @@
-package com.example.prac7;
+package com.example.projectgotit;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prac7.network.RetrofitHelper;
-import com.example.prac7.network.RetrofitService;
+import com.example.projectgotit.network.RetrofitHelper;
+import com.example.projectgotit.network.RetrofitService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

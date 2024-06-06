@@ -1,36 +1,23 @@
-package com.example.prac7;
+package com.example.projectgotit;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prac7.network.RetrofitHelper;
-import com.example.prac7.network.RetrofitService;
-import com.example.prac7.network.RetrofitHelper;
-import com.example.prac7.network.RetrofitService;
+import com.example.projectgotit.network.RetrofitHelper;
+import com.example.projectgotit.network.RetrofitService;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import retrofit2.Call;

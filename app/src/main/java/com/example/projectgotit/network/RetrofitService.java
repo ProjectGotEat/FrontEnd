@@ -1,4 +1,4 @@
-package com.example.prac7.network;
+package com.example.projectgotit.network;
 
 import java.util.HashMap;
 import java.util.List;

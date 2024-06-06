@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FrontEnd"
+rootProject.name = "projectgotit"
 include(":app")
  

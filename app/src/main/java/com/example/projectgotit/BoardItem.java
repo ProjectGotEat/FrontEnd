@@ -1,4 +1,4 @@
-package com.example.prac7;
+package com.example.projectgotit;
 
 public class BoardItem {
     private String imageUrl;

@@ -1,11 +1,10 @@
-package com.example.prac7;
+package com.example.projectgotit;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,8 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.prac7.network.RetrofitHelper;
-import com.example.prac7.network.RetrofitService;
+import com.example.projectgotit.network.RetrofitHelper;
+import com.example.projectgotit.network.RetrofitService;
 
 import java.util.HashMap;
 import java.util.Map;
