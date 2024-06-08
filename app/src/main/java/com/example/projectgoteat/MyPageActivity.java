@@ -76,8 +76,8 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // ChatActivity로 이동
-                //Intent intent = new Intent(MyPageActivity.this, ChatActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(MyPageActivity.this, MyItemList.class);
+                startActivity(intent);
             }
         });
 

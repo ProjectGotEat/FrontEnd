@@ -48,6 +48,8 @@ public class MyItemList extends AppCompatActivity {
     private RetrofitService retrofitService;
     private SwipeRefreshLayout swipeRefreshLayout;
     private int uid;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +139,13 @@ public class MyItemList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
+        startMessageCheck();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopMessageCheck();
     }
 
     private void loadData() {
@@ -160,7 +169,7 @@ public class MyItemList extends AppCompatActivity {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
-                        viewPagerAdapter.notifyDataSetChanged();
+                        updateFragment(listIndex);
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 } else {
@@ -182,6 +191,12 @@ public class MyItemList extends AppCompatActivity {
             }
         });
     }
+
+    private void updateFragment(int listIndex) {
+        ItemFragment fragment = (ItemFragment) viewPagerAdapter.getItem(listIndex);
+        fragment.updateItems(itemLists.get(listIndex));
+    }
+
 
     private Item convertMapToItem(HashMap<String, Object> map) {
         String title = (String) map.get("title");
@@ -393,5 +408,20 @@ public class MyItemList extends AppCompatActivity {
                 Log.e(TAG, "Network error: " + t.getMessage());
             }
         });
+    }
+
+    private void startMessageCheck() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                loadData();
+                handler.postDelayed(this, 5000); // 5초마다 데이터 확인
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void stopMessageCheck() {
+        handler.removeCallbacks(runnable);
     }
 }

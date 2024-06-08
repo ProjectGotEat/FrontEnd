@@ -3,6 +3,7 @@ package com.example.projectgoteat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,9 @@ public class ChatActivity extends AppCompatActivity {
     private int participantId;
     private int receiverId;
     private int uid;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,18 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startMessageCheck();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopMessageCheck();
+    }
+
     private void sendMessage() {
         String messageText = messageInput.getText().toString();
         if (!messageText.isEmpty()) {
@@ -109,5 +125,22 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(null);
         chatAdapter = null;
         messageList.clear();
+    }
+
+    private void startMessageCheck() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                chatAdapter.fetchMessages(() -> {
+                    // 메시지 확인 후 UI 업데이트 등 추가 작업
+                });
+                handler.postDelayed(this, 5000); // 5초마다 메시지 확인
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void stopMessageCheck() {
+        handler.removeCallbacks(runnable);
     }
 }
