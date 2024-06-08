@@ -33,8 +33,8 @@ import retrofit2.Retrofit;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
-    RetrofitService retrofitService = retrofit.create(RetrofitService.class);
+    private Retrofit retrofit;
+    private RetrofitService retrofitService;
     private ImageView btnSearch;
     private ImageView btnWrite;
     private EditText editKeyword;
@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.listview_main);
+
+        retrofit = RetrofitHelper.getRetrofitInstance(this);
+        retrofitService = retrofit.create(RetrofitService.class);
 
         btnSearch = findViewById(R.id.btnSearch);
         btnWrite = findViewById(R.id.btnWrite);
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         String[] str = getResources().getStringArray(R.array.categoriesArray);
 
         //2번에서 생성한 spinner_item.xml과 str을 인자로 어댑터 생성.
-        final ArrayAdapter<String> adapter= new ArrayAdapter<>(MainActivity.this, R.layout.categories_item,str);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.categories_item, str);
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         spinner_field.setAdapter(adapter);
 
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         spinner_field.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(spinner_field.getSelectedItemPosition() > 0){
+                if (spinner_field.getSelectedItemPosition() > 0) {
                     //선택된 항목
                     Toast toast = Toast.makeText(MainActivity.this, spinner_field.getSelectedItem().toString(), Toast.LENGTH_SHORT);
                     toast.show();
@@ -111,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { }
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -212,20 +216,45 @@ public class MainActivity extends AppCompatActivity {
         String uid = String.valueOf(sharedPreferences.getInt("uid", -1));
         editKeyword = findViewById(R.id.editKeyword);
         String keyword = String.valueOf(editKeyword.getText());
-        switch(category) {
-            case "전체": category = ""; break;
-            case "과일": category = "0101"; break;
-            case "채소": category = "0102"; break;
-            case "유제품": category = "0103"; break;
-            case "양념": category = "0104"; break;
-            case "정육 및 계란": category = "0105"; break;
-            case "곡물": category = "0106"; break;
-            case "냉동식품": category = "0201"; break;
-            case "베이커리": category = "0202"; break;
-            case "가공육": category = "0203"; break;
-            case "간식 및 음료": category = "0204"; break;
-            case "기타": category = "0301"; break;
-            default: break;
+        switch (category) {
+            case "전체":
+                category = "";
+                break;
+            case "과일":
+                category = "0101";
+                break;
+            case "채소":
+                category = "0102";
+                break;
+            case "유제품":
+                category = "0103";
+                break;
+            case "양념":
+                category = "0104";
+                break;
+            case "정육 및 계란":
+                category = "0105";
+                break;
+            case "곡물":
+                category = "0106";
+                break;
+            case "냉동식품":
+                category = "0201";
+                break;
+            case "베이커리":
+                category = "0202";
+                break;
+            case "가공육":
+                category = "0203";
+                break;
+            case "간식 및 음료":
+                category = "0204";
+                break;
+            case "기타":
+                category = "0301";
+                break;
+            default:
+                break;
         }
 
         // API를 호출할 객체 생성

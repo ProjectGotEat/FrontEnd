@@ -3,7 +3,6 @@ package com.example.projectgoteat.network;
 import com.example.projectgoteat.Review;
 import com.example.projectgoteat.Report;
 import com.example.projectgoteat.model.BoardDetailResponse;
-import com.example.projectgoteat.model.RequestData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +11,6 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
@@ -115,7 +112,9 @@ public interface RetrofitService {
     @POST("board/{id}/scrap")
     Call<Void> postScrap(@Header("uid") String uid, @Path("id") int bid);
 
-    // 추가된 부분
     @GET("auth/user-id")
     Call<Integer> getUserId(@Header("Authorization") String token);
+
+    @POST("auth/log-in")
+    Call<HashMap<String, Object>> postAuthLogin(@Body HashMap<String, String> requestBody);
 }

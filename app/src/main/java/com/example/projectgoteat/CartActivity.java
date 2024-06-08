@@ -126,7 +126,7 @@ public class CartActivity extends AppCompatActivity {
         // 사용자가 이미 요청한 게시물인지 확인합니다.
         if (!isAlreadyRequested()) {
             int organizerId = boardDetailResponse.getOrganizerId(); // 주최자의 ID를 가져옵니다.
-            RetrofitHelper.requestBoard(boardId, userId, organizerId, new ApiCallback<Void>() {
+            RetrofitHelper.requestBoard(this, boardId, userId, organizerId, new ApiCallback<Void>() {
                 @Override
                 public void onSuccess(Void response) {
                     saveRequestedStatus();
@@ -146,7 +146,6 @@ public class CartActivity extends AppCompatActivity {
         }
     }
 
-
     private void saveRequestedStatus() {
         SharedPreferences sharedPreferences = getSharedPreferences("RequestedStatus", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -161,8 +160,6 @@ public class CartActivity extends AppCompatActivity {
 
     private int getUserId() {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        // "uid"라는 키로 저장된 사용자 ID를 가져옵니다. 만약 해당 키로 저장된 값이 없다면 -1을 반환합니다.
-        // 이 경우, 실제로는 로그인된 사용자의 ID를 가져와야 합니다.
         return sharedPreferences.getInt("uid", -1);
     }
 }

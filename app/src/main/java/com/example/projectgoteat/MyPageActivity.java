@@ -126,13 +126,12 @@ public class MyPageActivity extends AppCompatActivity {
         });
     }
 
-    private void clearPreferences(){
+    private void clearPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
     }
-
 
     private void getUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
@@ -143,7 +142,7 @@ public class MyPageActivity extends AppCompatActivity {
             return;
         }
 
-        Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(this);
         RetrofitService retrofitService = retrofit.create(RetrofitService.class);
 
         Call<HashMap<String, Object>> call = retrofitService.getUser(String.valueOf(uid));

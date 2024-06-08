@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,13 +32,16 @@ public class SignupActivity extends AppCompatActivity {
     private Switch switchNotification;
     Boolean isChecked = false;
 
-    Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
-    RetrofitService retrofitService = retrofit.create(RetrofitService.class);
+    Retrofit retrofit;
+    RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        retrofit = RetrofitHelper.getRetrofitInstance(this);
+        retrofitService = retrofit.create(RetrofitService.class);
 
         etName = findViewById(R.id.et_name);
         etNickname = findViewById(R.id.et_nickname);

@@ -28,8 +28,8 @@ import retrofit2.Retrofit;
 public class ReviewActivity extends AppCompatActivity {
 
     private static final String TAG = "ReviewActivity";
-    Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
-    RetrofitService retrofitService = retrofit.create(RetrofitService.class);
+    Retrofit retrofit;
+    RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,9 @@ public class ReviewActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.review_main);
+
+        retrofit = RetrofitHelper.getRetrofitInstance(this);
+        retrofitService = retrofit.create(RetrofitService.class);
 
         getReview();
 

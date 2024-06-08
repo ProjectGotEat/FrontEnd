@@ -25,7 +25,7 @@ public class SuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_success);
 
-        Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(this);
         retrofitService = retrofit.create(RetrofitService.class);
 
         int participantId = getIntent().getIntExtra("participantId", 0);

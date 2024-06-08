@@ -24,8 +24,8 @@ import retrofit2.Retrofit;
 public class ScrapActivity extends AppCompatActivity {
 
     private static final String TAG = "ScrapActivity";
-    Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
-    RetrofitService retrofitService = retrofit.create(RetrofitService.class);
+    Retrofit retrofit;
+    RetrofitService retrofitService;
     private RecyclerView recyclerView;
 
     @Override
@@ -36,6 +36,9 @@ public class ScrapActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.scrap_main);
+
+        retrofit = RetrofitHelper.getRetrofitInstance(this);
+        retrofitService = retrofit.create(RetrofitService.class);
 
         getScrap();
     }

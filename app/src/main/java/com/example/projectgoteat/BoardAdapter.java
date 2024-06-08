@@ -20,8 +20,6 @@ import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
 
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +44,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         this.itemList = itemList;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
@@ -87,18 +86,21 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
             item.setBookmarked(isChecked);
 
             SharedPreferences sharedPreferences = context.getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-            String uid = String.valueOf(sharedPreferences.getInt("uid", -1));
+            int uid = sharedPreferences.getInt("uid", -1);
+            if (uid == -1) {
+                Toast.makeText(context, "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            // API를 호출할 객체 생성
-            Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
+            Retrofit retrofit = RetrofitHelper.getRetrofitInstance(context);
             RetrofitService retrofitService = retrofit.create(RetrofitService.class);
-            Call<Void> call = retrofitService.postScrap(uid, Integer.parseInt(item.getBid().split("\\.")[0]));
 
-            // API 호출
+            Call<Void> call = retrofitService.postScrap(String.valueOf(uid), Integer.parseInt(item.getBid().split("\\.")[0]));
+
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
+                    if (response.isSuccessful()) {
                         Toast.makeText(context, "스크랩 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -110,20 +112,15 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
             });
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    String bidString = item.getBid();
-                    int bid;
-                    try {
-                        // 소수점을 기준으로 문자열을 잘라서 정수로 변환
-                        bid = Integer.parseInt(bidString.split("\\.")[0]);
-                        listener.onItemClick(bid);
-                    } catch (NumberFormatException e) {
-                        Log.e("BoardAdapter", "NumberFormatException: " + e.getMessage());
-                        // 적절한 오류 처리를 여기에 추가 (예: 사용자에게 오류 메시지를 표시)
-                    }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                String bidString = item.getBid();
+                int bid;
+                try {
+                    bid = Integer.parseInt(bidString.split("\\.")[0]);
+                    listener.onItemClick(bid);
+                } catch (NumberFormatException e) {
+                    Log.e("BoardAdapter", "NumberFormatException: " + e.getMessage());
                 }
             }
         });
@@ -134,7 +131,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         return itemList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView textViewTitle;
         private TextView textViewEachPrice;

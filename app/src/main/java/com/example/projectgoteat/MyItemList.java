@@ -38,7 +38,6 @@ import retrofit2.Retrofit;
 import android.graphics.drawable.Drawable;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-
 public class MyItemList extends AppCompatActivity {
     private static final String TAG = "MyItemList";
     private ViewPager2 viewPager;
@@ -55,6 +54,11 @@ public class MyItemList extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         uid = sharedPreferences.getInt("uid", -1);
+        if (uid == -1) {
+            Toast.makeText(this, "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,7 +77,7 @@ public class MyItemList extends AppCompatActivity {
         initViewPager();
         initSwipeRefresh();
 
-        Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(this);
         retrofitService = retrofit.create(RetrofitService.class);
 
         loadData();

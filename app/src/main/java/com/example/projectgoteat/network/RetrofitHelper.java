@@ -1,15 +1,16 @@
 package com.example.projectgoteat.network;
 
 import android.content.Context;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
+import android.net.Uri;
 
 import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.model.BoardDetailResponse;
-import com.example.projectgoteat.model.RequestData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,9 +19,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
+import okhttp3.MediaType;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,26 +36,52 @@ public class RetrofitHelper {
     private static final String BASE_URL = "http://goteat-project-goteat-fbd23032.koyeb.app/";
     private static Retrofit retrofit;
     private static RetrofitService apiService;
+    private static Context context;
 
     // Retrofit 인스턴스 초기화
-    public static Retrofit getRetrofitInstance() {
+    public static Retrofit getRetrofitInstance(Context ctx) {
+        context = ctx;
         if (retrofit == null) {
+            // 로그 인터셉터 추가
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            // uid 인터셉터 추가
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .addInterceptor(chain -> {
+                        Request original = chain.request();
+                        Request request = original.newBuilder()
+                                .header("uid", String.valueOf(getUidFromPreferences()))
+                                .method(original.method(), original.body())
+                                .build();
+                        return chain.proceed(request);
+                    })
+                    .build();
+
             Gson gson = new GsonBuilder()
                     .setLenient()
                     .create();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;
     }
 
+    private static String getUidFromPreferences() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        int uid = sharedPreferences.getInt("uid", -1);
+        return String.valueOf(uid);
+    }
+
     // API 서비스 초기화
     private static RetrofitService getApiService() {
         if (apiService == null) {
-            apiService = getRetrofitInstance().create(RetrofitService.class);
+            apiService = getRetrofitInstance(context).create(RetrofitService.class);
         }
         return apiService;
     }
@@ -58,25 +89,18 @@ public class RetrofitHelper {
     // 서버에 게시물 전송
     public static void sendBoardToServer(Context context, Board board, File imageFile1, File imageFile2, int userId) {
         try {
-            // API 서비스 초기화
             RetrofitService apiService = getApiService();
 
-            // Board 객체를 JSON 문자열로 변환
             Gson gson = new GsonBuilder().create();
             String boardJson = gson.toJson(board);
 
-            // JSON 데이터를 위한 RequestBody 생성
             RequestBody boardRequestBody = RequestBody.create(MediaType.parse("application/json"), boardJson);
-
-            // 이미지 파일을 위한 RequestBody 생성
             RequestBody requestFile1 = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile1);
             RequestBody requestFile2 = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile2);
 
-            // MultipartBody.Part 생성
             MultipartBody.Part body1 = MultipartBody.Part.createFormData("item_image1", imageFile1.getName(), requestFile1);
             MultipartBody.Part body2 = MultipartBody.Part.createFormData("receipt_image", imageFile2.getName(), requestFile2);
 
-            // API 호출 실행
             Call<Void> call = apiService.sendBoardToServer(userId, body1, body2, boardRequestBody);
             call.enqueue(new Callback<Void>() {
                 @Override
@@ -107,7 +131,6 @@ public class RetrofitHelper {
         }
     }
 
-    // URI로부터 파일을 가져오는 메서드
     public static File getFileFromUri(Context context, Uri uri) throws IOException {
         File tempFile = File.createTempFile("temp", null, context.getCacheDir());
         tempFile.deleteOnExit();
@@ -130,7 +153,6 @@ public class RetrofitHelper {
         return tempFile;
     }
 
-    // 게시판 상세 정보를 가져오는 메서드
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
         getApiService();
 
@@ -139,7 +161,6 @@ public class RetrofitHelper {
             @Override
             public void onResponse(Call<BoardDetailResponse> call, Response<BoardDetailResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // 서버로부터 받은 응답에서 작성자 아이디를 설정합니다.
                     int organizerId = response.body().getOrganizerId();
                     response.body().setOrganizerId(organizerId);
                     callback.onSuccess(response.body());
@@ -156,13 +177,11 @@ public class RetrofitHelper {
         });
     }
 
-
-    public static void requestBoard(int boardId, int userId, int organizerId, final ApiCallback<Void> callback) {
+    public static void requestBoard(Context context, int boardId, int userId, int organizerId, final ApiCallback<Void> callback) {
         RetrofitService apiService = getApiService();
 
-        // 요청 바디 생성
         Map<String, Integer> body = new HashMap<>();
-        body.put("organizerId", organizerId); // 요청 바디의 키를 "organizerId"로 수정
+        body.put("organizerId", organizerId);
 
         Call<Void> call = apiService.requestBoard(boardId, userId, body);
         call.enqueue(new Callback<Void>() {
@@ -190,7 +209,4 @@ public class RetrofitHelper {
             }
         });
     }
-
-
-
 }

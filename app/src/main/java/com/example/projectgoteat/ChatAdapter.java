@@ -1,5 +1,6 @@
 package com.example.projectgoteat;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -35,14 +36,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     private int uid;
     private int participantId;
     private int receiverId;
+    private Context context;
 
-    public ChatAdapter(int uid, int participantId, int receiverId, List<Message> messageList) {
+    public ChatAdapter(Context context, int uid, int participantId, int receiverId, List<Message> messageList) {
+        this.context = context;
         this.uid = uid;
         this.participantId = participantId;
         this.receiverId = receiverId;
         this.messageList = messageList;
 
-        Retrofit retrofit = RetrofitHelper.getRetrofitInstance();
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(context);
         retrofitService = retrofit.create(RetrofitService.class);
 
         fetchMessages(() -> {});
@@ -58,13 +61,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     messageList.clear();
 
                     Gson gson = new Gson();
-                    List<HashMap<String, Object>> messages = (List<HashMap<String, Object>>) response.body().get("messages");
-                    if (messages == null) {
+                    Object messagesObj = response.body().get("messages");
+                    if (messagesObj == null) {
                         Log.e(TAG, "No messages found in response");
                         return;
                     }
+
+                    // Convert the messages object to a JSON string and then to a List of HashMaps
+                    String messagesJson = gson.toJson(messagesObj);
                     Type messageType = new TypeToken<List<HashMap<String, Object>>>() {}.getType();
-                    List<HashMap<String, Object>> messageObjects = gson.fromJson(gson.toJson(messages), messageType);
+                    List<HashMap<String, Object>> messageObjects = gson.fromJson(messagesJson, messageType);
 
                     for (HashMap<String, Object> messageObject : messageObjects) {
                         String profileName = (String) messageObject.get("profile_name");
@@ -101,6 +107,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             }
         });
     }
+
 
     public void sendMessage(HashMap<String, Object> message, Runnable onSuccess) {
         Log.d(TAG, "Sending message: " + message.toString());

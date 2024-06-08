@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class ChatActivity extends AppCompatActivity {
     private Button refreshButton;
     private int participantId;
     private int receiverId;
+    private int uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +49,19 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
 
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        uid = sharedPreferences.getInt("uid", -1);
+        if (uid == -1) {
+            Toast.makeText(this, "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         messageInput = findViewById(R.id.messageInput);
         sendButton = findViewById(R.id.sendButton);
         refreshButton = findViewById(R.id.refreshButton);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        int uid = sharedPreferences.getInt("uid", -1);
 
         messageList = new ArrayList<>();
         participantId = getIntent().getIntExtra("participantId", -1);
@@ -62,7 +69,7 @@ public class ChatActivity extends AppCompatActivity {
 
         Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId + ", UID: " + uid);
 
-        chatAdapter = new ChatAdapter(uid, participantId, receiverId, messageList);
+        chatAdapter = new ChatAdapter(this, uid, participantId, receiverId, messageList);
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -81,9 +88,11 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         String messageText = messageInput.getText().toString();
         if (!messageText.isEmpty()) {
-            java.util.HashMap<String, Object> message = new java.util.HashMap<>();
+            HashMap<String, Object> message = new HashMap<>();
             message.put("content", messageText);
             message.put("receiver_id", receiverId);
+
+            Log.d(TAG, "Sending message: " + message.toString());
 
             chatAdapter.sendMessage(message, () -> {
                 messageInput.setText("");
