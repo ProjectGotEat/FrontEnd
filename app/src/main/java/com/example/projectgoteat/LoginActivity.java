@@ -35,8 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        etEmail = findViewById(R.id.et_id); // XML 파일에서 et_id로 변경됨
-        etPassword = findViewById(R.id.et_pass); // XML 파일에서 et_pass로 변경됨
+        etEmail = findViewById(R.id.et_id);
+        etPassword = findViewById(R.id.et_pass);
         btnLogin = findViewById(R.id.btn_login);
         btnSignup = findViewById(R.id.btn_signup);
 
@@ -46,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
             startActivity(intent);
         });
+
+        checkLoginStatus();
     }
 
     private void loginUser() {
@@ -71,8 +73,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     HashMap<String, Object> responseBody = response.body();
                     int uid = ((Double) responseBody.get("uid")).intValue();
+                    String token = (String) responseBody.get("token"); // Assuming the response contains a token
 
-                    saveLoginInfo(uid);
+                    saveLoginInfo(uid, token);
 
                     Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -91,10 +94,22 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveLoginInfo(int uid) {
+    private void saveLoginInfo(int uid, String token) {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("uid", uid);
+        editor.putString("token", token); // Save the token
+        editor.putBoolean("isLoggedIn", true);
         editor.apply();
+    }
+
+    private void checkLoginStatus() {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (isLoggedIn) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

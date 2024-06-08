@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.listview_main);
 
+        checkLoginStatus();
+
         retrofit = RetrofitHelper.getRetrofitInstance(this);
         retrofitService = retrofit.create(RetrofitService.class);
 
@@ -128,14 +130,23 @@ public class MainActivity extends AppCompatActivity {
         btnWrite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 게시물 작성 화면으로 이동하는 처리 구현
-                // Intent를 사용하여 WriteActivity로 전환
+                // 게시물 작성 화면으로 이동하는 처리 구현
                 Intent intent = new Intent(MainActivity.this, AddpostActivity.class);
                 startActivity(intent);
             }
         });
 
         getBoard();
+    }
+
+    private void checkLoginStatus() {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (!isLoggedIn) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void getBoard() { // 3.1 전체 소분 내역 조회

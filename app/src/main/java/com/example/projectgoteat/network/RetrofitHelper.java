@@ -11,7 +11,6 @@ import com.example.projectgoteat.model.BoardDetailResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,7 +51,7 @@ public class RetrofitHelper {
                     .addInterceptor(chain -> {
                         Request original = chain.request();
                         Request request = original.newBuilder()
-                                .header("uid", String.valueOf(getUidFromPreferences()))
+                                .header("uid", getUidFromPreferences())
                                 .method(original.method(), original.body())
                                 .build();
                         return chain.proceed(request);
@@ -79,7 +78,7 @@ public class RetrofitHelper {
     }
 
     // API 서비스 초기화
-    private static RetrofitService getApiService() {
+    public static RetrofitService getApiService() {
         if (apiService == null) {
             apiService = getRetrofitInstance(context).create(RetrofitService.class);
         }
@@ -154,7 +153,7 @@ public class RetrofitHelper {
     }
 
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {
-        getApiService();
+        RetrofitService apiService = getApiService();
 
         Call<BoardDetailResponse> call = apiService.getBoardDetail(boardId, userId);
         call.enqueue(new Callback<BoardDetailResponse>() {

@@ -3,6 +3,8 @@ package com.example.projectgoteat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -147,13 +149,15 @@ public class MyItemList extends AppCompatActivity {
         call.enqueue(new Callback<List<HashMap<String, Object>>>() {
             @Override
             public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful()) {
                     List<Item> items = new ArrayList<>();
-                    for (HashMap<String, Object> map : response.body()) {
-                        items.add(convertMapToItem(map));
+                    if (response.code() != 204 && response.body() != null) {
+                        for (HashMap<String, Object> map : response.body()) {
+                            items.add(convertMapToItem(map));
+                        }
                     }
                     Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
-                    runOnUiThread(() -> {
+                    new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
                         viewPagerAdapter.notifyDataSetChanged();
