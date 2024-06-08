@@ -1,20 +1,12 @@
 package com.example.projectgoteat;
-//신고
-//세진
+
 public class Report {
     private int reporteeId;  // 신고하려는 유저 ID
     private int categoryId;  // 신고 사유 카테고리 ID
-    private String content;  // 신고 내용
+    private String content;  // 신고 내용 (선택적, 없을 시 null)
 
-    // 기존 생성자
     public Report(int reporteeId, int categoryId, String content) {
         this.reporteeId = reporteeId;
-        this.categoryId = categoryId;
-        this.content = content;
-    }
-
-    // 새로운 생성자
-    public Report(int categoryId, String content) {
         this.categoryId = categoryId;
         this.content = content;
     }
