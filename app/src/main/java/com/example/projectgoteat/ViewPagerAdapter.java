@@ -4,11 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
 import java.util.List;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
     private List<List<Item>> itemLists;
-    private boolean isCompletedItems;
     private int uid;
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<List<Item>> itemLists, int uid) {
@@ -20,7 +20,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        isCompletedItems = (position == 2);
+        boolean isCompletedItems = (position == 2);
         return ItemFragment.newInstance(itemLists.get(position), isCompletedItems, uid);
     }
 
@@ -29,9 +29,13 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
         return itemLists.size();
     }
 
-    // 추가: getItem 메서드
-    public Fragment getItem(int position) {
-        isCompletedItems = (position == 2);
-        return ItemFragment.newInstance(itemLists.get(position), isCompletedItems, uid);
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        return itemId < getItemCount();
     }
 }

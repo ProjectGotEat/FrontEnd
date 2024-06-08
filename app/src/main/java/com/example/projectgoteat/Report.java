@@ -3,12 +3,12 @@ package com.example.projectgoteat;
 public class Report {
     private int reporteeId;  // 신고하려는 유저 ID
     private int categoryId;  // 신고 사유 카테고리 ID
-    private String content;  // 신고 내용 (선택적, 없을 시 null)
+    private String content;  // 신고 내용
 
     public Report(int reporteeId, int categoryId, String content) {
         this.reporteeId = reporteeId;
         this.categoryId = categoryId;
-        this.content = content;
+        this.content = content != null ? content : ""; // 빈 문자열로 기본값 설정
     }
 
     public int getReporteeId() {
