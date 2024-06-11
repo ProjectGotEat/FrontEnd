@@ -36,10 +36,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     private int uid;
     private int participantId;
     private int receiverId;
-    private Context context;
+    private Context context; // 추가된 부분
 
     public ChatAdapter(Context context, int uid, int participantId, int receiverId, List<Message> messageList) {
-        this.context = context;
         this.uid = uid;
         this.participantId = participantId;
         this.receiverId = receiverId;
@@ -51,6 +50,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         fetchMessages(() -> {});
     }
 
+
     public void fetchMessages(Runnable onComplete) {
         Log.d(TAG, "Fetching messages for participantId: " + participantId);
         retrofitService.getMessageDetails(participantId).enqueue(new Callback<HashMap<String, Object>>() {
@@ -61,16 +61,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     messageList.clear();
 
                     Gson gson = new Gson();
-                    Object messagesObj = response.body().get("messages");
-                    if (messagesObj == null) {
+                    List<HashMap<String, Object>> messages = (List<HashMap<String, Object>>) response.body().get("messages");
+                    if (messages == null) {
                         Log.e(TAG, "No messages found in response");
                         return;
                     }
-
-                    // Convert the messages object to a JSON string and then to a List of HashMaps
-                    String messagesJson = gson.toJson(messagesObj);
                     Type messageType = new TypeToken<List<HashMap<String, Object>>>() {}.getType();
-                    List<HashMap<String, Object>> messageObjects = gson.fromJson(messagesJson, messageType);
+                    List<HashMap<String, Object>> messageObjects = gson.fromJson(gson.toJson(messages), messageType);
 
                     for (HashMap<String, Object> messageObject : messageObjects) {
                         String profileName = (String) messageObject.get("profile_name");
@@ -107,7 +104,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             }
         });
     }
-
 
     public void sendMessage(HashMap<String, Object> message, Runnable onSuccess) {
         Log.d(TAG, "Sending message: " + message.toString());

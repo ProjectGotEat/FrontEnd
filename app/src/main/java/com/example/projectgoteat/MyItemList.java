@@ -48,8 +48,6 @@ public class MyItemList extends AppCompatActivity {
     private RetrofitService retrofitService;
     private SwipeRefreshLayout swipeRefreshLayout;
     private int uid;
-    private Handler handler = new Handler();
-    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,13 +137,6 @@ public class MyItemList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
-        startMessageCheck();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopMessageCheck();
     }
 
     private void loadData() {
@@ -154,6 +145,7 @@ public class MyItemList extends AppCompatActivity {
         fetchItems(retrofitService.getCompletedItems(String.valueOf(uid)), 2);
     }
 
+    // 수정된 fetchItems 메소드
     private void fetchItems(Call<List<HashMap<String, Object>>> call, int listIndex) {
         call.enqueue(new Callback<List<HashMap<String, Object>>>() {
             @Override
@@ -165,11 +157,10 @@ public class MyItemList extends AppCompatActivity {
                             items.add(convertMapToItem(map));
                         }
                     }
-                    Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
                     new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
-                        updateFragment(listIndex);
+                        viewPagerAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 } else {
@@ -191,12 +182,6 @@ public class MyItemList extends AppCompatActivity {
             }
         });
     }
-
-    private void updateFragment(int listIndex) {
-        ItemFragment fragment = (ItemFragment) viewPagerAdapter.getItem(listIndex);
-        fragment.updateItems(itemLists.get(listIndex));
-    }
-
 
     private Item convertMapToItem(HashMap<String, Object> map) {
         String title = (String) map.get("title");
@@ -313,7 +298,6 @@ public class MyItemList extends AppCompatActivity {
 
     private void submitReview(int participantId, int revieweeId, int rating, String content) {
         Review review = new Review(revieweeId, rating, content);
-
         Log.d(TAG, "Submitting review: " + review.toString());
 
         retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() {
@@ -321,11 +305,13 @@ public class MyItemList extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Review submitted successfully");
+                    Toast.makeText(MyItemList.this, "리뷰가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                         Log.e(TAG, "Failed to submit review: " + response.code());
                         Log.e(TAG, "Error body: " + errorBody);
+                        Toast.makeText(MyItemList.this, "리뷰 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -335,10 +321,10 @@ public class MyItemList extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network error: " + t.getMessage());
+                Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     public void showReportDialog(int participantId, int reporteeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
@@ -370,6 +356,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
+
     private int getSelectedCategoryId(RadioGroup radioGroup) {
         int checkedId = radioGroup.getCheckedRadioButtonId();
         if (checkedId == R.id.radioNoShow) {
@@ -385,9 +372,8 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-
     private void submitReport(int participantId, int reporteeId, int categoryId, String content) {
-        Report report = new Report(reporteeId, categoryId, content);
+        Report report = new Report(reporteeId, categoryId, content != null ? content : ""); // 빈 문자열로 기본값 설정
         Log.d(TAG, "Submitting report: " + report.toString());
 
         retrofitService.submitReport(participantId, uid, report).enqueue(new Callback<Void>() {
@@ -414,21 +400,5 @@ public class MyItemList extends AppCompatActivity {
                 Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    private void startMessageCheck() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                loadData();
-                handler.postDelayed(this, 5000); // 5초마다 데이터 확인
-            }
-        };
-        handler.post(runnable);
-    }
-
-    private void stopMessageCheck() {
-        handler.removeCallbacks(runnable);
     }
 }

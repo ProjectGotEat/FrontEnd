@@ -42,9 +42,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(myItemList, ChatActivity.class);
-            intent.putExtra("participantId", item.getParticipantId());
-            intent.putExtra("receiverId", item.getUserId() != uid ? item.getUserId() : item.getOrganizerId());
-            intent.putExtra("chatRoomTitle", item.getTitle());
+            intent.putExtra("item", item);  // 변경된 부분: Parcelable로 Item 객체를 전달
             myItemList.startActivity(intent);
         });
 
