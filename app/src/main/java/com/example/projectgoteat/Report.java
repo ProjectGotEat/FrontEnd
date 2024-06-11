@@ -11,7 +11,7 @@ public class Report {
     public Report(int reporteeId, int categoryId, String content) {
         this.reporteeId = reporteeId;
         this.categoryId = categoryId;
-        this.content = content;
+        this.content = content != null ? content : ""; // 빈 문자열로 기본값 설정
     }
 
     // 새로운 생성자
