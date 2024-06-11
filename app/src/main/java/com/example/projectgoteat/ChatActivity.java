@@ -3,7 +3,6 @@ package com.example.projectgoteat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -29,12 +27,8 @@ public class ChatActivity extends AppCompatActivity {
     private EditText messageInput;
     private Button sendButton;
     private Button refreshButton;
-    private int participantId;
-    private int receiverId;
     private int uid;
-
-    private Handler handler = new Handler();
-    private Runnable runnable;
+    private int receiverId; // 클래스 필드로 선언
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +39,6 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            String chatRoomTitle = getIntent().getStringExtra("chatRoomTitle");
-            if (chatRoomTitle != null) {
-                getSupportActionBar().setTitle(chatRoomTitle);
-            } else {
-                getSupportActionBar().setTitle("Chat Room");
-            }
-        }
-
-        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
-        uid = sharedPreferences.getInt("uid", -1);
-        if (uid == -1) {
-            Toast.makeText(this, "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
         }
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -67,48 +47,51 @@ public class ChatActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.sendButton);
         refreshButton = findViewById(R.id.refreshButton);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        uid = sharedPreferences.getInt("uid", -1);
+
         messageList = new ArrayList<>();
-        participantId = getIntent().getIntExtra("participantId", -1);
-        receiverId = getIntent().getIntExtra("receiverId", -1);
 
-        Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId + ", UID: " + uid);
+        // 인텐트에서 Item 객체를 받아옴
+        Item item = getIntent().getParcelableExtra("item");
+        if (item != null) {
+            int participantId = item.getParticipantId();
+            receiverId = item.getUserId() != uid ? item.getUserId() : item.getOrganizerId(); // receiverId 설정
+            String chatRoomTitle = item.getTitle(); // 채팅방 이름 설정
 
-        chatAdapter = new ChatAdapter(this, uid, participantId, receiverId, messageList);
-        recyclerView.setAdapter(chatAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(chatRoomTitle);
+            }
 
-        sendButton.setOnClickListener(v -> sendMessage());
+            Log.d(TAG, "Participant ID: " + participantId + ", Receiver ID: " + receiverId + ", UID: " + uid);
 
-        chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
+            chatAdapter = new ChatAdapter(this, uid, participantId, receiverId, messageList);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false)));
+            recyclerView.setAdapter(chatAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        refreshButton.setOnClickListener(v -> {
-            swipeRefreshLayout.setRefreshing(true);
+            sendButton.setOnClickListener(v -> sendMessage());
+
             chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
-        });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startMessageCheck();
-    }
+            swipeRefreshLayout.setOnRefreshListener(() -> chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false)));
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopMessageCheck();
+            refreshButton.setOnClickListener(v -> {
+                swipeRefreshLayout.setRefreshing(true);
+                chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
+            });
+        } else {
+            Toast.makeText(this, "채팅방 정보를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void sendMessage() {
         String messageText = messageInput.getText().toString();
         if (!messageText.isEmpty()) {
-            HashMap<String, Object> message = new HashMap<>();
+            java.util.HashMap<String, Object> message = new java.util.HashMap<>();
             message.put("content", messageText);
-            message.put("receiver_id", receiverId);
-
-            Log.d(TAG, "Sending message: " + message.toString());
+            message.put("receiver_id", receiverId); // receiverId 사용
 
             chatAdapter.sendMessage(message, () -> {
                 messageInput.setText("");
@@ -125,22 +108,5 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(null);
         chatAdapter = null;
         messageList.clear();
-    }
-
-    private void startMessageCheck() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                chatAdapter.fetchMessages(() -> {
-                    // 메시지 확인 후 UI 업데이트 등 추가 작업
-                });
-                handler.postDelayed(this, 5000); // 5초마다 메시지 확인
-            }
-        };
-        handler.post(runnable);
-    }
-
-    private void stopMessageCheck() {
-        handler.removeCallbacks(runnable);
     }
 }

@@ -48,8 +48,6 @@ public class MyItemList extends AppCompatActivity {
     private RetrofitService retrofitService;
     private SwipeRefreshLayout swipeRefreshLayout;
     private int uid;
-    private Handler handler = new Handler();
-    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,13 +137,6 @@ public class MyItemList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
-        startMessageCheck();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopMessageCheck();
     }
 
     private void loadData() {
@@ -154,6 +145,7 @@ public class MyItemList extends AppCompatActivity {
         fetchItems(retrofitService.getCompletedItems(String.valueOf(uid)), 2);
     }
 
+    // 수정된 fetchItems 메소드
     private void fetchItems(Call<List<HashMap<String, Object>>> call, int listIndex) {
         call.enqueue(new Callback<List<HashMap<String, Object>>>() {
             @Override
@@ -165,11 +157,10 @@ public class MyItemList extends AppCompatActivity {
                             items.add(convertMapToItem(map));
                         }
                     }
-                    Log.d(TAG, "Fetched items: " + items.size() + " for listIndex: " + listIndex);
                     new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
-                        updateFragment(listIndex);
+                        viewPagerAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 } else {
@@ -190,12 +181,6 @@ public class MyItemList extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-
-
-    private void updateFragment(int listIndex) {
-        viewPagerAdapter.notifyItemChanged(listIndex);
     }
 
     private Item convertMapToItem(HashMap<String, Object> map) {
@@ -311,7 +296,6 @@ public class MyItemList extends AppCompatActivity {
                 .show();
     }
 
-
     private void submitReview(int participantId, int revieweeId, int rating, String content) {
         Review review = new Review(revieweeId, rating, content);
         Log.d(TAG, "Submitting review: " + review.toString());
@@ -341,8 +325,6 @@ public class MyItemList extends AppCompatActivity {
             }
         });
     }
-
-
 
     public void showReportDialog(int participantId, int reporteeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
@@ -390,7 +372,6 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-
     private void submitReport(int participantId, int reporteeId, int categoryId, String content) {
         Report report = new Report(reporteeId, categoryId, content != null ? content : ""); // 빈 문자열로 기본값 설정
         Log.d(TAG, "Submitting report: " + report.toString());
@@ -419,20 +400,5 @@ public class MyItemList extends AppCompatActivity {
                 Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void startMessageCheck() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                loadData();
-                handler.postDelayed(this, 5000); // 5초마다 데이터 확인
-            }
-        };
-        handler.post(runnable);
-    }
-
-    private void stopMessageCheck() {
-        handler.removeCallbacks(runnable);
     }
 }
