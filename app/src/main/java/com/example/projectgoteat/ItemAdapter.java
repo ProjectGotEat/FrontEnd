@@ -52,7 +52,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             holder.btnSuccess.setText("리뷰하기");
             holder.btnFail.setText("신고하기");
             holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
-            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getParticipantId()));
+            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
         } else {
             holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
             holder.btnFail.setOnClickListener(v -> myItemList.showFailDialog(item));

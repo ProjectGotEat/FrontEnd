@@ -48,6 +48,8 @@ public class MyItemList extends AppCompatActivity {
     private RetrofitService retrofitService;
     private SwipeRefreshLayout swipeRefreshLayout;
     private int uid;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +139,13 @@ public class MyItemList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
+        startMessageCheck();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopMessageCheck();
     }
 
     private void loadData() {
@@ -160,7 +169,7 @@ public class MyItemList extends AppCompatActivity {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
-                        viewPagerAdapter.notifyDataSetChanged();
+                        updateFragment(listIndex);
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 } else {
@@ -181,6 +190,12 @@ public class MyItemList extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+
+
+    private void updateFragment(int listIndex) {
+        viewPagerAdapter.notifyItemChanged(listIndex);
     }
 
     private Item convertMapToItem(HashMap<String, Object> map) {
@@ -296,9 +311,9 @@ public class MyItemList extends AppCompatActivity {
                 .show();
     }
 
+
     private void submitReview(int participantId, int revieweeId, int rating, String content) {
         Review review = new Review(revieweeId, rating, content);
-
         Log.d(TAG, "Submitting review: " + review.toString());
 
         retrofitService.submitReview(participantId, review).enqueue(new Callback<Void>() {
@@ -306,11 +321,13 @@ public class MyItemList extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Review submitted successfully");
+                    Toast.makeText(MyItemList.this, "리뷰가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                         Log.e(TAG, "Failed to submit review: " + response.code());
                         Log.e(TAG, "Error body: " + errorBody);
+                        Toast.makeText(MyItemList.this, "리뷰 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -320,11 +337,14 @@ public class MyItemList extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network error: " + t.getMessage());
+                Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void showReportDialog(int participantId) {
+
+
+    public void showReportDialog(int participantId, int reporteeId) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
@@ -335,7 +355,7 @@ public class MyItemList extends AppCompatActivity {
                     String otherReason = otherReasonEditText.getText().toString();
 
                     String content = selectedCategoryId == 4 ? otherReason : null;
-                    submitReport(participantId, selectedCategoryId, content);
+                    submitReport(participantId, reporteeId, selectedCategoryId, content);
                     dialog.dismiss();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
@@ -354,6 +374,7 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
+
     private int getSelectedCategoryId(RadioGroup radioGroup) {
         int checkedId = radioGroup.getCheckedRadioButtonId();
         if (checkedId == R.id.radioNoShow) {
@@ -369,19 +390,23 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-    private void submitReport(int participantId, int categoryId, String content) {
-        Report report = new Report(participantId, categoryId, content);
+
+    private void submitReport(int participantId, int reporteeId, int categoryId, String content) {
+        Report report = new Report(reporteeId, categoryId, content != null ? content : ""); // 빈 문자열로 기본값 설정
         Log.d(TAG, "Submitting report: " + report.toString());
+
         retrofitService.submitReport(participantId, uid, report).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Report submitted successfully");
+                    Toast.makeText(MyItemList.this, "신고가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                         Log.e(TAG, "Failed to submit report: " + response.code());
                         Log.e(TAG, "Error body: " + errorBody);
+                        Toast.makeText(MyItemList.this, "신고 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -391,7 +416,23 @@ public class MyItemList extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network error: " + t.getMessage());
+                Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void startMessageCheck() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                loadData();
+                handler.postDelayed(this, 5000); // 5초마다 데이터 확인
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void stopMessageCheck() {
+        handler.removeCallbacks(runnable);
     }
 }

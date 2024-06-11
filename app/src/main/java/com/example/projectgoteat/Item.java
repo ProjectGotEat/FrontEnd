@@ -1,6 +1,5 @@
 package com.example.projectgoteat;
 
-// 이벤트나 모임의 정보를 저장하는 클래스
 public class Item {
     private String title;
     private String meetingTime;
