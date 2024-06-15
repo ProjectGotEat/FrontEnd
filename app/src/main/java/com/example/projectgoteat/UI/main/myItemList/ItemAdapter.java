@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myItemList;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,6 +9,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.UI.main.myItemList.chat.ChatActivity;
+import com.example.projectgoteat.model.Item;
 
 import java.util.List;
 

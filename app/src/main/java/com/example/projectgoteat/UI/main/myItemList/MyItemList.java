@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myItemList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,10 @@ import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.model.Item;
+import com.example.projectgoteat.model.Report;
+import com.example.projectgoteat.model.Review;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
 import com.google.android.material.tabs.TabLayout;

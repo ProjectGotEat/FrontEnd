@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myItemList;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.board;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.projectgoteat.R;
 import com.example.projectgoteat.model.BoardDetailResponse;
 import com.example.projectgoteat.network.ApiCallback;
 import com.example.projectgoteat.network.RetrofitHelper;

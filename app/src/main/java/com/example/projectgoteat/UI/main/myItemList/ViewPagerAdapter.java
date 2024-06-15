@@ -1,9 +1,11 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myItemList;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.projectgoteat.model.Item;
 
 import java.util.List;
 

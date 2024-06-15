@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.model;
 
 //리뷰
 //세진

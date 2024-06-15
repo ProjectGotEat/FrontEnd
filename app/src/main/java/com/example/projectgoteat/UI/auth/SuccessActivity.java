@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.UI.main.myItemList.MyItemList;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
 

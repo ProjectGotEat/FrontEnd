@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.board.addPost;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
@@ -24,6 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.UI._globalUtil.UIHelper;
+import com.example.projectgoteat.UI._globalUtil.UnitSpinnerUtil;
 import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.google.android.material.imageview.ShapeableImageView;

@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.UI.auth.LoginActivity;
+import com.example.projectgoteat.UI.main.board.BoardAdapter;
+import com.example.projectgoteat.UI.main.board.CartActivity;
+import com.example.projectgoteat.UI.main.board.addPost.AddpostActivity;
+import com.example.projectgoteat.UI.main.myItemList.MyItemList;
+import com.example.projectgoteat.UI.main.myPage.MyPageActivity;
+import com.example.projectgoteat.model.BoardItem;
 import com.example.projectgoteat.network.RetrofitService;
 import com.example.projectgoteat.network.RetrofitHelper;
 
@@ -38,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnSearch;
     private ImageView btnWrite;
     private EditText editKeyword;
-
-    private RecyclerView recyclerView;
-
-    private BoardAdapter boardAdapter;
     private ImageButton btnHome, btnChat, btnProfile;
 
     @Override
@@ -278,54 +282,6 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
                     List<HashMap<String, Object>> boardList = response.body();
                     printBoardData(boardList);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<HashMap<String, Object>>> call, Throwable t) {
-                Log.e(TAG, "Network Error: " + t.getMessage());
-            }
-        });
-    }
-
-    private void getUser() { // 1.3 마이페이지
-        // 백엔드로 넘겨 줄 파라미터
-        String uid = "";
-
-        // API를 호출할 객체 생성
-        Call<HashMap<String, Object>> call = retrofitService.getUser(uid);
-
-        // API 호출
-        call.enqueue(new Callback<HashMap<String, Object>>() {
-            @Override
-            public void onResponse(Call<HashMap<String, Object>> call, Response<HashMap<String, Object>> response) {
-                if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
-                    HashMap<String, Object> responseMap = response.body(); // 백엔드에서 넘겨준 결과를 받아옴
-                    /** TODO: 화면에 출력하는 처리 구현 */
-                }
-            }
-
-            @Override
-            public void onFailure(Call<HashMap<String, Object>> call, Throwable t) {
-                Log.e(TAG, "Network Error: " + t.getMessage());
-            }
-        });
-    }
-
-    private void getUserPoint() { // 1.3.1 포인트 조회
-        // 백엔드로 넘겨 줄 파라미터
-        String uid = "";
-
-        // API를 호출할 객체 생성
-        Call<List<HashMap<String, Object>>> call = retrofitService.getUserPoint(uid);
-
-        // API 호출
-        call.enqueue(new Callback<List<HashMap<String, Object>>>() {
-            @Override
-            public void onResponse(Call<List<HashMap<String, Object>>> call, Response<List<HashMap<String, Object>>> response) {
-                if (response.isSuccessful()) { // 200(정상적인 응답)이 왔을 때는 response.isSuccessful() 가 true
-                    List<HashMap<String, Object>> responseMapList = response.body(); // 백엔드에서 넘겨준 결과를 받아옴
-                    /** TODO: 화면에 출력하는 처리 구현 */
                 }
             }
 

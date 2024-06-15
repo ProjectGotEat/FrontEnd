@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myPage.scrap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.UI.main.board.BoardAdapter;
+import com.example.projectgoteat.model.BoardItem;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
 

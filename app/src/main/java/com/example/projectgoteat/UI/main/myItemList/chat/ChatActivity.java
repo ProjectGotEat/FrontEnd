@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI.main.myItemList.chat;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +13,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.example.projectgoteat.R;
+import com.example.projectgoteat.model.Item;
+import com.example.projectgoteat.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;

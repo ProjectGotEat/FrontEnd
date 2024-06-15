@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

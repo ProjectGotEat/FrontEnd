@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI._globalUtil;
 
 // UnitSpinnerUtil.java
 

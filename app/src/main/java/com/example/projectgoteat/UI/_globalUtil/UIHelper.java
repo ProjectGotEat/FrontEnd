@@ -1,4 +1,4 @@
-package com.example.projectgoteat;
+package com.example.projectgoteat.UI._globalUtil;
 
 
 import android.app.DatePickerDialog;
@@ -6,6 +6,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
+
+import com.example.projectgoteat.UI.main.board.addPost.AddpostActivity;
 
 import java.util.Calendar;
 

@@ -1,7 +1,7 @@
 package com.example.projectgoteat.network;
 
-import com.example.projectgoteat.Review;
-import com.example.projectgoteat.Report;
+import com.example.projectgoteat.model.Review;
+import com.example.projectgoteat.model.Report;
 import com.example.projectgoteat.model.BoardDetailResponse;
 
 import java.util.HashMap;
