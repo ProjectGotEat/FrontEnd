@@ -82,6 +82,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         holder.textViewEachPrice.setText(item.getEachPrice());
         holder.textViewMittingLocationText.setText(item.getLocation());
         holder.textViewParticipants.setText(item.getParticipants());
+        holder.btnBookmark.setOnCheckedChangeListener(null); // 초기화 과정에서 리스너가 실행되는 것을 방지하기 위해 리스너를 null로 설정
         holder.btnBookmark.setChecked(item.isBookmarked());
 
         holder.btnBookmark.setOnCheckedChangeListener((buttonView, isChecked) -> {
