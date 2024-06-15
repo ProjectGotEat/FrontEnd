@@ -98,21 +98,37 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
             Retrofit retrofit = RetrofitHelper.getRetrofitInstance(context);
             RetrofitService retrofitService = retrofit.create(RetrofitService.class);
 
-            Call<Void> call = retrofitService.postScrap(String.valueOf(uid), Integer.parseInt(item.getBid().split("\\.")[0]));
-
-            call.enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(context, "스크랩 되었습니다.", Toast.LENGTH_SHORT).show();
+            if (isChecked) { // 스크랩하는 경우
+                Call<Void> postScrap = retrofitService.postScrap(String.valueOf(uid), Integer.parseInt(item.getBid().split("\\.")[0]));
+                postScrap.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(context, "스크랩 되었습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("BoardAdapter", "Network Error: " + t.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("BoardAdapter", "Network Error: " + t.getMessage());
+                    }
+                });
+            } else { // 스크랩 취소하는 경우
+                Call<Void> deleteScrap = retrofitService.deleteScrap(String.valueOf(uid), Integer.parseInt(item.getBid().split("\\.")[0]));
+                deleteScrap.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(context, "스크랩이 취소되었습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("BoardAdapter", "Network Error: " + t.getMessage());
+                    }
+                });
+            }
         });
 
         holder.itemView.setOnClickListener(v -> {
