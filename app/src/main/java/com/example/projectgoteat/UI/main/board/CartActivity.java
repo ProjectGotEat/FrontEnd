@@ -96,6 +96,11 @@ public class CartActivity extends AppCompatActivity {
         categoryInput.setText(response.getCategory());
         titleText.setText(response.getItem_name());
 
+        if (response.getIs_requested() == 1) { // 이미 신청한 소분인 경우, 버튼 비활성화 처리
+            postButton.setEnabled(false);
+            postButton.setText("요청 제출됨");
+        }
+
         try {
             Glide.with(CartActivity.this).load(response.getItem_image1()).into(itemImage1);
             if (response.getReceipt_image() != null) {
@@ -124,39 +129,34 @@ public class CartActivity extends AppCompatActivity {
             return;
         }
 
-        // 사용자가 이미 요청한 게시물인지 확인합니다.
-        if (!isAlreadyRequested()) {
-            int organizerId = boardDetailResponse.getOrganizerId(); // 주최자의 ID를 가져옵니다.
-            RetrofitHelper.requestBoard(this, boardId, userId, organizerId, new ApiCallback<Void>() {
-                @Override
-                public void onSuccess(Void response) {
-                    saveRequestedStatus();
-                    Toast.makeText(CartActivity.this, "요청이 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
-                    // 성공적인 요청 후 버튼을 비활성화하고 텍스트를 변경합니다.
-                    postButton.setEnabled(false);
-                    postButton.setText("요청 제출됨");
-                }
+        int organizerId = boardDetailResponse.getOrganizerId(); // 주최자의 ID를 가져옵니다.
+        RetrofitHelper.requestBoard(this, boardId, userId, organizerId, new ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void response) {
+                saveRequestedStatus();
+                Toast.makeText(CartActivity.this, "요청이 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
+                // 성공적인 요청 후 버튼을 비활성화하고 텍스트를 변경합니다.
+                postButton.setEnabled(false);
+                postButton.setText("요청 제출됨");
+            }
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    Toast.makeText(CartActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(CartActivity.this, "이미 이 상품을 요청하셨습니다.", Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(CartActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void saveRequestedStatus() {
         SharedPreferences sharedPreferences = getSharedPreferences("RequestedStatus", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isRequested_" + boardId, true);
+        editor.putBoolean("isRequested_" + boardId + "_" + userId, true);
         editor.apply();
     }
 
     private boolean isAlreadyRequested() {
         SharedPreferences sharedPreferences = getSharedPreferences("RequestedStatus", MODE_PRIVATE);
-        return sharedPreferences.getBoolean("isRequested_" + boardId, false);
+        return sharedPreferences.getBoolean("isRequested_" +  boardId + "_" + userId, false);
     }
 
     private int getUserId() {
