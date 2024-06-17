@@ -101,6 +101,10 @@ public class ChatActivity extends AppCompatActivity {
                 messageInput.setText("");
                 chatAdapter.fetchMessages(() -> recyclerView.scrollToPosition(messageList.size() - 1));
             });
+
+            messageInput.setText("");
+            swipeRefreshLayout.setRefreshing(true);
+            chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
         } else {
             Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
         }

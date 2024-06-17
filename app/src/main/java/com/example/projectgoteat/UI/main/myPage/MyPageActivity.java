@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI.auth.LoginActivity;
 import com.example.projectgoteat.UI.main.MainActivity;
@@ -46,6 +47,7 @@ public class MyPageActivity extends AppCompatActivity {
     private Button btn_review;
     private Button btn_logout;
     private ImageButton btnHome, btnChat, btnProfile;
+    private ImageView profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class MyPageActivity extends AppCompatActivity {
         pvNickname = findViewById(R.id.pvNickname); // ID 일치 확인
         pvPoint = findViewById(R.id.pvPoint); // ID 일치 확인
 
+        profileImage = findViewById(R.id.profile_image);
         btn_point = findViewById(R.id.btn_point);
         btn_scrap = findViewById(R.id.btn_scrap);
         btn_review = findViewById(R.id.btn_review);
@@ -162,6 +165,7 @@ public class MyPageActivity extends AppCompatActivity {
                         pvNickname.setText("닉네임 : " + String.valueOf(userInfo.get("profile_name")));
                         pvRank.setText("등급 : " + String.valueOf(userInfo.get("rank")));
                         pvPoint.setText("포인트 : " + String.valueOf(((Double) userInfo.get("point")).intValue()));
+                        Glide.with(MyPageActivity.this).load(userInfo.get("image")).into(profileImage);
                     }
                 } else {
                     Log.e(TAG, "Response not successful");

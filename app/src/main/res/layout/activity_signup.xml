@@ -7,31 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".UI.auth.SignupActivity">
 
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+    <RelativeLayout
+        android:id="@+id/profile_image_box"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/et_name">
+        <!-- 첫 번째 이미지 -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="157dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/rectangle4"
+            app:shapeAppearanceOverlay="@style/addimage" />
+        <ImageView
+            android:id="@+id/uploadicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/vector" />
+    </RelativeLayout>
 
     <EditText
         android:id="@+id/et_name"
         android:layout_width="305dp"
         android:layout_height="53dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="168dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="이름"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_image_box"
         app:layout_constraintWidth_percent="1" />
 
     <EditText
@@ -49,46 +62,48 @@
         app:layout_constraintTop_toBottomOf="@+id/et_name"
         app:layout_constraintWidth_percent="1" />
 
-    <EditText
-        android:id="@+id/et_id"
-        android:layout_width="189dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="38dp"
-        android:ems="10"
-        android:hint="아이디"
-        android:inputType="text"
-        app:layout_constraintEnd_toStartOf="@+id/btn_check_id"
+    <LinearLayout
+        android:id="@+id/ll_id_check"
+        android:layout_width="306dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_nickname"
-        app:layout_constraintWidth_percent="0.7" />
+        app:layout_constraintWidth_percent="1"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
 
-    <Button
-        android:id="@+id/btn_check_id"
-        android:layout_width="101dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="35dp"
-        android:text="중복체크"
-        android:background="@drawable/button"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_id"
-        app:layout_constraintTop_toTopOf="@+id/et_id"
-        app:layout_constraintWidth_percent="0.3" />
+        <EditText
+            android:id="@+id/et_id"
+            android:layout_width="200dp"
+            android:layout_height="53dp"
+            android:ems="10"
+            android:hint="아이디"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btn_check_id"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:text="중복체크"
+            android:background="@drawable/button"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/et_pass"
         android:layout_width="303dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="비밀번호"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_id"
+        app:layout_constraintTop_toBottomOf="@+id/ll_id_check"
         app:layout_constraintWidth_percent="1" />
 
     <Button
