@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".PlacePickerActivity">
+    tools:context=".UI.main.board.addPost.PlacePickerActivity">
 
     <!-- Header Bar -->
     <LinearLayout
@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="19dp"
-        android:background="@color/button"
+        android:background="@drawable/button"
         android:text="등록"
         android:textColor="@color/white"
         android:textSize="20sp"

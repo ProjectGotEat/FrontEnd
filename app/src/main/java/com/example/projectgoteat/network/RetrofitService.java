@@ -1,7 +1,7 @@
 package com.example.projectgoteat.network;
 
-import com.example.projectgoteat.Review;
-import com.example.projectgoteat.Report;
+import com.example.projectgoteat.model.Review;
+import com.example.projectgoteat.model.Report;
 import com.example.projectgoteat.model.BoardDetailResponse;
 
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -111,6 +112,9 @@ public interface RetrofitService {
 
     @POST("board/{id}/scrap")
     Call<Void> postScrap(@Header("uid") String uid, @Path("id") int bid);
+
+    @DELETE("board/{id}/scrap")
+    Call<Void> deleteScrap(@Header("uid") String uid, @Path("id") int bid);
 
     @GET("auth/user-id")
     Call<Integer> getUserId(@Header("Authorization") String token);

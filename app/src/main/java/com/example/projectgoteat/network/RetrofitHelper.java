@@ -2,6 +2,8 @@ package com.example.projectgoteat.network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 import android.net.Uri;
@@ -131,15 +133,38 @@ public class RetrofitHelper {
     }
 
     public static File getFileFromUri(Context context, Uri uri) throws IOException {
-        File tempFile = File.createTempFile("temp", null, context.getCacheDir());
-        tempFile.deleteOnExit();
+//        File tempFile = File.createTempFile("temp", null, context.getCacheDir());
+//        tempFile.deleteOnExit();
+
+        String fileName = null;
+        Cursor cursor = null;
+        try {
+            String[] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+            cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+                fileName = cursor.getString(columnIndex);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        File directory = new File(context.getFilesDir(), "uploads");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // 저장할 파일 생성
+        File outputFile = new File(directory, fileName);
 
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
         if (inputStream == null) {
             throw new IOException("URI에서 InputStream을 열 수 없습니다: " + uri);
         }
 
-        FileOutputStream outputStream = new FileOutputStream(tempFile);
+        FileOutputStream outputStream = new FileOutputStream(outputFile);
         byte[] buffer = new byte[4 * 1024];
         int read;
         while ((read = inputStream.read(buffer)) != -1) {
@@ -149,7 +174,7 @@ public class RetrofitHelper {
         outputStream.close();
         inputStream.close();
 
-        return tempFile;
+        return outputFile;
     }
 
     public static void getBoardDetail(Context context, int boardId, int userId, final ApiCallback<BoardDetailResponse> callback) {

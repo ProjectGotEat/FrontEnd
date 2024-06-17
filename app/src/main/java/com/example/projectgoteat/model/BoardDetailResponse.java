@@ -22,6 +22,8 @@ public class BoardDetailResponse {
     private double longitude;
     private int is_finished;
     private int is_reusable;
+    private int is_requested;
+    private int is_full;
 
     // Getters and Setters
 
@@ -176,4 +178,12 @@ public class BoardDetailResponse {
     public void setIs_reusable(int is_reusable) {
         this.is_reusable = is_reusable;
     }
+
+    public int getIs_requested() { return is_requested; }
+
+    public void setIs_requested(int is_requested) { this.is_requested = is_requested; }
+
+    public void setIs_full(int is_full) { this.is_full = is_full; }
+
+    public int getIs_full() { return is_full; }
 }

@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!--<data>
-        <variable
-            name="item"
-            type="com.example.myapplication.BoardItem" />
-        <import type="android.view.View"/>
-    </data>-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_member"
@@ -92,7 +86,7 @@
 
                 <TextView
                     android:id="@+id/textViewMittingLocationText"
-                    android:layout_width="170dp"
+                    android:layout_width="160dp"
                     android:layout_height="25dp"
                     android:textSize="15sp"
                     android:layout_row="2"

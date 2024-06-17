@@ -147,39 +147,37 @@
 
                 <LinearLayout
                     android:id="@+id/user_info"
-                    android:layout_width="199dp"
-                    android:layout_height="72dp"
+                    android:layout_width="235dp"
+                    android:layout_height="74dp"
                     android:layout_marginEnd="4dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
 
                     <LinearLayout
                         android:id="@+id/ID_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/ID"
-                            android:textColor="#808080"
-                            android:textSize="14sp"
-                            android:layout_marginEnd="4dp"
+                            android:textColor="#43B43D"
+                            android:textSize="18sp"
+                            android:layout_marginEnd="6dp"
                             android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="소분 진행자 : " />
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:text="소분 진행자   |" />
 
                         <TextView
                             android:id="@+id/ID_input"
                             android:textColor="#808080"
-                            android:textSize="14sp"
-                            android:layout_marginEnd="4dp"
+                            android:textSize="18sp"
                             android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="name" />
+                            android:layout_width="wrap_content"
+                            android:text="" />
 
                     </LinearLayout>
 
@@ -192,23 +190,22 @@
 
                         <TextView
                             android:id="@+id/rank"
-                            android:textColor="#808080"
-                            android:textSize="14sp"
-                            android:layout_marginEnd="4dp"
+                            android:textColor="#43B43D"
+                            android:textSize="18sp"
+                            android:layout_marginEnd="6dp"
                             android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="등급 : " />
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:text="등급 　　 　 |" />
 
                         <TextView
                             android:id="@+id/rank_input"
                             android:textColor="#808080"
-                            android:textSize="14sp"
+                            android:textSize="18sp"
                             android:layout_marginEnd="4dp"
                             android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:text="rank" />
+                            android:layout_width="wrap_content"
+                            android:text="" />
 
                     </LinearLayout>
 
@@ -248,13 +245,14 @@
 
                     <TextView
                         android:id="@+id/category"
-                        android:textColor="#808080"
+                        android:textColor="#43B43D"
                         android:textSize="18sp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="10dp"
                         android:layout_weight="1"
-                        android:text="카테고리 : " />
+                        android:textStyle="bold"
+                        android:text="카테고리   |" />
 
                     <TextView
                         android:id="@+id/category_input"
@@ -262,9 +260,9 @@
                         android:textSize="18sp"
                         android:layout_marginEnd="4dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="150dp"
                         android:layout_weight="1"
-                        android:text="category" />
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -277,13 +275,15 @@
 
                     <TextView
                         android:id="@+id/place"
-                        android:textColor="#808080"
+                        android:textColor="#43B43D"
                         android:textSize="18sp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="10dp"
                         android:layout_weight="1"
-                        android:text="장소 : " />
+                        android:layout_gravity="top"
+                        android:textStyle="bold"
+                        android:text="장소          |" />
 
                     <TextView
                         android:id="@+id/place_input"
@@ -291,9 +291,9 @@
                         android:textSize="18sp"
                         android:layout_marginEnd="4dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="150dp"
                         android:layout_weight="1"
-                        android:text="location" />
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -306,13 +306,14 @@
 
                     <TextView
                         android:id="@+id/time"
-                        android:textColor="#808080"
+                        android:textColor="#43B43D"
                         android:textSize="18sp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="10dp"
                         android:layout_weight="1"
-                        android:text="시간 :" />
+                        android:textStyle="bold"
+                        android:text="시간          |" />
 
                     <TextView
                         android:id="@+id/time_input"
@@ -320,9 +321,9 @@
                         android:textSize="18sp"
                         android:layout_marginEnd="4dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="150dp"
                         android:layout_weight="1"
-                        android:text="time" />
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -334,13 +335,14 @@
 
                     <TextView
                         android:id="@+id/amount"
-                        android:textColor="#808080"
+                        android:textColor="#43B43D"
                         android:textSize="18sp"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="10dp"
                         android:layout_weight="1"
-                        android:text="분량 :" />
+                        android:textStyle="bold"
+                        android:text="분량          |" />
 
                     <TextView
                         android:id="@+id/amount_input"
@@ -348,9 +350,9 @@
                         android:textSize="18sp"
                         android:layout_marginEnd="4dp"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
+                        android:layout_width="150dp"
                         android:layout_weight="1"
-                        android:text="amount" />
+                        android:text="" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -369,13 +371,14 @@
 
                 <TextView
                     android:id="@+id/cost"
-                    android:textColor="#808080"
+                    android:textColor="#43B43D"
                     android:textSize="18sp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="6dp"
                     android:layout_height="wrap_content"
-                    android:layout_width="0dp"
+                    android:layout_width="10dp"
                     android:layout_weight="1"
-                    android:text="금액 :" />
+                    android:textStyle="bold"
+                    android:text="금액          |" />
 
                 <TextView
                     android:id="@+id/cost_input"
@@ -383,9 +386,9 @@
                     android:textSize="18sp"
                     android:layout_marginEnd="4dp"
                     android:layout_height="wrap_content"
-                    android:layout_width="0dp"
+                    android:layout_width="150dp"
                     android:layout_weight="1"
-                    android:text="price" />
+                    android:text="" />
             </LinearLayout>
 
             <Button
@@ -393,7 +396,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="19dp"
-                android:background="@color/button"
+                android:background="@drawable/button"
                 android:elevation="20dp"
                 android:text="소분 참여"
                 android:textColor="@color/white"

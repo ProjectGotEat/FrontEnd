@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".UI.auth.LoginActivity">
 
     <ImageView
         android:id="@+id/logo"
@@ -23,8 +23,8 @@
         android:layout_height="58dp"
         android:layout_marginTop="20dp"
         android:text="로그인"
-        android:background="#009000"
         android:textColor="#FFFFFF"
+        android:background="@drawable/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
         android:layout_height="58dp"
         android:layout_marginTop="16dp"
         android:text="회원가입"
-        android:background="#009000"
+        android:background="@drawable/button"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

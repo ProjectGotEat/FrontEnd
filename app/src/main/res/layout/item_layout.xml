@@ -38,19 +38,19 @@
 
         <Button
             android:id="@+id/btnSuccess"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:text="거래완료"
             android:textColor="@android:color/white"
-            android:background="@color/green" />
+            android:background="@drawable/button" />
 
         <Button
             android:id="@+id/btnFail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:text="거래실패"
             android:textColor="@android:color/white"
-            android:background="@color/red"
+            android:background="@drawable/button_red"
             android:layout_marginStart="8dp" />
 
     </LinearLayout>
