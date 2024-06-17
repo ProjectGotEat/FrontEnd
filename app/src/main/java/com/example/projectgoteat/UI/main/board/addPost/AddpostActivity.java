@@ -27,12 +27,15 @@ import androidx.core.content.ContextCompat;
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI._globalUtil.UIHelper;
 import com.example.projectgoteat.UI._globalUtil.UnitSpinnerUtil;
+import com.example.projectgoteat.UI.main.MainActivity;
 import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class AddpostActivity extends AppCompatActivity {
 
@@ -59,6 +62,8 @@ public class AddpostActivity extends AppCompatActivity {
     private int selectedSubCategory = -1;
 
     private boolean postRegistered = false; // 변수 추가
+
+    private String sendMeetingDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +101,10 @@ public class AddpostActivity extends AppCompatActivity {
         Button postButton = findViewById(R.id.post_button);
         postButton.setOnClickListener(v -> {
             registerPost(); // registerPost 메서드 호출
-            // Intent intent = new Intent(getApplicationContext(), CartActivity.class);
-            // startActivity(intent);
+            if (postRegistered) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
             // 현재 액티비티 종료
         });
 
@@ -127,7 +134,11 @@ public class AddpostActivity extends AppCompatActivity {
     }
 
     private void updateTimeInputTextView() {
-        String formattedDateTime = android.text.format.DateFormat.format("yyyy-MM-dd'T'HH:mm:ss", calendar).toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul")); // UTC 시간대 설정
+        sendMeetingDate = dateFormat.format(calendar.getTime());
+        // sendMeetingDate = android.text.format.DateFormat.format("yyyy-MM-dd'T'HH:mm:ss", calendar).toString(); // 서버 전송용 약속 시간
+        String formattedDateTime = android.text.format.DateFormat.format("yyyy년 MM월 dd일 HH시 mm분", calendar).toString(); // 화면 표시용 약속 시간
         timeInputTextView.setText(formattedDateTime);
     }
 
@@ -262,7 +273,6 @@ public class AddpostActivity extends AppCompatActivity {
             int totalPrice = Integer.parseInt(((EditText) findViewById(R.id.cost_input)).getText().toString());
             int quantity = Integer.parseInt(((EditText) findViewById(R.id.amount_input)).getText().toString());
             String meetingLocation = placeInput.getText().toString();
-            String meetingTime = timeInputTextView.getText().toString();
             boolean isUp = ((CheckBox) findViewById(R.id.pointuse_checkbox)).isChecked();
             boolean isReusable = ((CheckBox) findViewById(R.id.container_checkbox)).isChecked();
             String scale = ((Spinner) findViewById(R.id.unit_spinner)).getSelectedItem().toString();
@@ -280,7 +290,7 @@ public class AddpostActivity extends AppCompatActivity {
             board.setTotal_price(totalPrice);
             board.setQuantity(quantity);
             board.setMeeting_location(meetingLocation);
-            board.setMeeting_time(meetingTime);
+            board.setMeeting_time(sendMeetingDate);
             board.setIs_up(isUp);
             board.setIs_reusable(isReusable);
             board.setScale(scale);

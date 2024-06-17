@@ -2,6 +2,7 @@ package com.example.projectgoteat.UI.main.board;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -90,15 +91,27 @@ public class CartActivity extends AppCompatActivity {
 
     private void updateUI(BoardDetailResponse response) {
         placeInput.setText(response.getMeeting_location());
-        timeInput.setText(response.getMeeting_time());
+        String meetingTime = response.getMeeting_time().substring(0, 4) + "년 "
+                + response.getMeeting_time().substring(5, 7) + "월 "
+                + response.getMeeting_time().substring(8, 10) + "일  "
+                + response.getMeeting_time().substring(11, 13) + "시 "
+                + response.getMeeting_time().substring(14, 16) + "분";
+        timeInput.setText(meetingTime);
         amountInput.setText(String.valueOf(response.getEach_quantity()) + " " + response.getScale());
-        costInput.setText(String.valueOf(response.getEach_price()));
+        costInput.setText(String.valueOf(response.getEach_price()) + "원");
         categoryInput.setText(response.getCategory());
         titleText.setText(response.getItem_name());
-
+        
+        if (response.getIs_full() == 1) { // 선착순 마감된 소분인 경우, 버튼 비활성화 처리
+            postButton.setEnabled(false);
+            postButton.setBackgroundResource(R.drawable.button_disabled);
+            postButton.setText("선착순 마감되었습니다.");
+        }
+        
         if (response.getIs_requested() == 1) { // 이미 신청한 소분인 경우, 버튼 비활성화 처리
             postButton.setEnabled(false);
-            postButton.setText("요청 제출됨");
+            postButton.setBackgroundResource(R.drawable.button_disabled);
+            postButton.setText("요청되었습니다.");
         }
 
         try {
@@ -116,7 +129,8 @@ public class CartActivity extends AppCompatActivity {
 
         if (response.isIs_finished() == 1) {
             postButton.setEnabled(false);
-            postButton.setText("소분 완료됨");
+            postButton.setBackgroundResource(R.drawable.button_disabled);
+            postButton.setText("종료된 소분입니다.");
         }
 
         boardDetailResponse = response;
@@ -133,10 +147,10 @@ public class CartActivity extends AppCompatActivity {
         RetrofitHelper.requestBoard(this, boardId, userId, organizerId, new ApiCallback<Void>() {
             @Override
             public void onSuccess(Void response) {
-                saveRequestedStatus();
                 Toast.makeText(CartActivity.this, "요청이 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                 // 성공적인 요청 후 버튼을 비활성화하고 텍스트를 변경합니다.
                 postButton.setEnabled(false);
+                postButton.setBackgroundResource(R.drawable.button_disabled);
                 postButton.setText("요청 제출됨");
             }
 
@@ -145,18 +159,6 @@ public class CartActivity extends AppCompatActivity {
                 Toast.makeText(CartActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void saveRequestedStatus() {
-        SharedPreferences sharedPreferences = getSharedPreferences("RequestedStatus", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isRequested_" + boardId + "_" + userId, true);
-        editor.apply();
-    }
-
-    private boolean isAlreadyRequested() {
-        SharedPreferences sharedPreferences = getSharedPreferences("RequestedStatus", MODE_PRIVATE);
-        return sharedPreferences.getBoolean("isRequested_" +  boardId + "_" + userId, false);
     }
 
     private int getUserId() {

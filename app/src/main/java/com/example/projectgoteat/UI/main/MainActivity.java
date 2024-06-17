@@ -205,11 +205,11 @@ public class MainActivity extends AppCompatActivity {
             String title = String.valueOf(boardMap.get("item_name")) + " | 총 " + strQuantity + String.valueOf(boardMap.get("scale"));
             String eachPrice = strEachQuantity + String.valueOf(boardMap.get("scale")) + " 당 " + strEachPrice + "원";
             String location = "장소 : " + String.valueOf(boardMap.get("meeting_location"));
-            String participants = "인원 : " + strPartHeadcnt + "/" + strHeadcnt;
+            String participantsStatus = "인원 : " + strPartHeadcnt + "/" + strHeadcnt;
             String category = String.valueOf(boardMap.get("category"));
             boolean isBookmarked = "1".equals(strIsScraped);
             String imageUrl = String.valueOf(boardMap.get("item_image1"));
-            itemList.add(new BoardItem(bid, imageUrl, title, eachPrice, location, participants, category, isBookmarked, isFinished));
+            itemList.add(new BoardItem(bid, imageUrl, title, eachPrice, location, participantsStatus, category, isBookmarked, isFinished, strHeadcnt, strPartHeadcnt));
         }
 
         BoardAdapter adapter = new BoardAdapter(MainActivity.this, itemList);

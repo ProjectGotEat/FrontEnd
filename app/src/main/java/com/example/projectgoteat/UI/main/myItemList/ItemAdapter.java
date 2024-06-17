@@ -41,7 +41,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = itemList.get(position);
         holder.itemName.setText(item.getTitle());
-        holder.itemDate.setText(item.getMeetingTime());
+        String meetingTime = item.getMeetingTime().substring(0, 4) + "년 "
+                + item.getMeetingTime().substring(5, 7) + "월 "
+                + item.getMeetingTime().substring(8, 10) + "일  "
+                + item.getMeetingTime().substring(11, 13) + "시 "
+                + item.getMeetingTime().substring(14, 16) + "분";
+        holder.itemDate.setText("약속 일시:  " + meetingTime);
         holder.itemRecentMessage.setText(item.getMessage());
 
         holder.itemView.setOnClickListener(v -> {
