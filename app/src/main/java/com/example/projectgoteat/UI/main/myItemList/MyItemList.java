@@ -56,7 +56,7 @@ public class MyItemList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_sejin);
+        setContentView(R.layout.activity_myitemlist);
 
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         uid = sharedPreferences.getInt("uid", -1);

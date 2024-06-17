@@ -15,10 +15,13 @@
 
         <Button
             android:id="@+id/refreshButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Refresh"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/button"
+            android:textColor="#FFFFFF"
+            android:text="새로고침"
             android:layout_gravity="end"
+            android:layout_marginRight="10dp"
             android:padding="8dp"/>
     </androidx.appcompat.widget.Toolbar>
 
@@ -49,8 +52,10 @@
 
         <Button
             android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send" />
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:background="@drawable/button"
+            android:textColor="#FFFFFF"
+            android:text="전송" />
     </LinearLayout>
 </LinearLayout>

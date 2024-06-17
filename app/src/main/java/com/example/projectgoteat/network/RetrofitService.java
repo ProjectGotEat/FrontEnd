@@ -89,8 +89,9 @@ public interface RetrofitService {
     @GET("board/search") // 3.2.1 일반 검색어 검색, 3.2.2 필터 적용하여 검색
     Call<List<HashMap<String, Object>>> getBoardSearch(@Header("uid") String uid, @Query("keyword") String keyword, @Query("category") String category);
 
+    @Multipart
     @POST("auth/join") // 1.1 회원가입
-    Call<Void> postAuthJoin(@Body Map<String, Object> requestBody);
+    Call<Void> postAuthJoin(@Part MultipartBody.Part profile_image, @Part("user") RequestBody UserJson);
 
     @POST("auth/log-in") // 1.2 로그인
     Call<HashMap<String, Object>> postAuthLogin(@Body Map<String, Object> requestBody);
