@@ -71,7 +71,7 @@ public class ScrapActivity extends AppCompatActivity {
                         String strQuantity = String.valueOf(((Double) ScrapMap.get("quantity")).intValue());
                         String strEachQuantity = String.valueOf(((Double) ScrapMap.get("each_quantity")).intValue());
                         String strEachPrice = String.valueOf(((Double) ScrapMap.get("each_price")).intValue());
-                        String strPartHeadcnt = String.valueOf(((Double) ScrapMap.get("participantsHeadcnt")).intValue());
+                        String strPartHeadcnt = String.valueOf(((Double) ScrapMap.get("participants_headcnt")).intValue());
                         String strHeadcnt = String.valueOf(((Double) ScrapMap.get("headcnt")).intValue());
                         String strIsScraped = String.valueOf(((Double) ScrapMap.get("isScraped")).intValue());
                         boolean isFinished = "1".equals(String.valueOf(((Double) ScrapMap.get("isFinished")).intValue()));
