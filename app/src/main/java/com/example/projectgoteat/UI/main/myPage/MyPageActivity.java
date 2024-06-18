@@ -39,9 +39,6 @@ public class MyPageActivity extends AppCompatActivity {
     private TextView pvRank;
     private TextView pvPoint;
 
-    private ImageView imageView9;
-    private ImageView imageView8;
-    private TextView tvmypage;
     private Button btn_point;
     private Button btn_scrap;
     private Button btn_review;
@@ -162,9 +159,9 @@ public class MyPageActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     HashMap<String, Object> userInfo = response.body();
                     if (userInfo != null) {
-                        pvNickname.setText("닉네임 : " + String.valueOf(userInfo.get("profile_name")));
-                        pvRank.setText("등급 : " + String.valueOf(userInfo.get("rank")));
-                        pvPoint.setText("포인트 : " + String.valueOf(((Double) userInfo.get("point")).intValue()));
+                        pvNickname.setText(String.valueOf(userInfo.get("profile_name")));
+                        pvRank.setText(String.valueOf(userInfo.get("rank")));
+                        pvPoint.setText(String.valueOf(((Double) userInfo.get("point")).intValue()));
                         Glide.with(MyPageActivity.this).load(userInfo.get("image")).into(profileImage);
                     }
                 } else {
