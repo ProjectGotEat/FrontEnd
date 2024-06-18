@@ -158,7 +158,7 @@ public class MyItemList extends AppCompatActivity {
                     List<Item> items = new ArrayList<>();
                     if (response.code() != 204 && response.body() != null) {
                         for (HashMap<String, Object> map : response.body()) {
-                            items.add(convertMapToItem(map));
+                            items.add(convertMapToItem(map, listIndex));
                         }
                     }
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -187,15 +187,19 @@ public class MyItemList extends AppCompatActivity {
         });
     }
 
-    private Item convertMapToItem(HashMap<String, Object> map) {
+    private Item convertMapToItem(HashMap<String, Object> map, int listIndex) {
         String title = (String) map.get("title");
         String meetingTime = (String) map.get("meeting_time");
         String message = (String) map.get("message");
+        String hasReview = "";
+        if (listIndex == 2) { // 종료된 소분인 경우에만 사용되는 정보(리뷰 작성 완료 여부)
+            hasReview = String.valueOf(((Number) map.get("has_review")).intValue());
+        }
         int id = map.get("id") != null ? ((Number) map.get("id")).intValue() : 0;
         int revieweeId = map.get("reviewee_id") != null ? ((Number) map.get("reviewee_id")).intValue() : 0;
         int organizerId = map.get("organizer_id") != null ? ((Number) map.get("organizer_id")).intValue() : 0;
         int userId = map.get("user_id") != null ? ((Number) map.get("user_id")).intValue() : 0;
-        return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId);
+        return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId, hasReview);
     }
 
     public void showSuccessDialog(Item item) {
@@ -206,6 +210,7 @@ public class MyItemList extends AppCompatActivity {
                     Log.d(TAG, "Marking item as success with ID: " + item.getParticipantId());
                     markItemSuccess(item.getParticipantId());
                     dialog.dismiss();
+                    loadData();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
                 .create()
@@ -245,6 +250,7 @@ public class MyItemList extends AppCompatActivity {
                     Log.d(TAG, "Marking item as failed with ID: " + item.getParticipantId());
                     markItemFail(item.getParticipantId());
                     dialog.dismiss();
+                    loadData();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
                 .create()
@@ -294,6 +300,7 @@ public class MyItemList extends AppCompatActivity {
                     Log.d(TAG, "Rating: " + rating);
                     submitReview(participantId, revieweeId, rating, reviewContent);
                     dialog.dismiss();
+                    loadData();
                 })
                 .setNegativeButton("취소", (dialog, id) -> dialog.dismiss())
                 .create()
