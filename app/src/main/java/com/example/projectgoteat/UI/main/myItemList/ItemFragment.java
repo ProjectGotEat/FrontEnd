@@ -23,7 +23,6 @@ public class ItemFragment extends Fragment {
     private MyItemList myItemList;
     private boolean isCompletedItems;
     private int uid;
-    private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
 
     public static ItemFragment newInstance(List<Item> itemList, boolean isCompletedItems, int uid) {
@@ -54,30 +53,22 @@ public class ItemFragment extends Fragment {
             isCompletedItems = getArguments().getBoolean("isCompletedItems");
             uid = getArguments().getInt("uid");
         }
-        if (itemList == null) {
-            itemList = new ArrayList<>();
-        }
-        itemAdapter = new ItemAdapter(itemList, myItemList, isCompletedItems, uid);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item, container, false);
-        recyclerView = view.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        itemAdapter = new ItemAdapter(itemList, myItemList, isCompletedItems, uid);
         recyclerView.setAdapter(itemAdapter);
         return view;
     }
 
     public void updateItems(List<Item> newItemList) {
-        if (itemList == null) {
-            itemList = new ArrayList<>();
-        }
         itemList.clear();
         itemList.addAll(newItemList);
-        if (itemAdapter != null) {
-            itemAdapter.notifyDataSetChanged();
-        }
+        itemAdapter.notifyDataSetChanged();
     }
 }
