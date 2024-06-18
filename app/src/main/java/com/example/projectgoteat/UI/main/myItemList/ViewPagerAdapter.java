@@ -1,5 +1,7 @@
 package com.example.projectgoteat.UI.main.myItemList;
 
+import android.util.SparseArray;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -12,6 +14,7 @@ import java.util.List;
 public class ViewPagerAdapter extends FragmentStateAdapter {
     private List<List<Item>> itemLists;
     private int uid;
+    private SparseArray<ItemFragment> registeredFragments = new SparseArray<>();
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<List<Item>> itemLists, int uid) {
         super(fragmentActivity);
@@ -23,7 +26,9 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         boolean isCompletedItems = (position == 2);
-        return ItemFragment.newInstance(itemLists.get(position), isCompletedItems, uid);
+        ItemFragment fragment = ItemFragment.newInstance(itemLists.get(position), isCompletedItems, uid);
+        registeredFragments.put(position, fragment);
+        return fragment;
     }
 
     @Override
@@ -39,5 +44,12 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public boolean containsItem(long itemId) {
         return itemId < getItemCount();
+    }
+
+    public void updateFragment(int position, List<Item> items) {
+        ItemFragment fragment = registeredFragments.get(position);
+        if (fragment != null) {
+            fragment.updateItems(items);
+        }
     }
 }

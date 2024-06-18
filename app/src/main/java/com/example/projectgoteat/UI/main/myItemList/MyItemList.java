@@ -164,7 +164,7 @@ public class MyItemList extends AppCompatActivity {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         itemLists.get(listIndex).clear();
                         itemLists.get(listIndex).addAll(items);
-                        viewPagerAdapter.notifyDataSetChanged();
+                        viewPagerAdapter.updateFragment(listIndex, items);
                         swipeRefreshLayout.setRefreshing(false);
                     });
                 } else {

@@ -47,7 +47,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 + item.getMeetingTime().substring(11, 13) + "시 "
                 + item.getMeetingTime().substring(14, 16) + "분";
         holder.itemDate.setText("약속 일시:  " + meetingTime);
-        holder.itemRecentMessage.setText("최근 대화:  " + item.getMessage());
+        String message = "최근 대화:  ";
+        if (item.getMessage() != null) {
+            message += item.getMessage();
+        }
+        holder.itemRecentMessage.setText(message);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(myItemList, ChatActivity.class);

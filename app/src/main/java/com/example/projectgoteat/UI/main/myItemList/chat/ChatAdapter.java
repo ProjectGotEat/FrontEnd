@@ -157,7 +157,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         if (holder.profileImageView != null) {
             Glide.with(holder.profileImageView.getContext())
                     .load(message.getProfileImage())
-                    .placeholder(R.drawable.ic_profile_placeholder)
                     .circleCrop()
                     .into(holder.profileImageView);
         }
