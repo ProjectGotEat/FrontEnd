@@ -38,8 +38,6 @@
         <activity android:name="com.example.projectgoteat.UI.main.myItemList.chat.ChatActivity" android:exported="true" android:parentActivityName="com.example.projectgoteat.UI.main.myItemList.MyItemList">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.projectgoteat.UI.main.myItemList.MyItemList" />
         </activity>
-        <activity android:name="com.example.projectgoteat.UI.auth.SuccessActivity" android:exported="true" />
-        <activity android:name="com.example.projectgoteat.UI.auth.FailActivity" android:exported="true" />
         <activity android:name="com.example.projectgoteat.UI.main.board.addPost.AddpostActivity" android:exported="true">
         </activity>
         <activity android:name="com.example.projectgoteat.UI.main.myPage.review.ReviewActivity" android:exported="false" />
