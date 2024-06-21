@@ -22,8 +22,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,9 +83,41 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                         int senderId = ((Double) messageObject.get("sender_id")).intValue();
                         int receiverId = ((Double) messageObject.get("receiver_id")).intValue();
 
+                        // 오늘 수신/발신한 쪽지인지 판단하기 위해 오늘 날짜 취득
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul")); // UTC 시간대 설정
+                        String nowDate = formatter.format(calendar.getTime());
+                        // 서버로부터 받은 수신/발신 일자(createdDate), 일시(createdTime) 취득
+                        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                        outputFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                        String createdAt = (String) messageObject.get("created_at");
+                        String printDate = "";
+                        try {
+                            Date date = inputFormat.parse(createdAt);
+                            // 18시간을 더함
+                            long timeInMillis = date.getTime();
+                            timeInMillis += 9 * 60 * 60 * 1000; // 18시간을 밀리초로 변환하여 더함
+                            date = new Date(timeInMillis);
+                            printDate = outputFormat.format(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        String createdDate = printDate.substring(0, 4) + "-"
+                                + printDate.substring(5, 7) + "-"
+                                + printDate.substring(8, 10);
+                        String createdTime = printDate.substring(11, 13) + ":" + printDate.substring(14, 16);
+                        // 화면에 표시할 시간 정의
+                        printDate = createdTime;
+                        if (!nowDate.equals(createdDate)) { // 오늘 수신/발신한 쪽지가 아니라면, 일자 + 시간 형태로 표시
+                            printDate = createdDate + " " + createdTime;
+                        }
+
                         Log.d(TAG, "Message received - profileName: " + profileName + ", content: " + content);
 
-                        Message message = new Message(profileName, profileImage, content, senderId, receiverId);
+                        Message message = new Message(profileName, profileImage, content, senderId, receiverId, printDate);
                         messageList.add(message);
                     }
 
@@ -160,6 +197,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     .circleCrop()
                     .into(holder.profileImageView);
         }
+        holder.createdAtTextView.setText(message.getCreatedAt());
     }
 
     @Override
@@ -180,12 +218,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         ImageView profileImageView;
         TextView profileNameTextView;
         TextView messageTextView;
+        TextView createdAtTextView;
 
         MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImageView = itemView.findViewById(R.id.profileImageView);
             profileNameTextView = itemView.findViewById(R.id.profileNameTextView);
             messageTextView = itemView.findViewById(R.id.messageTextView);
+            createdAtTextView = itemView.findViewById(R.id.createdAtTextView);
         }
     }
 }

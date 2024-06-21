@@ -78,7 +78,10 @@ public class PointHistoryActivity extends AppCompatActivity {
                         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
                             Date date = inputFormat.parse(strCreatedAt);
-                            outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                            outputFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                            long timeInMillis = date.getTime();
+                            timeInMillis += 9 * 60 * 60 * 1000; // 18시간을 밀리초로 변환하여 더함
+                            date = new Date(timeInMillis);
                             strCreatedAt = outputFormat.format(date);
                             itemList.add(new PointHistoryItem(strChangeReason, strChangePoint, strCreatedAt));
                         } catch (ParseException e) {
