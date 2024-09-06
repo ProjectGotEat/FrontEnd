@@ -52,6 +52,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.github.chrisbanes:Photoview:2.3.0")
+    implementation("com.google.maps.android:android-maps-utils:3.8.2")
     implementation(libs.insetter)
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     testImplementation("junit:junit:4.13.2")

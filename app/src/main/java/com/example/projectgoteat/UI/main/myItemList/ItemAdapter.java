@@ -43,9 +43,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.itemName.setText(item.getTitle());
         String meetingTime = item.getMeetingTime().substring(0, 4) + "년 "
                 + item.getMeetingTime().substring(5, 7) + "월 "
-                + item.getMeetingTime().substring(8, 10) + "일  "
-                + item.getMeetingTime().substring(11, 13) + "시 "
-                + item.getMeetingTime().substring(14, 16) + "분";
+                + item.getMeetingTime().substring(8, 10) + "일 "
+                + item.getMeetingTime().substring(11, 13) + ":"
+                + item.getMeetingTime().substring(14, 16);
         holder.itemDate.setText("약속 일시:  " + meetingTime);
         String message = "최근 대화:  ";
         if (item.getMessage() != null) {
@@ -60,7 +60,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         });
 
         if (isCompletedItems) {
-            holder.btnFail.setText("신고하기");
+            if ("1".equals(item.getHasReport())) {
+                holder.btnFail.setText("신고완료");
+                holder.btnFail.setEnabled(false);
+                holder.btnFail.setBackgroundResource(R.drawable.button_disabled);
+            } else {
+                holder.btnFail.setText("신고하기");
+                holder.btnFail.setEnabled(true);
+                holder.btnFail.setBackgroundResource(R.drawable.button_red);
+            }
             if ("1".equals(item.getHasReview())) {
                 holder.btnSuccess.setText("리뷰완료");
                 holder.btnSuccess.setEnabled(false);

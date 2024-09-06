@@ -7,6 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".UI.auth.SignupActivity">
 
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titletext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="회원가입"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="16dp" />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/profile_image_box"
         android:layout_width="150dp"
@@ -89,13 +108,15 @@
             android:layout_marginStart="16dp"
             android:text="중복체크"
             android:background="@drawable/button"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
     </LinearLayout>
 
     <EditText
         android:id="@+id/et_pass"
-        android:layout_width="303dp"
-        android:layout_height="55dp"
+        android:layout_width="306dp"
+        android:layout_height="53dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
@@ -105,6 +126,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_id_check"
         app:layout_constraintWidth_percent="1" />
+
+    <LinearLayout
+        android:id="@+id/ll_select_place"
+        android:layout_width="306dp"
+        android:layout_height="53dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_pass"
+        app:layout_constraintWidth_percent="1" >
+        <ImageView
+            android:id="@+id/icon_place"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/icon_place"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/et_pass"
+            app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv_place"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            android:textColor="#808080"
+            android:textSize="18sp"
+            android:text="거래 희망 장소 선택" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_register"
@@ -116,9 +164,11 @@
         android:text="회원가입"
         android:background="@drawable/button"
         android:textColor="#FFFFFF"
+        android:elevation="0dp"
+        android:stateListAnimator="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_pass"
+        app:layout_constraintTop_toBottomOf="@+id/ll_select_place"
         app:layout_constraintWidth_percent="1" />
 
     <Switch

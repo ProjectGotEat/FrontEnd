@@ -72,61 +72,53 @@
 
                 <!-- Image Upload Box -->
                 <LinearLayout
-                    android:id="@+id/imageUploadContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginBottom="2dp">
-
-                    <!-- 첫 번째 이미지 업로드 상자 -->
-                    <RelativeLayout
-                        android:id="@+id/first_image_box"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="19dp"
+                    android:layout_marginBottom="5dp"
+                    android:weightSum="2">
+                    <!-- 첫 번째 이미지 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        android:padding="5dp">
-                        <!-- 첫 번째 이미지 -->
+                        android:layout_marginRight="5dp"
+                        app:cardElevation="0dp" >
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/image"
                             android:layout_width="match_parent"
-                            android:layout_height="157dp"
-                            android:scaleType="fitXY"
+                            android:layout_height="160dp"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/rectangle4"
                             app:shapeAppearanceOverlay="@style/addimage" />
                         <ImageView
                             android:id="@+id/uploadicon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:src="@drawable/vector" />
-                    </RelativeLayout>
-
-
-                    <!-- 두 번째 이미지 업로드 상자 -->
-                    <RelativeLayout
-                        android:id="@+id/second_image_box"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    </androidx.cardview.widget.CardView>
+                    <!-- 두 번째 이미지 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="5dp"
-                        android:padding="5dp">
-
-                        <!-- 두 번째 이미지 -->
+                        android:layout_marginLeft="5dp"
+                        app:cardElevation="0dp" >
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/image_receipt"
                             android:layout_width="match_parent"
-                            android:layout_height="157dp"
-                            android:scaleType="fitXY"
+                            android:layout_height="160dp"
+                            android:scaleType="centerCrop"
                             android:src="@drawable/rectangle4"
                             app:shapeAppearanceOverlay="@style/addimage" />
                         <ImageView
                             android:id="@+id/uploadicon_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:src="@drawable/vector" />
-                    </RelativeLayout>
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -160,7 +152,8 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="14dp"
                     android:background="@drawable/rectangle1"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical">
+                </LinearLayout>
 
                 <!-- Name Layout -->
                 <LinearLayout
@@ -177,7 +170,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:elevation="40dp"
+                        android:elevation="6dp"
                         android:orientation="vertical"
                         android:paddingRight="7dp">
 
@@ -211,14 +204,6 @@
                                 android:textColor="#808080"
                                 android:textSize="18sp" />
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/text_underbar1"
-                            android:layout_width="90dp"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="66dp"
-                            android:background="@drawable/rectangle1"
-                            android:orientation="vertical"></LinearLayout>
                     </LinearLayout>
 
                     <!-- Product Box -->
@@ -227,7 +212,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:elevation="40dp"
+                        android:elevation="6dp"
                         android:orientation="vertical"
                         android:paddingRight="8dp">
 
@@ -257,14 +242,6 @@
                                 android:textColor="#808080"
                                 android:textSize="18sp" />
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/text_underbar2"
-                            android:layout_width="90dp"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="65dp"
-                            android:background="@drawable/rectangle1"
-                            android:orientation="vertical"></LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -284,11 +261,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="15dp"
                     android:background="@drawable/rectangle3"
-                    android:elevation="40dp"
+                    android:elevation="6dp"
                     android:orientation="vertical"
-                    android:paddingVertical="18dp"
+                    android:paddingVertical="15dp"
                     android:paddingRight="18dp">
 
                     <LinearLayout
@@ -296,7 +273,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -326,21 +303,13 @@
                             android:textAlignment="center"/>
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/text_underbar3"
-                        android:layout_width="251dp"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="66dp"
-                        android:background="@drawable/rectangle1"
-                        android:orientation="vertical"></LinearLayout>
-
                     <!-- People Layout -->
                     <LinearLayout
                         android:id="@+id/people"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="21dp"
-                        android:layout_marginBottom="11dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -366,21 +335,12 @@
                             android:textSize="18sp" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/text_underbar4"
-                        android:layout_width="251dp"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="66dp"
-                        android:background="@drawable/rectangle1"
-                        android:orientation="vertical"></LinearLayout>
-
                     <!-- Cost Layout -->
                     <LinearLayout
                         android:id="@+id/cost"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginBottom="10dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -404,25 +364,7 @@
                             android:textColor="#808080"
                             android:textSize="18sp" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/text_underbar5"
-                        android:layout_width="251dp"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="66dp"
-                        android:background="@drawable/rectangle1"
-                        android:orientation="vertical"></LinearLayout>
                 </LinearLayout>
-
-                <!-- Rectangle 8 -->
-                <LinearLayout
-                    android:id="@+id/rectangle8"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginBottom="13dp"
-                    android:background="@drawable/rectangle1"
-                    android:orientation="vertical"></LinearLayout>
 
                 <!-- Time and Place Layout -->
                 <LinearLayout
@@ -430,11 +372,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="15dp"
                     android:background="@drawable/rectangle2"
-                    android:elevation="40dp"
+                    android:elevation="6dp"
                     android:orientation="vertical"
-                    android:paddingVertical="18dp"
+                    android:paddingVertical="15dp"
                     android:paddingRight="18dp">
 
                     <!-- Place Layout -->
@@ -443,7 +385,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="12dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -467,22 +409,12 @@
                             android:textSize="18sp" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/text_underbar6"
-                        android:layout_width="251dp"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="66dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="@drawable/rectangle1"
-                        android:orientation="vertical"></LinearLayout>
-
                     <!-- Time Layout -->
                     <LinearLayout
                         android:id="@+id/time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -505,25 +437,7 @@
                             android:textSize="18sp"
                             android:onClick="showDateTimePicker"/>
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/text_underbar7"
-                        android:layout_width="251dp"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="66dp"
-                        android:background="@drawable/rectangle1"
-                        android:orientation="vertical"></LinearLayout>
                 </LinearLayout>
-
-                <!-- Rectangle 9 -->
-                <LinearLayout
-                    android:id="@+id/rectangle9"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/rectangle1"
-                    android:orientation="vertical"></LinearLayout>
 
                 <!-- Checkbox Layout -->
                 <LinearLayout
@@ -531,12 +445,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="15dp"
                     android:background="@drawable/rectangle2"
-                    android:elevation="40dp"
+                    android:elevation="6dp"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingVertical="17dp">
+                    android:paddingVertical="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -566,12 +480,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/rectangle2"
-                    android:elevation="40dp"
+                    android:elevation="6dp"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingVertical="17dp">
+                    android:paddingVertical="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -603,7 +517,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
                     android:background="@drawable/button"
-                    android:elevation="20dp"
+                    android:elevation="6dp"
                     android:text="등록하기"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />

@@ -1,8 +1,8 @@
 package com.example.projectgoteat.UI.main.board;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +16,8 @@ import com.example.projectgoteat.R;
 import com.example.projectgoteat.model.BoardDetailResponse;
 import com.example.projectgoteat.network.ApiCallback;
 import com.example.projectgoteat.network.RetrofitHelper;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -28,7 +30,6 @@ public class CartActivity extends AppCompatActivity {
     private TextView amountInput;
     private TextView costInput;
     private ImageView itemImage1;
-    private ImageView itemImage2;
 
     private ImageView receiptImage;
     private ImageView userImage;
@@ -39,6 +40,8 @@ public class CartActivity extends AppCompatActivity {
 
     private int userId;
     private int boardId; // 동적으로 받을 boardId
+    private String image_url;
+    private String receipt_url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,19 @@ public class CartActivity extends AppCompatActivity {
         // 소분 신청 버튼 클릭 이벤트 처리
         postButton.setOnClickListener(v -> handlePostButtonClick());
 
+        // 이미지 클릭 이벤트 처리
+        itemImage1.setOnClickListener(v -> {
+            Intent intent = new Intent(CartActivity.this, FullscreenImageActivity.class);
+            intent.putExtra("imageResId", image_url); // 이미지 리소스 ID 전달
+            startActivity(intent);
+        });
+
+        receiptImage.setOnClickListener(v -> {
+            Intent intent = new Intent(CartActivity.this, FullscreenImageActivity.class);
+            intent.putExtra("imageResId", receipt_url); // 이미지 리소스 ID 전달
+            startActivity(intent);
+        });
+
         // 이전 페이지 이동
         ImageView closeButton = findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> onBackPressed()); // 이전 페이지로 이동
@@ -67,7 +83,6 @@ public class CartActivity extends AppCompatActivity {
         amountInput = findViewById(R.id.amount_input);
         costInput = findViewById(R.id.cost_input);
         itemImage1 = findViewById(R.id.image);
-        itemImage2 = findViewById(R.id.image); // 이미지 2를 위한 아이디로 가정
         receiptImage = findViewById(R.id.image_receipt);
         userImage = findViewById(R.id.profile_image);
         userNickname = findViewById(R.id.ID_input);
@@ -90,6 +105,8 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void updateUI(BoardDetailResponse response) {
+        image_url = response.getItem_image1();
+        receipt_url = response.getReceipt_image();
         placeInput.setText(response.getMeeting_location());
         String meetingTime = response.getMeeting_time().substring(0, 4) + "년 "
                 + response.getMeeting_time().substring(5, 7) + "월 "
@@ -112,6 +129,33 @@ public class CartActivity extends AppCompatActivity {
             postButton.setEnabled(false);
             postButton.setBackgroundResource(R.drawable.button_disabled);
             postButton.setText("요청되었습니다.");
+        }
+
+        // 위도, 경도를 기반으로 게시물에 등록된 장소와 거래 희망 장소가 5km 이내인 경우, 버튼 활성화. 이외 비활성화
+        if (response.getIs_requested() != 1 && response.getIs_full() != 1) { // 이미 요청한 소분이 아니고, 마감된 소분이 아닌 경우
+            SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+            String strPreferredLatitude = sharedPreferences.getString("preferredLatitude", "");
+            String strPreferredLongitude = sharedPreferences.getString("preferredLongitude", "");
+
+            if (strPreferredLatitude != null && !strPreferredLatitude.isEmpty()
+                && strPreferredLongitude != null && !strPreferredLongitude.isEmpty()) {
+                double preferredLatitude = Double.parseDouble(strPreferredLatitude);
+                double preferredLongitude = Double.parseDouble(strPreferredLongitude);
+
+                LatLng meetLocation = new LatLng(response.getLatitude(), response.getLongitude()); // 게시물에 등록된 거래 장소
+                LatLng preferredLocation = new LatLng(preferredLatitude, preferredLongitude); // 사용자가 등록한 거래 희망 장소
+
+                // 두 좌표 간의 거리 계산 (미터 단위)
+                double distance = SphericalUtil.computeDistanceBetween(meetLocation, preferredLocation);
+
+                // 5km 이내인지 확인
+                double allowedDistance = 5000; // 5000미터(5km)
+                if (distance > allowedDistance) { // 거리 초과postButton.setEnabled(false);
+                    postButton.setEnabled(false);
+                    postButton.setBackgroundResource(R.drawable.button_disabled);
+                    postButton.setText("거래 희망 장소와 너무 멀어요.");
+                }
+            }
         }
 
         try {

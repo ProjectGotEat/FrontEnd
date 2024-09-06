@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,6 +27,7 @@ import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI._globalUtil.UIHelper;
 import com.example.projectgoteat.UI._globalUtil.UnitSpinnerUtil;
 import com.example.projectgoteat.UI.main.MainActivity;
+import com.example.projectgoteat.common.CommonCode;
 import com.example.projectgoteat.model.Board;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -46,11 +46,6 @@ public class AddpostActivity extends AppCompatActivity {
     private TextView placeInput;
     private Uri imageUri1, imageUri2;
     private TextView classificationChoice;
-
-    private static final int GALLERY_REQUEST_CODE_1 = 1001;
-    private static final int GALLERY_REQUEST_CODE_2 = 1002;
-    private static final int PLACE_PICKER_REQUEST_CODE = 123;
-    private static final int READ_MEDIA_PERMISSION_REQUEST_CODE = 2001;
 
     private String[] mainCategories = {"신선식품", "가공식품", "기타"};
     private String[][] subCategories = {
@@ -82,8 +77,8 @@ public class AddpostActivity extends AppCompatActivity {
         TextView placeInputTextView = findViewById(R.id.place_input); // 장소 선택 텍스트뷰
 
         // 갤러리 열기 버튼 클릭 이벤트 처리
-        uploadIcon1.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, GALLERY_REQUEST_CODE_1));
-        uploadIcon2.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, GALLERY_REQUEST_CODE_2));
+        uploadIcon1.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, CommonCode.GALLERY_REQUEST_CODE_1));
+        uploadIcon2.setOnClickListener(v -> UIHelper.openGallery(AddpostActivity.this, CommonCode.GALLERY_REQUEST_CODE_2));
 
         // 날짜 및 시간 선택 다이얼로그 표시
         timeInputTextView.setOnClickListener(v -> showDateTimePicker());
@@ -94,7 +89,7 @@ public class AddpostActivity extends AppCompatActivity {
         // 장소 선택 텍스트뷰 클릭 이벤트
         placeInputTextView.setOnClickListener(v -> {
             Intent placePickerIntent = new Intent(AddpostActivity.this, PlacePickerActivity.class);
-            startActivityForResult(placePickerIntent, PLACE_PICKER_REQUEST_CODE); // 다음 화면으로 이동
+            startActivityForResult(placePickerIntent, CommonCode.PLACE_PICKER_REQUEST_CODE); // 다음 화면으로 이동
         });
 
         // 게시 버튼 클릭 이벤트 처리
@@ -171,12 +166,6 @@ public class AddpostActivity extends AppCompatActivity {
 
     private void displaySelectedImage(Uri imageUri, ImageView imageView) {
         imageView.setImageURI(imageUri);
-        // 이미지가 업로드되었으므로 해당 버튼을 숨김
-        if (imageView == image1) {
-            uploadIcon1.setVisibility(View.GONE);
-        } else if (imageView == image2) {
-            uploadIcon2.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -184,15 +173,15 @@ public class AddpostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("ActivityResult", "requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == GALLERY_REQUEST_CODE_1) {
+            if (requestCode == CommonCode.GALLERY_REQUEST_CODE_1) {
                 imageUri1 = data.getData();
                 displaySelectedImage(imageUri1, image1);
                 Log.d("ActivityResult", "Image 1 selected: " + imageUri1.toString());
-            } else if (requestCode == GALLERY_REQUEST_CODE_2) {
+            } else if (requestCode == CommonCode.GALLERY_REQUEST_CODE_2) {
                 imageUri2 = data.getData();
                 displaySelectedImage(imageUri2, image2);
                 Log.d("ActivityResult", "Image 2 selected: " + imageUri2.toString());
-            } else if (requestCode == PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
+            } else if (requestCode == CommonCode.PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
                 String address = data.getStringExtra("address");
                 double latitude = data.getDoubleExtra("latitude", 0);
                 double longitude = data.getDoubleExtra("longitude", 0);
@@ -226,7 +215,7 @@ public class AddpostActivity extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
 
             Log.d("Permissions", "Permissions not granted. Requesting...");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_AUDIO}, READ_MEDIA_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_AUDIO}, CommonCode.READ_MEDIA_PERMISSION_REQUEST_CODE);
         } else {
             Log.d("Permissions", "Permissions already granted.");
             sendDataToServer();
@@ -237,7 +226,7 @@ public class AddpostActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("Permissions", "onRequestPermissionsResult: requestCode=" + requestCode);
-        if (requestCode == READ_MEDIA_PERMISSION_REQUEST_CODE) {
+        if (requestCode == CommonCode.READ_MEDIA_PERMISSION_REQUEST_CODE) {
             boolean allPermissionsGranted = true;
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
