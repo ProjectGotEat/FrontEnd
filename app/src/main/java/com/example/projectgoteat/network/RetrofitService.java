@@ -122,4 +122,7 @@ public interface RetrofitService {
 
     @POST("auth/log-in")
     Call<HashMap<String, Object>> postAuthLogin(@Body HashMap<String, String> requestBody);
+
+    @PUT("user/location")
+    Call<Void> putUserLocation(@Header("uid") String uid, @Body HashMap<String, Object> requestBody);
 }

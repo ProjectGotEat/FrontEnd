@@ -12,8 +12,9 @@ public class Item implements Parcelable {
     private int organizerId;
     private int userId;
     private String hasReview;
+    private String hasReport;
 
-    public Item(String title, String meetingTime, String message, int id, int revieweeId, int organizerId, int userId, String hasReview) {
+    public Item(String title, String meetingTime, String message, int id, int revieweeId, int organizerId, int userId, String hasReview, String hasReport) {
         this.title = title;
         this.meetingTime = meetingTime;
         this.message = message;
@@ -22,6 +23,7 @@ public class Item implements Parcelable {
         this.organizerId = organizerId;
         this.userId = userId;
         this.hasReview = hasReview;
+        this.hasReport = hasReport;
     }
 
     protected Item(Parcel in) {
@@ -33,6 +35,7 @@ public class Item implements Parcelable {
         organizerId = in.readInt();
         userId = in.readInt();
         hasReview = in.readString();
+        hasReport = in.readString();
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -81,6 +84,8 @@ public class Item implements Parcelable {
 
     public String getHasReview() { return hasReview; }
 
+    public String getHasReport() { return hasReport; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -96,5 +101,6 @@ public class Item implements Parcelable {
         dest.writeInt(organizerId);
         dest.writeInt(userId);
         dest.writeString(hasReview);
+        dest.writeString(hasReport);
     }
 }

@@ -55,5 +55,6 @@
         </activity>
         <!-- MyItemList 액티비티 선언 추가 -->
         <activity android:name="com.example.projectgoteat.UI.main.myItemList.MyItemList" android:exported="true" />
+        <activity android:name="com.example.projectgoteat.UI.main.board.FullscreenImageActivity" android:exported="false" />
     </application>
 </manifest>

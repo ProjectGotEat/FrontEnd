@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -19,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI._globalUtil.UIHelper;
 import com.example.projectgoteat.UI.main.board.addPost.AddpostActivity;
+import com.example.projectgoteat.UI.main.board.addPost.PlacePickerActivity;
+import com.example.projectgoteat.common.CommonCode;
 import com.example.projectgoteat.model.Users;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
@@ -46,8 +49,10 @@ public class SignupActivity extends AppCompatActivity {
     private ImageView uploadIcon;
     private ShapeableImageView profileImage;
     private Uri imageUri;
+    private TextView tvPlace;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
 
-    private static final int GALLERY_REQUEST_CODE_1 = 1001;
     private Switch switchNotification;
     Boolean isChecked = false;
 
@@ -70,6 +75,7 @@ public class SignupActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btn_register);
         uploadIcon = findViewById(R.id.uploadicon);
         profileImage = findViewById(R.id.image);
+        tvPlace = findViewById(R.id.tv_place);
 
         switchNotification = findViewById(R.id.switch_notification);
 
@@ -80,7 +86,13 @@ public class SignupActivity extends AppCompatActivity {
         // 갤러리 열기 버튼 클릭 이벤트 처리
         uploadIcon.setOnClickListener(v -> {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            SignupActivity.this.startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE_1);
+            SignupActivity.this.startActivityForResult(galleryIntent, CommonCode.GALLERY_REQUEST_CODE_1);
+        });
+
+        // 장소 선택 텍스트뷰 클릭 이벤트
+        tvPlace.setOnClickListener(v -> {
+            Intent placePickerIntent = new Intent(SignupActivity.this, PlacePickerActivity.class);
+            startActivityForResult(placePickerIntent, CommonCode.PLACE_PICKER_REQUEST_CODE); // 다음 화면으로 이동
         });
     }
 
@@ -89,18 +101,24 @@ public class SignupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("ActivityResult", "requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == GALLERY_REQUEST_CODE_1) {
+            if (requestCode == CommonCode.GALLERY_REQUEST_CODE_1) {
                 imageUri = data.getData();
                 displaySelectedImage(imageUri, profileImage);
                 Log.d("ActivityResult", "Image 1 selected: " + imageUri.toString());
+            } else if (requestCode == CommonCode.PLACE_PICKER_REQUEST_CODE && data.hasExtra("address")) {
+                String address = data.getStringExtra("address");
+                double latitude = data.getDoubleExtra("latitude", 0);
+                double longitude = data.getDoubleExtra("longitude", 0);
+                tvPlace.setText(address);
+                this.latitude = latitude;
+                this.longitude = longitude;
+                Log.d("ActivityResult", "Place selected: " + address);
             }
         }
     }
 
     private void displaySelectedImage(Uri imageUri, ImageView imageView) {
         imageView.setImageURI(imageUri);
-        // 이미지가 업로드되었으므로 해당 버튼을 숨김
-        uploadIcon.setVisibility(View.GONE);
     }
 
     private void checkIdAvailability() {
@@ -144,6 +162,8 @@ public class SignupActivity extends AppCompatActivity {
         String email = etId.getText().toString().trim();
         String password = etPass.getText().toString().trim();
         boolean isNotificationEnabled = switchNotification.isChecked();
+        double preferredLatitude = latitude;
+        double preferredLongitude = longitude;
 
         if (name.isEmpty() || nickname.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show();
@@ -153,11 +173,21 @@ public class SignupActivity extends AppCompatActivity {
             Toast.makeText(this, "아이디 중복체크를 해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (preferredLatitude == 0.0 || preferredLongitude == 0.0) {
+            Toast.makeText(this, "거래 희망 장소를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         try {
-            File imageFile = RetrofitHelper.getFileFromUri(this, imageUri);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("profile_image", imageFile.getName(), requestFile);
+            MultipartBody.Part body;
+            if (imageUri != null) {
+                File imageFile = RetrofitHelper.getFileFromUri(this, imageUri);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
+                body = MultipartBody.Part.createFormData("profile_image", imageFile.getName(), requestFile);
+            } else {
+                RequestBody emptyRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), new byte[0]);
+                body = MultipartBody.Part.createFormData("profile_image", "", emptyRequestBody);
+            }
 
             Map<String, Object> requestBody = new HashMap<>();
             Users user = new Users();
@@ -166,6 +196,9 @@ public class SignupActivity extends AppCompatActivity {
             user.setEmail(email);
             user.setPassword(password);
             user.setNotiAllow(isNotificationEnabled ? 1 : 0);
+            user.setPreferredLatitude(preferredLatitude);
+            user.setPreferredLongitude(preferredLongitude);
+            user.setPreferredLocation(tvPlace.getText().toString());
 
             Gson gson = new GsonBuilder().create();
             String userJson = gson.toJson(user);

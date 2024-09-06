@@ -75,9 +75,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     HashMap<String, Object> responseBody = response.body();
                     int uid = ((Double) responseBody.get("uid")).intValue();
+                    double preferredLatitude = ((Double) responseBody.get("preferred_latitude")).doubleValue();
+                    double preferredLongitude = ((Double) responseBody.get("preferred_longitude")).doubleValue();
                     String token = (String) responseBody.get("token"); // Assuming the response contains a token
 
-                    saveLoginInfo(uid, token);
+                    saveLoginInfo(uid, preferredLatitude, preferredLongitude, token);
 
                     Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -96,10 +98,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveLoginInfo(int uid, String token) {
+    private void saveLoginInfo(int uid, double preferredLatitude, double preferredLongitude, String token) {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("uid", uid);
+        editor.putString("preferredLatitude", String.valueOf(preferredLatitude)); // double형을 저장하는 메소드를 지원하지 않으므로, String으로 변환하여 저장
+        editor.putString("preferredLongitude", String.valueOf(preferredLongitude)); // double형을 저장하는 메소드를 지원하지 않으므로, String으로 변환하여 저장
         editor.putString("token", token); // Save the token
         editor.putBoolean("isLoggedIn", true);
         editor.apply();

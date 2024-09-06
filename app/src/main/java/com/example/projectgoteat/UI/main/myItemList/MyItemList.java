@@ -192,14 +192,16 @@ public class MyItemList extends AppCompatActivity {
         String meetingTime = (String) map.get("meeting_time");
         String message = (String) map.get("message");
         String hasReview = "";
-        if (listIndex == 2) { // 종료된 소분인 경우에만 사용되는 정보(리뷰 작성 완료 여부)
+        String hasReport = "";
+        if (listIndex == 2) { // 종료된 소분인 경우에만 사용되는 정보(리뷰 작성 완료 여부, 신고 완료 여부)
             hasReview = String.valueOf(((Number) map.get("has_review")).intValue());
+            hasReport = String.valueOf(((Number) map.get("has_report")).intValue());
         }
         int id = map.get("id") != null ? ((Number) map.get("id")).intValue() : 0;
         int revieweeId = map.get("reviewee_id") != null ? ((Number) map.get("reviewee_id")).intValue() : 0;
         int organizerId = map.get("organizer_id") != null ? ((Number) map.get("organizer_id")).intValue() : 0;
         int userId = map.get("user_id") != null ? ((Number) map.get("user_id")).intValue() : 0;
-        return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId, hasReview);
+        return new Item(title, meetingTime, message, id, revieweeId, organizerId, userId, hasReview, hasReport);
     }
 
     public void showSuccessDialog(Item item) {
@@ -317,6 +319,7 @@ public class MyItemList extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Review submitted successfully");
                     Toast.makeText(MyItemList.this, "리뷰가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
+                    loadData();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
@@ -393,6 +396,7 @@ public class MyItemList extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Report submitted successfully");
                     Toast.makeText(MyItemList.this, "신고가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
+                    loadData();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";

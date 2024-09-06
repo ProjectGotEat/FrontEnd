@@ -16,6 +16,9 @@ public class Users {
     private Integer notiAllow;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String preferredLocation;
+    private double preferredLatitude;
+    private double preferredLongitude;
 
     public Integer getId() {
         return id;
@@ -112,4 +115,16 @@ public class Users {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getPreferredLocation() { return preferredLocation; }
+
+    public void setPreferredLocation(String preferredLocation) { this.preferredLocation = preferredLocation; }
+
+    public double getPreferredLatitude() { return preferredLatitude; }
+
+    public void setPreferredLatitude(double preferredLatitude) { this.preferredLatitude = preferredLatitude; }
+
+    public double getPreferredLongitude() { return preferredLongitude; }
+
+    public void setPreferredLongitude(double preferredLongitude) { this.preferredLongitude = preferredLongitude; }
 }
