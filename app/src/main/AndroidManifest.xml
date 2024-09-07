@@ -25,7 +25,8 @@
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="31"
-        android:theme="@style/Theme.Addpost">
+        android:theme="@style/Theme.Addpost"
+        android:windowSoftInputMode="adjustPan" >
 
         <!--Google Map API-->
         <meta-data
@@ -35,26 +36,26 @@
         <!-- Activities -->
         <activity android:name="com.example.projectgoteat.UI.main.board.CartActivity" />
         <activity android:name="com.example.projectgoteat.UI.main.board.addPost.PlacePickerActivity" />
-        <activity android:name="com.example.projectgoteat.UI.main.myItemList.chat.ChatActivity" android:exported="true" android:parentActivityName="com.example.projectgoteat.UI.main.myItemList.MyItemList">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.projectgoteat.UI.main.myItemList.MyItemList" />
+        <activity android:name="com.example.projectgoteat.UI.main.myItemList.chat.ChatActivity" android:exported="true" android:parentActivityName="com.example.projectgoteat.UI.main.myItemList.MyItemListFragment">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.projectgoteat.UI.main.myItemList.MyItemListFragment" />
         </activity>
         <activity android:name="com.example.projectgoteat.UI.main.board.addPost.AddpostActivity" android:exported="true">
         </activity>
         <activity android:name="com.example.projectgoteat.UI.main.myPage.review.ReviewActivity" android:exported="false" />
         <activity android:name="com.example.projectgoteat.UI.main.myPage.scrap.ScrapActivity" android:exported="false" />
         <activity android:name="com.example.projectgoteat.UI.main.myPage.pointHistory.PointHistoryActivity" android:exported="false" />
-        <activity android:name="com.example.projectgoteat.UI.main.myPage.MyPageActivity" android:exported="false" />
+<!--        <activity android:name="com.example.projectgoteat.UI.main.myPage.MyPageFragment" android:exported="false" />-->
         <activity android:name="com.example.projectgoteat.UI.auth.SignupActivity" android:exported="false" />
-        <activity android:name="com.example.projectgoteat.UI.main.MainActivity" android:exported="false" />
+<!--        <activity android:name="com.example.projectgoteat.UI.main.HomeFragment" android:exported="false" />-->
         <activity android:name="com.example.projectgoteat.UI.auth.LoginActivity" android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- MyItemList 액티비티 선언 추가 -->
-        <activity android:name="com.example.projectgoteat.UI.main.myItemList.MyItemList" android:exported="true" />
+<!--        <activity android:name="com.example.projectgoteat.UI.main.myItemList.MyItemListFragment" android:exported="true" />-->
         <activity android:name="com.example.projectgoteat.UI.main.board.FullscreenImageActivity" android:exported="false" />
+        <activity android:name="com.example.projectgoteat.UI.main.MainActivity" android:exported="false" android:windowSoftInputMode="adjustPan" />
     </application>
 </manifest>

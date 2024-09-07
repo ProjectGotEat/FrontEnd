@@ -49,7 +49,7 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
 
         userId = getUserId(); // 사용자 아이디 가져오기
-        boardId = getIntent().getIntExtra("BOARD_ID", -1); // MainActivity에서 전달받은 boardId
+        boardId = getIntent().getIntExtra("BOARD_ID", -1); // HomeActivity에서 전달받은 boardId
 
         initializeViews();
         fetchBoardDetails();

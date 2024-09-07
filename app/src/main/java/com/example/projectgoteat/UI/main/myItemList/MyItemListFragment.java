@@ -7,17 +7,20 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -44,7 +47,7 @@ import retrofit2.Retrofit;
 import android.graphics.drawable.Drawable;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-public class MyItemList extends AppCompatActivity {
+public class MyItemListFragment extends Fragment {
     private static final String TAG = "MyItemList";
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
@@ -53,53 +56,42 @@ public class MyItemList extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private int uid;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_myitemlist);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_myitemlist, container, false);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         uid = sharedPreferences.getInt("uid", -1);
         if (uid == -1) {
-            Toast.makeText(this, "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+            Toast.makeText(getContext(), "로그인 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+            return view;
         }
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> getActivity().onBackPressed());
 
-            Drawable navigationIcon = toolbar.getNavigationIcon();
-            if (navigationIcon != null) {
-                DrawableCompat.setTint(navigationIcon, ContextCompat.getColor(this, R.color.purple_700));
-                toolbar.setNavigationIcon(navigationIcon);
-            }
+        Drawable navigationIcon = toolbar.getNavigationIcon();
+        if (navigationIcon != null) {
+            DrawableCompat.setTint(navigationIcon, ContextCompat.getColor(getContext(), R.color.purple_700));
+            toolbar.setNavigationIcon(navigationIcon);
         }
 
         createRequiredDirectory();
-        initViewPager();
-        initSwipeRefresh();
+        initViewPager(view);
+        initSwipeRefresh(view);
 
-        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(this);
+        Retrofit retrofit = RetrofitHelper.getRetrofitInstance(getContext());
         retrofitService = retrofit.create(RetrofitService.class);
 
         loadData();
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return view;
     }
 
     private void createRequiredDirectory() {
-        File directory = new File(getFilesDir(), "recent_tasks");
+        File directory = new File(getContext().getFilesDir(), "recent_tasks");
         if (!directory.exists() && directory.mkdirs()) {
             Log.d(TAG, "Directory created: " + directory.getAbsolutePath());
         } else {
@@ -107,16 +99,16 @@ public class MyItemList extends AppCompatActivity {
         }
     }
 
-    private void initViewPager() {
-        viewPager = findViewById(R.id.viewPager);
+    private void initViewPager(View view) {
+        viewPager = view.findViewById(R.id.viewPager);
         itemLists = new ArrayList<>();
         itemLists.add(new ArrayList<>());
         itemLists.add(new ArrayList<>());
         itemLists.add(new ArrayList<>());
-        viewPagerAdapter = new ViewPagerAdapter(this, itemLists, uid);
+        viewPagerAdapter = new ViewPagerAdapter(getActivity(), itemLists, uid);
         viewPager.setAdapter(viewPagerAdapter);
 
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
@@ -132,13 +124,13 @@ public class MyItemList extends AppCompatActivity {
         }).attach();
     }
 
-    private void initSwipeRefresh() {
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+    private void initSwipeRefresh(View view) {
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this::loadData);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         loadData();
     }
@@ -205,7 +197,7 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showSuccessDialog(Item item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("소분 성공")
                 .setMessage("정말로 이 소분을 성공 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
@@ -245,7 +237,7 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showFailDialog(Item item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("소분 실패")
                 .setMessage("정말로 이 소분을 실패 처리하시겠습니까?")
                 .setPositiveButton("확인", (dialog, id) -> {
@@ -285,17 +277,18 @@ public class MyItemList extends AppCompatActivity {
     }
 
     public void showReviewDialog(int participantId, int revieweeId) {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_review, null);
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_review, null);
         EditText reviewContentEditText = dialogView.findViewById(R.id.reviewContent);
         RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
+        ratingBar.setRating(5F);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(dialogView)
                 .setPositiveButton("리뷰 제출", (dialog, id) -> {
                     String reviewContent = reviewContentEditText.getText().toString();
                     int rating = (int) ratingBar.getRating();
                     if (rating == 0) {
-                        Toast.makeText(this, "평점을 입력하세요", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "평점을 입력하세요", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     Log.d(TAG, "Review Content: " + reviewContent);
@@ -318,14 +311,14 @@ public class MyItemList extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Review submitted successfully");
-                    Toast.makeText(MyItemList.this, "리뷰가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "리뷰가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                     loadData();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                         Log.e(TAG, "Failed to submit review: " + response.code());
                         Log.e(TAG, "Error body: " + errorBody);
-                        Toast.makeText(MyItemList.this, "리뷰 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "리뷰 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -335,14 +328,14 @@ public class MyItemList extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network error: " + t.getMessage());
-                Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void showReportDialog(int participantId, int reporteeId) {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_report, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_report, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(dialogView)
                 .setPositiveButton("신고 제출", (dialog, id) -> {
                     RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
@@ -359,6 +352,8 @@ public class MyItemList extends AppCompatActivity {
                 .show();
 
         RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
+        RadioButton radioNoShow = dialogView.findViewById(R.id.radioNoShow);
+        radioNoShow.setChecked(true);
         EditText otherReasonEditText = dialogView.findViewById(R.id.otherReasonEditText);
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -395,14 +390,14 @@ public class MyItemList extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Report submitted successfully");
-                    Toast.makeText(MyItemList.this, "신고가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "신고가 성공적으로 제출되었습니다.", Toast.LENGTH_SHORT).show();
                     loadData();
                 } else {
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                         Log.e(TAG, "Failed to submit report: " + response.code());
                         Log.e(TAG, "Error body: " + errorBody);
-                        Toast.makeText(MyItemList.this, "신고 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "신고 제출에 실패했습니다: " + errorBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -412,7 +407,7 @@ public class MyItemList extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(TAG, "Network error: " + t.getMessage());
-                Toast.makeText(MyItemList.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }

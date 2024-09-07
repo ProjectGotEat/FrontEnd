@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI._globalUtil.UIHelper;
 import com.example.projectgoteat.UI._globalUtil.UnitSpinnerUtil;
+import com.example.projectgoteat.UI.main.HomeFragment;
 import com.example.projectgoteat.UI.main.MainActivity;
 import com.example.projectgoteat.common.CommonCode;
 import com.example.projectgoteat.model.Board;
@@ -98,6 +99,7 @@ public class AddpostActivity extends AppCompatActivity {
             registerPost(); // registerPost 메서드 호출
             if (postRegistered) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
             // 현재 액티비티 종료

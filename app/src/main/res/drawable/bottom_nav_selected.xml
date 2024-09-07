@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 투명 배경 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent"/>
+        </shape>
+    </item>
+
+    <!-- 하단에만 선을 추가 -->
+    <item android:top="53dp"> <!-- 선 외의 영역에 대해 여백을 추가 -->
+        <shape android:shape="rectangle">
+            <size android:height="3dp"/>
+            <solid android:color="#43B43D"/>
+        </shape>
+    </item>
+</layer-list>
