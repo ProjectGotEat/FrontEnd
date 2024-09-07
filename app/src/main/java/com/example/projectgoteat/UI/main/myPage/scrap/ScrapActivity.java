@@ -1,6 +1,7 @@
 package com.example.projectgoteat.UI.main.myPage.scrap;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.UI.main.board.BoardAdapter;
+import com.example.projectgoteat.UI.main.board.CartActivity;
 import com.example.projectgoteat.model.BoardItem;
 import com.example.projectgoteat.network.RetrofitHelper;
 import com.example.projectgoteat.network.RetrofitService;
@@ -89,6 +91,15 @@ public class ScrapActivity extends AppCompatActivity {
 
                     BoardAdapter adapter = new BoardAdapter(ScrapActivity.this, itemList);
                     recyclerView.setAdapter(adapter);
+
+                    adapter.setOnItemClickListener(new BoardAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int boardId) {
+                            Intent intent = new Intent(ScrapActivity.this, CartActivity.class);
+                            intent.putExtra("BOARD_ID", boardId);
+                            startActivity(intent);
+                        }
+                    });
                 }
             }
 

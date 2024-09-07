@@ -517,6 +517,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="19dp"
                     android:background="@drawable/button"
+                    android:layout_marginTop="10dp"
                     android:elevation="6dp"
                     android:text="등록하기"
                     android:textColor="#FFFFFF"

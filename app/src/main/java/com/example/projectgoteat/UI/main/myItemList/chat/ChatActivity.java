@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -54,6 +55,16 @@ public class ChatActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         uid = sharedPreferences.getInt("uid", -1);
 
+        // 엔터키로 submit
+        messageInput.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                sendMessage();
+                chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
+                return true;
+            }
+            return false;
+        });
+
         messageList = new ArrayList<>();
 
         // 인텐트에서 Item 객체를 받아옴
@@ -103,10 +114,9 @@ public class ChatActivity extends AppCompatActivity {
             });
 
             messageInput.setText("");
-            swipeRefreshLayout.setRefreshing(true);
             chatAdapter.fetchMessages(() -> swipeRefreshLayout.setRefreshing(false));
         } else {
-            Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "메시지를 입력하세요", Toast.LENGTH_SHORT).show();
         }
     }
 

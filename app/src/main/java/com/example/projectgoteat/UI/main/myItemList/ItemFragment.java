@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,12 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.projectgoteat.R;
 import com.example.projectgoteat.model.Item;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemFragment extends Fragment {
     private List<Item> itemList;
-    private MyItemList myItemList;
+    private MyItemListFragment myItemList;
     private boolean isCompletedItems;
     private int uid;
     private ItemAdapter itemAdapter;
@@ -38,10 +38,15 @@ public class ItemFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof MyItemList) {
-            myItemList = (MyItemList) context;
+        if (context instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) context;
+            if (activity.getSupportFragmentManager().findFragmentById(R.id.main_fragment) instanceof MyItemListFragment) {
+                myItemList = (MyItemListFragment) activity.getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+            } else {
+                throw new RuntimeException("Activity does not contain MyItemListFragment");
+            }
         } else {
-            throw new RuntimeException(context.toString() + " must be an instance of MyItemList");
+            throw new RuntimeException(context.toString() + " must be an instance of AppCompatActivity");
         }
     }
 

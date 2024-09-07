@@ -1,5 +1,6 @@
 package com.example.projectgoteat.UI.main.myItemList;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +20,15 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private List<Item> itemList;
-    private MyItemList myItemList;
+    private MyItemListFragment myItemListFragment;
     private boolean isCompletedItems;
     private int uid;
+    private Context context;
 
-    public ItemAdapter(List<Item> itemList, MyItemList myItemList, boolean isCompletedItems, int uid) {
+    public ItemAdapter(List<Item> itemList, MyItemListFragment myItemListFragment, boolean isCompletedItems, int uid) {
         this.itemList = itemList;
-        this.myItemList = myItemList;
+        this.context = myItemListFragment.getContext();
+        this.myItemListFragment = myItemListFragment;
         this.isCompletedItems = isCompletedItems;
         this.uid = uid;
     }
@@ -54,9 +57,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.itemRecentMessage.setText(message);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(myItemList, ChatActivity.class);
+            Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra("item", item);  // 변경된 부분: Parcelable로 Item 객체를 전달
-            myItemList.startActivity(intent);
+            context.startActivity(intent);
         });
 
         if (isCompletedItems) {
@@ -78,11 +81,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 holder.btnSuccess.setEnabled(true);
                 holder.btnSuccess.setBackgroundResource(R.drawable.button);
             }
-            holder.btnSuccess.setOnClickListener(v -> myItemList.showReviewDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
-            holder.btnFail.setOnClickListener(v -> myItemList.showReportDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
+            holder.btnSuccess.setOnClickListener(v -> myItemListFragment.showReviewDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
+            holder.btnFail.setOnClickListener(v -> myItemListFragment.showReportDialog(item.getParticipantId(), item.getUserId() != uid ? item.getUserId() : item.getOrganizerId()));
         } else {
-            holder.btnSuccess.setOnClickListener(v -> myItemList.showSuccessDialog(item));
-            holder.btnFail.setOnClickListener(v -> myItemList.showFailDialog(item));
+            holder.btnSuccess.setOnClickListener(v -> myItemListFragment.showSuccessDialog(item));
+            holder.btnFail.setOnClickListener(v -> myItemListFragment.showFailDialog(item));
         }
     }
 
